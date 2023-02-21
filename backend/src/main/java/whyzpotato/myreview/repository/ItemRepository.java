@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import whyzpotato.myreview.domain.Book;
 import whyzpotato.myreview.domain.Item;
 import whyzpotato.myreview.domain.Movie;
-import whyzpotato.myreview.domain.User;
+import whyzpotato.myreview.domain.Users;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -65,15 +65,15 @@ public class ItemRepository {
     }
 
     //사용하지 말 것 (ReviewRepository에 있는 메소드 사용 권장)
-    public List<Book> findLikeBooksByUser(User user) {
+    public List<Book> findLikeBooksByUser(Users users) {
         return em.createNativeQuery(
                         "select * from item i" +
                                 " join (select *" +
                                 " from review r" +
-                                " where r.user_id = :user_id and r.status = 'LIKE') as r" +
+                                " where r.users_id = :users_id and r.status = 'LIKE') as r" +
                                 " on r.item_id = i.item_id "
                         , Book.class)
-                .setParameter("user_id", user.getId())
+                .setParameter("users_id", users.getId())
                 .getResultList();
     }
 

@@ -18,8 +18,8 @@ public class Review {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "users_id")
+    private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
@@ -34,9 +34,9 @@ public class Review {
 
     private String content;
 
-    public static Review createReview(User user, Item item, LocalDate date, ReviewStatus status, int rate, String content) {
+    public static Review createReview(Users users, Item item, LocalDate date, ReviewStatus status, int rate, String content) {
         Review review = new Review();
-        review.user = user;
+        review.users = users;
         review.item = item;
         review.date = date;
         review.status = status;

@@ -2,7 +2,7 @@ package whyzpotato.myreview.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import whyzpotato.myreview.domain.User;
+import whyzpotato.myreview.domain.Users;
 
 import javax.persistence.EntityManager;
 
@@ -11,8 +11,8 @@ import javax.persistence.EntityManager;
 public class UserRepository {
     private final EntityManager em;
 
-    public Long save(User user) {
-        em.persist(user);
-        return user.getId();
+    public Long save(Users users) {
+        em.persist(users);
+        return users.getId();
     }
 }

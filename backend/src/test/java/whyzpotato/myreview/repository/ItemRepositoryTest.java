@@ -90,23 +90,23 @@ public class ItemRepositoryTest {
 
     @Test
     void top10Book() {
-        User user1 = User.createUser("user1");
-        User user2 = User.createUser("user2");
-        User user3 = User.createUser("user3");
-        userRepository.save(user1);
-        userRepository.save(user2);
-        userRepository.save(user3);
+        Users users1 = Users.createUser("user1");
+        Users users2 = Users.createUser("user2");
+        Users users3 = Users.createUser("user3");
+        userRepository.save(users1);
+        userRepository.save(users2);
+        userRepository.save(users3);
         Book book1 = Book.createBook("b1", LocalDate.of(2015, 8, 13), "url", "desc", "au", "1234");
         Book book2 = Book.createBook("b2", LocalDate.of(2018, 8, 13), "url", "desc", "au", "5678");
         Book book3 = Book.createBook("b3", LocalDate.of(2022, 8, 13), "url", "desc", "au", "9101");
         itemRepository.save(book1);
         itemRepository.save(book2);
         itemRepository.save(book3);
-        reviewRepository.save(Review.createReview(user1, book2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user2, book2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user3, book2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user2, book3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user3, book3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users1, book2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users2, book2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users3, book2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users2, book3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users3, book3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
 
         List<Book> topBooks = itemRepository.top10Book();
 
@@ -134,19 +134,19 @@ public class ItemRepositoryTest {
 
     @Test
     void findLikeBooksByUser() {
-        User user1 = User.createUser("user1");
-        userRepository.save(user1);
+        Users users1 = Users.createUser("user1");
+        userRepository.save(users1);
         Book book1 = Book.createBook("b1", LocalDate.of(2015, 8, 13), "url", "desc", "au", "1234");
         Book book2 = Book.createBook("b2", LocalDate.of(2018, 8, 13), "url", "desc", "au", "5678");
         Book book3 = Book.createBook("b3", LocalDate.of(2022, 8, 13), "url", "desc", "au", "9101");
         itemRepository.save(book1);
         itemRepository.save(book2);
         itemRepository.save(book3);
-        reviewRepository.save(Review.createReview(user1, book1, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user1, book3, LocalDate.now(), ReviewStatus.LIKE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user1, book2, LocalDate.now(), ReviewStatus.LIKE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users1, book1, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users1, book3, LocalDate.now(), ReviewStatus.LIKE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users1, book2, LocalDate.now(), ReviewStatus.LIKE, 5, "다시 봐도 재밌을 것 같음"));
 
-        List<Book> likeBooksByUser = itemRepository.findLikeBooksByUser(user1);
+        List<Book> likeBooksByUser = itemRepository.findLikeBooksByUser(users1);
 
         assertThat(likeBooksByUser.size()).isEqualTo(2);
         assertThat(likeBooksByUser.get(0)).isSameAs(book3);
@@ -192,23 +192,23 @@ public class ItemRepositoryTest {
 
     @Test
     void top10Movie() {
-        User user1 = User.createUser("user1");
-        User user2 = User.createUser("user2");
-        User user3 = User.createUser("user3");
-        userRepository.save(user1);
-        userRepository.save(user2);
-        userRepository.save(user3);
+        Users users1 = Users.createUser("user1");
+        Users users2 = Users.createUser("user2");
+        Users users3 = Users.createUser("user3");
+        userRepository.save(users1);
+        userRepository.save(users2);
+        userRepository.save(users3);
         Movie movie1 = Movie.createMovie("m1", LocalDate.of(2019, 8, 13), "url", "desc", "au", "actors");
         Movie movie2 = Movie.createMovie("m2   ", LocalDate.of(2022, 8, 13), "url", "desc", "au", "actors");
         Movie movie3 = Movie.createMovie("m3", LocalDate.of(2023, 8, 13), "url", "desc", "au", "actors");
         itemRepository.save(movie1);
         itemRepository.save(movie2);
         itemRepository.save(movie3);
-        reviewRepository.save(Review.createReview(user1, movie2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user2, movie2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user3, movie2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user2, movie3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
-        reviewRepository.save(Review.createReview(user3, movie3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users1, movie2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users2, movie2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users3, movie2, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users2, movie3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users3, movie3, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
 
         List<Movie> topMovies = itemRepository.top10Movie();
 
