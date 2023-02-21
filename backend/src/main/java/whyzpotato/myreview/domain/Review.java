@@ -1,9 +1,15 @@
 package whyzpotato.myreview.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
 
     @Id
@@ -27,4 +33,17 @@ public class Review {
     private int rate;
 
     private String content;
+
+    public static Review createReview(User user, Item item, LocalDate date, ReviewStatus status, int rate, String content) {
+        Review review = new Review();
+        review.user = user;
+        review.item = item;
+        review.date = date;
+        review.status = status;
+        review.rate = rate;
+        review.content = content;
+        return review;
+    }
+
+
 }

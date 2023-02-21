@@ -22,7 +22,7 @@ public class User {
 
     private String name;
 
-    public User createUser(String name){
+    public static User createUser(String name){
         User user = new User();
         user.setName(name);
         return user;
