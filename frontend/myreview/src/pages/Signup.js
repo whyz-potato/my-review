@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert, ScrollView } from 'react-native';
 import Checkbox from 'expo-checkbox';
-import { emailValidation } from '../util/Validation';
+import { emailValidation, pwdValidation } from '../util/Validation';
 
 const Signup = () => {
     const [email, setEmail] = useState('');
@@ -38,6 +38,16 @@ const Signup = () => {
     //         setValidPwd(false);
     //     }
     //  };
+
+    useEffect(()=> {
+        if (pwdValidation(password)) {
+            setPwdError("");
+            setValidPwd(true);
+        } else {
+            setPwdError("영문 소문자 또는 대문자, 숫자, 특수문자를 포함해 8-15자 내외로 설정해주세요.");
+            setValidPwd(false);
+        }
+    }, [password])
 
     useEffect(()=> {
         if (password===passwordCheck) {
@@ -85,7 +95,7 @@ const Signup = () => {
                         secureTextEntry={true}
                     />
                 </View>
-                {/* {!validPwd && <Text style={styles.errorMsg}>{pwdError}</Text>} */}
+                {!validPwd && <Text style={styles.errorMsg}>{pwdError}</Text>}
                 <View style={styles.row}>
                     <Text style={styles.inputArea}>비밀번호 확인</Text>
                     <TextInput
@@ -132,9 +142,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        marginTop: 20,
+        marginTop: 40,
         color: '#6DAFB5',
-        fontSize: 45,
+        fontSize: 35,
         fontWeight: 'bold'
     },
     row: {
@@ -144,7 +154,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     inputArea: {
-        fontSize: 20,
+        fontSize: 18,
         color: '#E1D7C6',
     },
     input: {
@@ -189,16 +199,17 @@ const styles = StyleSheet.create({
 
     },
     signupBtn: {
-        alignItems: 'center',
+        // alignItems: 'center',
         marginTop: 30
     },
     signupTxt: {
         backgroundColor: '#6DAFB5',
         borderRadius: 25,
         color: '#ffffff',
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        fontSize: 25,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        fontSize: 20,
+        textAlign: 'center'
     },
 });
 
