@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Pressable, Alert, ScrollView } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { emailValidation } from '../util/Validation';
 
@@ -51,7 +51,7 @@ const Signup = () => {
 
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>회원가입</Text>
 
             <View style={{ marginTop: 30}}>
@@ -120,13 +120,13 @@ const Signup = () => {
                 </Pressable>
             </View>
             <StatusBar style="auto" />
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
