@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,18 +21,24 @@ public class ReviewRepositoryTest {
     @Autowired
     ItemRepository itemRepository;
     @Autowired
-    UserRepository userRepository;
+    UsersRepository usersRepository;
 
 
     @Test
     void save() {
-        Users users = Users.createUser("user1");
-        userRepository.save(users);
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
         Item item = Book.createBook("책1", LocalDate.of(2012, 12, 28), "img", "des", "aut", "isbn");
         itemRepository.save(item);
 
 
-        Review review = Review.createReview(users, item, LocalDate.now(), ReviewStatus.WATCHING, 4, "보고있는데 재밌음");
+        Review review = Review.createReview(users1, item, LocalDate.now(), ReviewStatus.WATCHING, 4, "보고있는데 재밌음");
         reviewRepository.save(review);
 
         assertThat(review.getId()).isNotNull();
@@ -39,11 +46,17 @@ public class ReviewRepositoryTest {
 
     @Test
     void findById() {
-        Users users = Users.createUser("user1");
-        userRepository.save(users);
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
         Item item = Book.createBook("책1", LocalDate.of(2012, 12, 28), "img", "des", "aut", "isbn");
         itemRepository.save(item);
-        Review review = Review.createReview(users, item, LocalDate.now(), ReviewStatus.WATCHING, 4, "보고있는데 재밌음");
+        Review review = Review.createReview(users1, item, LocalDate.now(), ReviewStatus.WATCHING, 4, "보고있는데 재밌음");
         reviewRepository.save(review);
 
         Review findReview = reviewRepository.findById(review.getId());
@@ -53,14 +66,20 @@ public class ReviewRepositoryTest {
 
     @Test
     void findAll() {
-        Users users = Users.createUser("user1");
-        userRepository.save(users);
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
         Item book = Book.createBook("책1", LocalDate.of(2012, 12, 28), "img", "des", "aut", "isbn");
         itemRepository.save(book);
         Item movie = Movie.createMovie("영화1", LocalDate.of(2008, 7, 16), "img", "des", "dir", "actors");
         itemRepository.save(movie);
-        reviewRepository.save(Review.createReview(users, book, LocalDate.now(), ReviewStatus.WATCHING, 4, "보고있는데 재밌음"));
-        reviewRepository.save(Review.createReview(users, movie, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
+        reviewRepository.save(Review.createReview(users1, book, LocalDate.now(), ReviewStatus.WATCHING, 4, "보고있는데 재밌음"));
+        reviewRepository.save(Review.createReview(users1, movie, LocalDate.now(), ReviewStatus.DONE, 5, "다시 봐도 재밌을 것 같음"));
 
         List<Review> reviews = reviewRepository.findAll();
 
@@ -69,8 +88,14 @@ public class ReviewRepositoryTest {
 
     @Test
     void findAllBookReviewByUser() {
-        Users users1 = Users.createUser("user1");
-        userRepository.save(users1);
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
         Book book1 = Book.createBook("b1", LocalDate.of(2015, 8, 13), "url", "desc", "au", "1234");
         Book book2 = Book.createBook("b2", LocalDate.of(2018, 8, 13), "url", "desc", "au", "5678");
         Book book3 = Book.createBook("b3", LocalDate.of(2022, 8, 13), "url", "desc", "au", "9101");
@@ -88,8 +113,14 @@ public class ReviewRepositoryTest {
 
     @Test
     void findLikeBookByUer() {
-        Users users1 = Users.createUser("user1");
-        userRepository.save(users1);
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
         Book book1 = Book.createBook("b1", LocalDate.of(2015, 8, 13), "url", "desc", "au", "1234");
         Book book2 = Book.createBook("b2", LocalDate.of(2018, 8, 13), "url", "desc", "au", "5678");
         Book book3 = Book.createBook("b3", LocalDate.of(2022, 8, 13), "url", "desc", "au", "9101");
@@ -110,12 +141,30 @@ public class ReviewRepositoryTest {
 
     @Test
     void findAllMovieReviewByUser() {
-        Users users1 = Users.createUser("user1");
-        Users users2 = Users.createUser("user2");
-        Users users3 = Users.createUser("user3");
-        userRepository.save(users1);
-        userRepository.save(users2);
-        userRepository.save(users3);
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        Users users2 = Users
+                .builder()
+                .email("test2@test.com")
+                .name("user2")
+                .pw("22")
+                .createDate(LocalDateTime.now())
+                .build();
+        Users users3 = Users
+                .builder()
+                .email("test3@test.com")
+                .name("user3")
+                .pw("33")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
+        usersRepository.save(users2);
+        usersRepository.save(users3);
         Book book1 = Book.createBook("b1", LocalDate.of(2015, 8, 13), "url", "desc", "au", "1234");
         Book book2 = Book.createBook("b2", LocalDate.of(2018, 8, 13), "url", "desc", "au", "5678");
         Book book3 = Book.createBook("b3", LocalDate.of(2022, 8, 13), "url", "desc", "au", "9101");
@@ -154,8 +203,14 @@ public class ReviewRepositoryTest {
 
     @Test
     void findLikeMovieByUser() {
-        Users users1 = Users.createUser("user1");
-        userRepository.save(users1);
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
         Movie movie1 = Movie.createMovie("m1", LocalDate.of(2019, 8, 13), "url", "desc", "au", "actors");
         Movie movie2 = Movie.createMovie("m2   ", LocalDate.of(2022, 8, 13), "url", "desc", "au", "actors");
         Movie movie3 = Movie.createMovie("m3", LocalDate.of(2023, 8, 13), "url", "desc", "au", "actors");
