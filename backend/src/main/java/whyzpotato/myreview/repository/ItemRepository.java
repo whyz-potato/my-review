@@ -115,5 +115,4 @@ public class ItemRepository {
         return movies.subList(0, min(max, movies.size()));
     }
 
-
 }

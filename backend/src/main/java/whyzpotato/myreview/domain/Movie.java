@@ -1,6 +1,7 @@
 package whyzpotato.myreview.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,14 +17,14 @@ public class Movie extends Item {
 
     private String actors;
 
-    public static Movie createMovie(String title, LocalDate releaseDate, String image, String description, String director, String actors) {
-        Movie movie = new Movie();
-        movie.title = title;
-        movie.releaseDate = releaseDate;
-        movie.image = image;
-        movie.description = description;
-        movie.director = director;
-        movie.actors = actors;
-        return movie;
+    @Builder
+    public Movie(String title, LocalDate releaseDate, String image, String description, String director, String actors){
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.image = image;
+        this.description = description;
+        this.director = director;
+        this.actors = actors;
     }
+
 }

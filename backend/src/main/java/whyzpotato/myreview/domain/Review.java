@@ -1,10 +1,12 @@
 package whyzpotato.myreview.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
@@ -14,7 +16,7 @@ public class Review {
 
     @Id
     @GeneratedValue
-    @Column(name = "review_id")
+    @Column(name = "review_id", unique = true, nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,17 +34,33 @@ public class Review {
 
     private int rate;
 
+    @Column(length = 1000)
+    @Size(max = 1000)
     private String content;
 
-    public static Review createReview(Users users, Item item, LocalDate date, ReviewStatus status, int rate, String content) {
-        Review review = new Review();
-        review.users = users;
-        review.item = item;
-        review.date = date;
-        review.status = status;
-        review.rate = rate;
-        review.content = content;
-        return review;
+    @Builder
+    public Review(Users users, Item item, LocalDate date, ReviewStatus status, int rate, String content) {
+        this.users = users;
+        this.item = item;
+        this.date = date;
+        this.status = status;
+        this.rate = rate;
+        this.content = content;
+    }
+
+    public void changeIntoLike(){
+        this.date = null;
+        this.status = ReviewStatus.LIKE;
+        this.rate = 0;
+        this.content = null;
+
+    }
+
+    public void update(ReviewStatus status, LocalDate date, int rate, String content){
+        this.date = date;
+        this.status = status;
+        this.rate = rate;
+        this.content = content;
     }
 
 

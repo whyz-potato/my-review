@@ -12,7 +12,7 @@ public abstract class Item {
 
     @Id
     @GeneratedValue
-    @Column(name = "item_id")
+    @Column(name = "item_id", unique = true, nullable = false)
     protected Long id;
 
     protected String title;

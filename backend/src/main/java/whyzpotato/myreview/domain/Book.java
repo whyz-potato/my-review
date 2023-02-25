@@ -1,6 +1,7 @@
 package whyzpotato.myreview.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,15 +17,14 @@ public class Book extends Item {
 
     private String isbn;
 
-    public static Book createBook(String title, LocalDate releaseDate, String image, String description, String author, String isbn) {
-        Book book = new Book();
-        book.title = title;
-        book.releaseDate = releaseDate;
-        book.image = image;
-        book.description = description;
-        book.author = author;
-        book.isbn = isbn;
-        return book;
+    @Builder
+    public Book(String title, LocalDate releaseDate, String image, String description, String author, String isbn){
+        this.title = title;
+        this.releaseDate = releaseDate;
+        this.image = image;
+        this.description = description;
+        this.author = author;
+        this.isbn = isbn;
     }
 
 }
