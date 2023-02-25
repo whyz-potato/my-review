@@ -20,9 +20,9 @@ public class ReviewRepository {
             em.merge(review);
     }
 
-    public void delete(Review review) {
-        if (review.getId() != null)
-            em.remove(review.getId());
+    public void delete(Long id) {
+        if (findById(id) != null)
+            em.remove(id);
     }
 
     public Review findById(Long id) {
