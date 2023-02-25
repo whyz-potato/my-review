@@ -22,7 +22,7 @@ public class Users {
     @Column(name = "users_id", unique = true, nullable = false)
     private Long id;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     private String email;
 
     @Column(length = 15, nullable = false)
@@ -48,12 +48,16 @@ public class Users {
     @OneToMany(mappedBy = "users")
     private List<YearlyGoal> yearlyGoalList = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>();
+
     @Builder
-    public Users(String email, String name, String pw, LocalDateTime createDate) {
+    public Users(String email, String name, String pw, LocalDateTime createDate, List<String> roles) {
         this.email = email;
         this.name = name;
-        this.pw = pw;   //TODO 암호화
+        this.pw = pw;
         this.createDate = createDate;
+        this.roles = roles;
     }
     
 }
