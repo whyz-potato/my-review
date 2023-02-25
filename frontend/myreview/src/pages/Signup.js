@@ -28,17 +28,6 @@ const Signup = () => {
         }
     };
 
-    // const handlePwdChange = (onchangePwd) => {
-    //     setPwd(onchangePwd);
-    //     if (pwdValidation(password)) {
-    //         setPwdError("");
-    //         setValidPwd(true);
-    //     }else {
-    //         setPwdError("영문 소문자 또는 대문자, 숫자, 특수문자를 포함해 8-15자 내외로 설정해주세요.");
-    //         setValidPwd(false);
-    //     }
-    //  };
-
     useEffect(()=> {
         if (pwdValidation(password)) {
             setPwdError("");
