@@ -34,7 +34,17 @@ public class ReviewRepository {
                 .getResultList();
     }
 
-    //리뷰 상세를 보여줄 때 item 정보도 함께 보여주기 때문에 item도 fetch join
+    public List<Review> findAllByUserYear(Users users, int year) {
+        return em.createQuery(
+                        "select r" +
+                                " from Review r" +
+                                " where r.users = :users and year(r.date) = :year and r.status = 'DONE'", Review.class)
+                .setParameter("users", users)
+                .setParameter("year", year)
+                .getResultList();
+    }
+
+    //리뷰 목록을 보여줄 때 item 정보(제목, 사진 등)도 함께 보여주기 때문에 item도 fetch join
     public List<Review> findAllBookReviewByUser(Users users) {
         return em.createQuery(
                         "select r" +

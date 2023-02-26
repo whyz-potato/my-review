@@ -98,7 +98,7 @@ public class ItemRepositoryTest {
         itemRepository.save(book);
 
         //when
-        Book findBook = itemRepository.findBookByIsbn("7813");
+        Book findBook = itemRepository.findBookByIsbn("7813").get();
 
         //then
         assertThat(findBook).isSameAs(book);
@@ -409,7 +409,7 @@ public class ItemRepositoryTest {
         itemRepository.save(movie);
 
         //when
-        Movie findMovie = itemRepository.findMovieByTitleDirector("test", "dir");
+        Movie findMovie = itemRepository.findMovieByTitleDirector("test", "dir").get();
 
         //then
         assertThat(findMovie).isSameAs(movie);

@@ -48,17 +48,16 @@ public class Review {
         this.content = content;
     }
 
-    public void changeIntoLike(){
-        this.date = null;
+    public void changeStatus(ReviewStatus status) {
         this.status = ReviewStatus.LIKE;
+        this.date = null;
         this.rate = 0;
         this.content = null;
-
     }
 
-    public void update(ReviewStatus status, LocalDate date, int rate, String content){
-        this.date = date;
+    public void update(ReviewStatus status, LocalDate date, int rate, String content) {
         this.status = status;
+        this.date = date;
         this.rate = rate;
         this.content = content;
     }

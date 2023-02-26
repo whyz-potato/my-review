@@ -9,6 +9,7 @@ import whyzpotato.myreview.domain.Users;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Math.min;
 
@@ -27,13 +28,14 @@ public class ItemRepository {
         return em.find(Item.class, id);
     }
 
-    public Book findBookByIsbn(String isbn) {
+    public Optional<Book> findBookByIsbn(String isbn) {
         return em.createQuery(
                         "select b" +
                                 " from Book b" +
                                 " where b.isbn = :isbn", Book.class)
                 .setParameter("isbn", isbn)
-                .getSingleResult();
+                .getResultList()
+                .stream().findAny();
     }
 
     public List<Book> findAllBook() {
@@ -77,14 +79,15 @@ public class ItemRepository {
                 .getResultList();
     }
 
-    public Movie findMovieByTitleDirector(String title, String director) {
+    public Optional<Movie> findMovieByTitleDirector(String title, String director) {
         return em.createQuery(
                         "select m" +
                                 " from Movie m" +
                                 " where m.title = :title and m.director = :director", Movie.class)
                 .setParameter("title", title)
                 .setParameter("director", director)
-                .getSingleResult();
+                .getResultList()
+                .stream().findAny();
     }
 
     public List<Movie> findAllMovie() {
