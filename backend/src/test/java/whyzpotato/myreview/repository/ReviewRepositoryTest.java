@@ -247,7 +247,7 @@ public class ReviewRepositoryTest {
                 .build();
         reviewRepository.save(review3);
 
-       //when
+        //when
         List<Review> reviews = reviewRepository.findAllBookReviewByUser(users1);
 
         //then
@@ -564,4 +564,81 @@ public class ReviewRepositoryTest {
         assertThat(reviews.get(1).getItem()).isSameAs(movie2);
     }
 
+    @Test
+    void findAllByUserYear() {
+        //given
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
+        Movie movie1 = Movie.builder()
+                .title("m1")
+                .releaseDate(LocalDate.of(2019, 8, 13))
+                .image("url")
+                .description("desc")
+                .director("dir1")
+                .actors("a1, a2, a3")
+                .build();
+        Movie movie2 = Movie.builder()
+                .title("m2")
+                .releaseDate(LocalDate.of(2022, 4, 3))
+                .image("url")
+                .description("desc")
+                .director("dir2")
+                .actors("actors")
+                .build();
+        Movie movie3 = Movie.builder()
+                .title("m3")
+                .releaseDate(LocalDate.of(2023, 12, 7))
+                .image("url")
+                .description("desc")
+                .director("dir3")
+                .actors("actors")
+                .build();
+        itemRepository.save(movie1);
+        itemRepository.save(movie2);
+        itemRepository.save(movie3);
+        Review review1 = Review.builder()
+                .users(users1)
+                .item(movie1)
+                .date(LocalDate.of(2022, 8, 11))
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review2 = Review.builder()
+                .users(users1)
+                .item(movie3)
+                .date(LocalDate.of(2022, 3, 11))
+                .status(ReviewStatus.LIKE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review3 = Review.builder()
+                .users(users1)
+                .item(movie2)
+                .date(LocalDate.of(2023, 3, 11))
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+        reviewRepository.save(review2);
+        reviewRepository.save(review3);
+
+        //when
+        List<Review> reviews2022 = reviewRepository.findAllByUserYear(users1, 2022);
+        List<Review> reviews2023 = reviewRepository.findAllByUserYear(users1, 2023);
+
+        //then
+        assertThat(reviews2022.size()).isEqualTo(1);
+        assertThat(review1).isIn(reviews2022);
+        assertThat(reviews2023.size()).isEqualTo(1);
+        assertThat(review3).isIn(reviews2023);
+
+    }
 }
