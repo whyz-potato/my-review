@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -35,16 +34,6 @@ public class Users {
     @CreatedDate
     private LocalDateTime createDate;
 
-    @Column
-    @LastModifiedDate
-    private LocalDateTime deleteDate;
-
-    @Column(length = 200)
-    private String snsAccessToken;
-
-    @Column
-    private String profileImage;
-
     @OneToMany(mappedBy = "users")
     private List<YearlyGoal> yearlyGoalList = new ArrayList<>();
 
@@ -59,5 +48,10 @@ public class Users {
         this.createDate = createDate;
         this.roles = roles;
     }
-    
+
+    public void updateUsersInfo(String name, String pw) {
+        this.name = name;
+        this.pw = pw;
+    }
+
 }

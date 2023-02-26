@@ -46,6 +46,7 @@ public class JwtTokenProvider {
 
     //JWT 인증 정보 조회
     public Authentication getAuthentication(String token){
+        //TODO token에서 'Beare ' 분리
         UserDetails customUserDetails = userDetailsService.loadUserByUsername(this.getUserPK(token));
         return new UsernamePasswordAuthenticationToken(customUserDetails, "", customUserDetails.getAuthorities());
     }
@@ -64,6 +65,9 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             //TODO Bearer 검증
+            // if (token == null || !token.startsWith("Bearer ")) {
+            //      throw new IllegalArgumentException();
+            // }
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
