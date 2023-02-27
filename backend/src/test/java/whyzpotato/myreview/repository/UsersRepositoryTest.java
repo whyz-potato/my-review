@@ -6,8 +6,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import whyzpotato.myreview.domain.Users;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class UsersRepositoryTest {
@@ -54,17 +55,26 @@ public class UsersRepositoryTest {
          usersRepository.save(originUsers);
 
         //when
-        Users findUsers = usersRepository.findByEmail("test1234@test.com");
+        Optional<Users> findUsers = usersRepository.findByEmail("test1234@test.com");
 
         //then
-        assertThat(findUsers.getId()).isNotNull();
-        assertThat(findUsers.getEmail()).isEqualTo("test1234@test.com");
-        assertThat(findUsers.getName()).isEqualTo("seoyeong");
-        assertThat(findUsers.getPw()).isEqualTo("azsxdcfv!1");
-        assertThat(findUsers.getCreateDate()).isEqualTo(originUsers.getCreateDate());
-        assertThat(findUsers.getDeleteDate()).isNull();
-        assertThat(findUsers.getSnsAccessToken()).isNull();
-        assertThat(findUsers.getProfileImage()).isNull();
+        assertThat(findUsers.get().getId()).isNotNull();
+        assertThat(findUsers.get().getEmail()).isEqualTo("test1234@test.com");
+        assertThat(findUsers.get().getName()).isEqualTo("seoyeong");
+        assertThat(findUsers.get().getPw()).isEqualTo("azsxdcfv!1");
+        assertThat(findUsers.get().getCreateDate()).isEqualTo(originUsers.getCreateDate());
+        assertThat(findUsers.get().getDeleteDate()).isNull();
+        assertThat(findUsers.get().getSnsAccessToken()).isNull();
+        assertThat(findUsers.get().getProfileImage()).isNull();
 
+    }
+
+    @Test
+    public void findByNonExistentEmail(){
+        //when
+        Optional<Users> findUsers = usersRepository.findByEmail("nonExistent@test.com");
+
+        //then
+        assertThat(findUsers.isEmpty()).isTrue();
     }
 }
