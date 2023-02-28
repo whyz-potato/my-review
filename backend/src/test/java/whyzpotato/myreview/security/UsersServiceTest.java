@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.Users;
-import whyzpotato.myreview.exception.DuplicateEmailException;
+import whyzpotato.myreview.exception.DuplicateResourceException;
 import whyzpotato.myreview.repository.UsersRepository;
 import whyzpotato.myreview.service.UsersService;
 
@@ -56,7 +56,7 @@ public class UsersServiceTest {
         usersService.join(email, name, pw);
 
         //when
-        DuplicateEmailException e = assertThrows(DuplicateEmailException.class, () -> usersService.join(email, name, pw));
+        DuplicateResourceException e = assertThrows(DuplicateResourceException.class, () -> usersService.join(email, name, pw));
         //then
         assertThat(e.getMessage()).isEqualTo("이미 존재하는 이메일입니다.");
     }

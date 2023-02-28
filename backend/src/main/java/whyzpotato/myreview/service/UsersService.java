@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import whyzpotato.myreview.controller.ErrorCode;
 import whyzpotato.myreview.domain.Users;
-import whyzpotato.myreview.exception.DuplicateEmailException;
+import whyzpotato.myreview.exception.DuplicateResourceException;
 import whyzpotato.myreview.repository.UsersRepository;
 import whyzpotato.myreview.security.CustomUserDetails;
 import whyzpotato.myreview.security.JwtTokenProvider;
@@ -40,7 +40,7 @@ public class UsersService {
 
     private void validateDuplicateUsers(String email) {
         usersRepository.findByEmail(email).ifPresent(m -> {
-            throw new DuplicateEmailException(ErrorCode.DUPLICATE_EMAIL);
+            throw new DuplicateResourceException(ErrorCode.DUPLICATE_EMAIL);
         });
     }
 

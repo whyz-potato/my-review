@@ -220,44 +220,6 @@ public class ReviewRepositoryTest {
     }
 
     @Test
-    void findLikeBookByUer() {
-        //given
-        reviewRepository.save(Review.builder()
-                .users(users1)
-                .item(book1)
-                .date(LocalDate.now())
-                .status(ReviewStatus.DONE)
-                .rate(5)
-                .content("content")
-                .build());
-        reviewRepository.save(Review.builder()
-                .users(users1)
-                .item(book3)
-                .date(LocalDate.now())
-                .status(ReviewStatus.LIKE)
-                .rate(5)
-                .content("content")
-                .build());
-        reviewRepository.save(Review.builder()
-                .users(users1)
-                .item(book2)
-                .date(LocalDate.now())
-                .status(ReviewStatus.LIKE)
-                .rate(5)
-                .content("content")
-                .build());
-
-        //when
-        List<Review> reviews = reviewRepository.findLikeBookByUser(users1);
-
-        //then
-        assertThat(reviews.size()).isEqualTo(2);
-        assertThat(reviews.get(0).getItem()).isSameAs(book3);
-        assertThat(reviews.get(1).getItem()).isSameAs(book2);
-
-    }
-
-    @Test
     void findAllMovieReviewByUser() {
         //given
         Review review1 = Review.builder()
@@ -342,45 +304,6 @@ public class ReviewRepositoryTest {
         assertThat(reviews.get(1)).isSameAs(review7);
     }
 
-    @Test
-    void findLikeMovieByUser() {
-        //given
-        Review review1 = Review.builder()
-                .users(users1)
-                .item(movie1)
-                .date(LocalDate.now())
-                .status(ReviewStatus.DONE)
-                .rate(5)
-                .content("다시 봐도 재밌을 것 같음")
-                .build();
-        Review review2 = Review.builder()
-                .users(users1)
-                .item(movie3)
-                .date(LocalDate.now())
-                .status(ReviewStatus.LIKE)
-                .rate(5)
-                .content("다시 봐도 재밌을 것 같음")
-                .build();
-        Review review3 = Review.builder()
-                .users(users1)
-                .item(movie2)
-                .date(LocalDate.now())
-                .status(ReviewStatus.LIKE)
-                .rate(5)
-                .content("다시 봐도 재밌을 것 같음")
-                .build();
-        reviewRepository.save(review1);
-        reviewRepository.save(review2);
-        reviewRepository.save(review3);
-
-        //when
-        List<Review> reviews = reviewRepository.findLikeMovieByUser(users1);
-
-        //then
-        assertThat(reviews.size()).isEqualTo(2);
-        assertThat(reviews.get(0).getItem()).isSameAs(movie3);
-        assertThat(reviews.get(1).getItem()).isSameAs(movie2);
-    }
 
     @Test
     void findAllByUserYear() {

@@ -2,14 +2,12 @@ package whyzpotato.myreview.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import whyzpotato.myreview.domain.Book;
-import whyzpotato.myreview.domain.Item;
-import whyzpotato.myreview.domain.Movie;
-import whyzpotato.myreview.domain.Users;
+import whyzpotato.myreview.domain.*;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
 
@@ -28,6 +26,7 @@ public class ItemRepository {
         return em.find(Item.class, id);
     }
 
+    //--책 조회--//
     public Optional<Book> findBookByIsbn(String isbn) {
         return em.createQuery(
                         "select b" +
@@ -46,7 +45,21 @@ public class ItemRepository {
     }
 
 
-    public List<Book> top10Book() {
+    //--추천 페이지용 책 조회--//
+    public List<Book> likeBooksByUser(Users users) {
+        return em.createQuery(
+                        "select i" +
+                                " from Review r" +
+                                " join r.item i" +
+                                " where r.users = :user and type(i) = 'Book' and r.status = 'LIKE'", Item.class)
+                .setParameter("user", users)
+                .getResultList()
+                .stream()
+                .map(i -> (Book)i)
+                .collect(Collectors.toList());
+    }
+
+    public List<Book> top10Books() {
         List<Book> books = em.createNativeQuery(
                         "select *" +
                                 " from item i" +
@@ -66,19 +79,9 @@ public class ItemRepository {
         return books.subList(0, min(max, books.size()));
     }
 
-    //사용하지 말 것 (ReviewRepository에 있는 메소드 사용 권장)
-    public List<Book> findLikeBooksByUser(Users users) {
-        return em.createNativeQuery(
-                        "select * from item i" +
-                                " join (select *" +
-                                " from review r" +
-                                " where r.users_id = :users_id and r.status = 'LIKE') as r" +
-                                " on r.item_id = i.item_id "
-                        , Book.class)
-                .setParameter("users_id", users.getId())
-                .getResultList();
-    }
 
+
+    //-- Movie 조회 --//
     public Optional<Movie> findMovieByTitleDirector(String title, String director) {
         return em.createQuery(
                         "select m" +
@@ -98,7 +101,22 @@ public class ItemRepository {
     }
 
 
-    public List<Movie> top10Movie() {
+    //--추천 페이지 용 Movie 조회--//
+
+    public List<Movie> likeMoviesByUser(Users users) {
+        return em.createQuery(
+                        "select i" +
+                                " from Review r" +
+                                " join r.item i" +
+                                " where r.users = :user and type(i) = 'Movie' and r.status = 'LIKE'", Item.class)
+                .setParameter("user", users)
+                .getResultList()
+                .stream()
+                .map(i -> (Movie)i)
+                .collect(Collectors.toList());
+    }
+
+    public List<Movie> top10Movies() {
         List<Movie> movies = em.createNativeQuery(
                         "select *" +
                                 " from item i" +
@@ -117,5 +135,6 @@ public class ItemRepository {
                 .getResultList();
         return movies.subList(0, min(max, movies.size()));
     }
+
 
 }

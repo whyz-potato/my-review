@@ -7,7 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.Book;
 import whyzpotato.myreview.domain.Movie;
+import whyzpotato.myreview.exception.DuplicateResourceException;
 import whyzpotato.myreview.repository.ItemRepository;
+import whyzpotato.myreview.repository.ReviewRepository;
+import whyzpotato.myreview.repository.UsersRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +23,10 @@ class ItemServiceTest {
     private ItemService itemService;
     @Autowired
     private ItemRepository itemRepository;
+    @Autowired
+    private UsersRepository usersRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Test
     void saveBook() {
@@ -54,8 +61,8 @@ class ItemServiceTest {
     }
 
     @Test
-    @DisplayName("이미 DB에 존재하는 책을 등록하려고 하는 경우 IllegalStateException이 발생해야한다.")
-    void duplicatedBook() {
+    @DisplayName("이미 DB에 존재하는 책을 등록하려고 하는 경우 DuplicateResourceException이 발생해야한다.")
+    void duplicatedBooFail() {
         //given
         Book book1 = Book.builder()
                 .title("bookTitle")
@@ -71,12 +78,12 @@ class ItemServiceTest {
                 .build();
 
         //then
-        assertThrows(IllegalStateException.class, () -> itemService.save(book2));
+        assertThrows(DuplicateResourceException.class, () -> itemService.save(book2));
     }
 
     @Test
     @DisplayName("이미 DB에 존재하는 영화을 등록하려고 하는 경우 IllegalStateException이 발생해야한다.")
-    void duplicatedMovie() {
+    void duplicatedMovieFail() {
         //given
         Movie movie1 = Movie.builder()
                 .title("movieTitle")
@@ -92,7 +99,7 @@ class ItemServiceTest {
                 .build();
 
         //then
-        assertThrows(IllegalStateException.class, () -> itemService.save(movie2));
+        assertThrows(DuplicateResourceException.class, () -> itemService.save(movie2));
     }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import whyzpotato.myreview.exception.DuplicateEmailException;
+import whyzpotato.myreview.exception.DuplicateResourceException;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +17,7 @@ import static whyzpotato.myreview.controller.ErrorCode.DUPLICATE_EMAIL;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {DuplicateEmailException.class})
+    @ExceptionHandler(value = {DuplicateResourceException.class})
     protected ResponseEntity handleDupEmailException() {
         return ErrorResponse.createErrorResponseEntity(DUPLICATE_EMAIL);
     }

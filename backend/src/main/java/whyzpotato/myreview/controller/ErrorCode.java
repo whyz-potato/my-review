@@ -20,6 +20,7 @@ public enum ErrorCode {
 
     //409 CONFLICT
     DUPLICATE_EMAIL(CONFLICT, "이미 존재하는 이메일입니다."),
+    DUPLICATE_CONTENT(CONFLICT, "이미 존재하는 컨텐츠입니다."),
     ;
     private final HttpStatus httpStatus;
     private final String message;
