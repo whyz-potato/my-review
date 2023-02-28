@@ -3,7 +3,9 @@ package whyzpotato.myreview.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import whyzpotato.myreview.controller.ErrorCode;
 import whyzpotato.myreview.domain.Users;
+import whyzpotato.myreview.exception.DuplicateEmailException;
 import whyzpotato.myreview.repository.UsersRepository;
 import whyzpotato.myreview.security.CustomUserDetails;
 import whyzpotato.myreview.security.JwtTokenProvider;
@@ -38,7 +40,7 @@ public class UsersService {
 
     private void validateDuplicateUsers(String email) {
         usersRepository.findByEmail(email).ifPresent(m -> {
-            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+            throw new DuplicateEmailException(ErrorCode.DUPLICATE_EMAIL);
         });
     }
 
