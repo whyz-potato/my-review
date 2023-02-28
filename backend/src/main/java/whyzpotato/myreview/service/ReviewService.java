@@ -38,7 +38,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public int reviewCount(Users users, int year) {
-        return reviewRepository.findAllByUserYear(users, year).size();
+        return reviewRepository.countByUserYear(users, year).intValue();
     }
 
 

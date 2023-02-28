@@ -44,6 +44,17 @@ public class ReviewRepository {
                 .getResultList();
     }
 
+    public Long countByUserYear(Users users, int year) {
+        return em.createQuery(
+                        "select count(r)" +
+                                " from Review r" +
+                                " where r.users = :users and year(r.date) = :year and r.status = 'DONE'", Long.class)
+                .setParameter("users", users)
+                .setParameter("year", year)
+                .getSingleResult();
+
+    }
+
     //리뷰 목록을 보여줄 때 item 정보(제목, 사진 등)도 함께 보여주기 때문에 item도 fetch join
     public List<Review> findAllBookReviewByUser(Users users) {
         return em.createQuery(

@@ -1,5 +1,6 @@
 package whyzpotato.myreview.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,37 +24,107 @@ public class ReviewRepositoryTest {
     @Autowired
     UsersRepository usersRepository;
 
+    Users users1, users2, users3;
+    Book book1, book2, book3;
+    Movie movie1, movie2, movie3;
 
-    @Test
-    void save() {
-        //given
-        Users users1 = Users
+    @BeforeEach
+    void init(){
+        users1 = Users
                 .builder()
                 .email("test1@test.com")
                 .name("user1")
                 .pw("aa")
                 .createDate(LocalDateTime.now())
                 .build();
+        users2 = Users
+                .builder()
+                .email("test2@test.com")
+                .name("user2")
+                .pw("22")
+                .createDate(LocalDateTime.now())
+                .build();
+        users3 = Users
+                .builder()
+                .email("test3@test.com")
+                .name("user3")
+                .pw("33")
+                .createDate(LocalDateTime.now())
+                .build();
         usersRepository.save(users1);
-        Book book = Book.builder()
-                .title("책")
+        usersRepository.save(users2);
+        usersRepository.save(users3);
+        book1 = Book.builder()
+                .title("b1")
                 .releaseDate(LocalDate.of(2022, 8, 13))
                 .author("au")
                 .description("---")
                 .image("img")
-                .isbn("7813")
+                .isbn("1234")
                 .build();
-        itemRepository.save(book);
+        book2 = Book.builder()
+                .title("b2")
+                .releaseDate(LocalDate.of(2018, 8, 13))
+                .author("au")
+                .description("---")
+                .image("img")
+                .isbn("56789")
+                .build();
+        book3 = Book.builder()
+                .title("b3")
+                .releaseDate(LocalDate.of(2022, 8, 13))
+                .author("au")
+                .description("---")
+                .image("img")
+                .isbn("101112")
+                .build();
+        movie1 = Movie.builder()
+                .title("m1")
+                .releaseDate(LocalDate.of(2019, 8, 13))
+                .image("url")
+                .description("desc")
+                .director("dir1")
+                .actors("a1, a2, a3")
+                .build();
+        movie2 = Movie.builder()
+                .title("m2")
+                .releaseDate(LocalDate.of(2022, 4, 3))
+                .image("url")
+                .description("desc")
+                .director("dir2")
+                .actors("actors")
+                .build();
+        movie3 = Movie.builder()
+                .title("m3")
+                .releaseDate(LocalDate.of(2023, 12, 7))
+                .image("url")
+                .description("desc")
+                .director("dir3")
+                .actors("actors")
+                .build();
+        itemRepository.save(book1);
+        itemRepository.save(book2);
+        itemRepository.save(book3);
+        itemRepository.save(movie1);
+        itemRepository.save(movie2);
+        itemRepository.save(movie3);
+    }
 
-        //when
+
+    @Test
+    void save() {
+        //given
         Review review = (Review.builder()
                 .users(users1)
-                .item(book)
+                .item(book1)
                 .date(LocalDate.now())
                 .status(ReviewStatus.WATCHING)
                 .rate(4)
                 .content("보고있는데 재밌음")
                 .build());
+
+
+        //when
         reviewRepository.save(review);
 
         //then
@@ -63,26 +134,9 @@ public class ReviewRepositoryTest {
     @Test
     void findById() {
         //given
-        Users users1 = Users
-                .builder()
-                .email("test1@test.com")
-                .name("user1")
-                .pw("aa")
-                .createDate(LocalDateTime.now())
-                .build();
-        usersRepository.save(users1);
-        Book book = Book.builder()
-                .title("책")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("7813")
-                .build();
-        itemRepository.save(book);
         Review review = (Review.builder()
                 .users(users1)
-                .item(book)
+                .item(book1)
                 .date(LocalDate.now())
                 .status(ReviewStatus.WATCHING)
                 .rate(4)
@@ -100,32 +154,6 @@ public class ReviewRepositoryTest {
     @Test
     void findAll() {
         //given
-        Users users1 = Users
-                .builder()
-                .email("test1@test.com")
-                .name("user1")
-                .pw("aa")
-                .createDate(LocalDateTime.now())
-                .build();
-        usersRepository.save(users1);
-        Book book1 = Book.builder()
-                .title("b1")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("1234")
-                .build();
-        itemRepository.save(book1);
-        Movie movie1 = Movie.builder()
-                .title("m1")
-                .releaseDate(LocalDate.of(2019, 8, 13))
-                .image("url")
-                .description("desc")
-                .director("dir1")
-                .actors("a1, a2, a3")
-                .build();
-        itemRepository.save(movie1);
         Review review1 = Review.builder()
                 .users(users1)
                 .item(movie1)
@@ -156,69 +184,6 @@ public class ReviewRepositoryTest {
 
     @Test
     void findAllBookReviewByUser() {
-        Users users1 = Users
-                .builder()
-                .email("test1@test.com")
-                .name("user1")
-                .pw("aa")
-                .createDate(LocalDateTime.now())
-                .build();
-        usersRepository.save(users1);
-        Book book1 = Book.builder()
-                .title("b1")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("1234")
-                .build();
-        Book book2 = Book.builder()
-                .title("b2")
-                .releaseDate(LocalDate.of(2018, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("56789")
-                .build();
-        Book book3 = Book.builder()
-                .title("b3")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("101112")
-                .build();
-        Movie movie1 = Movie.builder()
-                .title("m1")
-                .releaseDate(LocalDate.of(2019, 8, 13))
-                .image("url")
-                .description("desc")
-                .director("dir1")
-                .actors("a1, a2, a3")
-                .build();
-        Movie movie2 = Movie.builder()
-                .title("m2")
-                .releaseDate(LocalDate.of(2022, 4, 3))
-                .image("url")
-                .description("desc")
-                .director("dir2")
-                .actors("actors")
-                .build();
-        Movie movie3 = Movie.builder()
-                .title("m3")
-                .releaseDate(LocalDate.of(2023, 12, 7))
-                .image("url")
-                .description("desc")
-                .director("dir3")
-                .actors("actors")
-                .build();
-        itemRepository.save(book1);
-        itemRepository.save(book2);
-        itemRepository.save(book3);
-        itemRepository.save(movie1);
-        itemRepository.save(movie2);
-        itemRepository.save(movie3);
-
         Review review1 = Review.builder()
                 .users(users1)
                 .item(book1)
@@ -257,41 +222,6 @@ public class ReviewRepositoryTest {
     @Test
     void findLikeBookByUer() {
         //given
-        Users users1 = Users
-                .builder()
-                .email("test1@test.com")
-                .name("user1")
-                .pw("aa")
-                .createDate(LocalDateTime.now())
-                .build();
-        usersRepository.save(users1);
-        Book book1 = Book.builder()
-                .title("b1")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("1234")
-                .build();
-        Book book2 = Book.builder()
-                .title("b2")
-                .releaseDate(LocalDate.of(2018, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("56789")
-                .build();
-        Book book3 = Book.builder()
-                .title("b3")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("101112")
-                .build();
-        itemRepository.save(book1);
-        itemRepository.save(book2);
-        itemRepository.save(book3);
         reviewRepository.save(Review.builder()
                 .users(users1)
                 .item(book1)
@@ -330,84 +260,6 @@ public class ReviewRepositoryTest {
     @Test
     void findAllMovieReviewByUser() {
         //given
-        Users users1 = Users
-                .builder()
-                .email("test1@test.com")
-                .name("user1")
-                .pw("aa")
-                .createDate(LocalDateTime.now())
-                .build();
-        Users users2 = Users
-                .builder()
-                .email("test2@test.com")
-                .name("user2")
-                .pw("22")
-                .createDate(LocalDateTime.now())
-                .build();
-        Users users3 = Users
-                .builder()
-                .email("test3@test.com")
-                .name("user3")
-                .pw("33")
-                .createDate(LocalDateTime.now())
-                .build();
-        usersRepository.save(users1);
-        usersRepository.save(users2);
-        usersRepository.save(users3);
-        Book book1 = Book.builder()
-                .title("b1")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("1234")
-                .build();
-        Book book2 = Book.builder()
-                .title("b2")
-                .releaseDate(LocalDate.of(2018, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("56789")
-                .build();
-        Book book3 = Book.builder()
-                .title("b3")
-                .releaseDate(LocalDate.of(2022, 8, 13))
-                .author("au")
-                .description("---")
-                .image("img")
-                .isbn("101112")
-                .build();
-        itemRepository.save(book1);
-        itemRepository.save(book2);
-        itemRepository.save(book3);
-        Movie movie1 = Movie.builder()
-                .title("m1")
-                .releaseDate(LocalDate.of(2019, 8, 13))
-                .image("url")
-                .description("desc")
-                .director("dir1")
-                .actors("a1, a2, a3")
-                .build();
-        Movie movie2 = Movie.builder()
-                .title("m2")
-                .releaseDate(LocalDate.of(2022, 4, 3))
-                .image("url")
-                .description("desc")
-                .director("dir2")
-                .actors("actors")
-                .build();
-        Movie movie3 = Movie.builder()
-                .title("m3")
-                .releaseDate(LocalDate.of(2023, 12, 7))
-                .image("url")
-                .description("desc")
-                .director("dir3")
-                .actors("actors")
-                .build();
-        itemRepository.save(movie1);
-        itemRepository.save(movie2);
-        itemRepository.save(movie3);
         Review review1 = Review.builder()
                 .users(users1)
                 .item(book1)
@@ -492,41 +344,7 @@ public class ReviewRepositoryTest {
 
     @Test
     void findLikeMovieByUser() {
-        Users users1 = Users
-                .builder()
-                .email("test1@test.com")
-                .name("user1")
-                .pw("aa")
-                .createDate(LocalDateTime.now())
-                .build();
-        usersRepository.save(users1);
-        Movie movie1 = Movie.builder()
-                .title("m1")
-                .releaseDate(LocalDate.of(2019, 8, 13))
-                .image("url")
-                .description("desc")
-                .director("dir1")
-                .actors("a1, a2, a3")
-                .build();
-        Movie movie2 = Movie.builder()
-                .title("m2")
-                .releaseDate(LocalDate.of(2022, 4, 3))
-                .image("url")
-                .description("desc")
-                .director("dir2")
-                .actors("actors")
-                .build();
-        Movie movie3 = Movie.builder()
-                .title("m3")
-                .releaseDate(LocalDate.of(2023, 12, 7))
-                .image("url")
-                .description("desc")
-                .director("dir3")
-                .actors("actors")
-                .build();
-        itemRepository.save(movie1);
-        itemRepository.save(movie2);
-        itemRepository.save(movie3);
+        //given
         Review review1 = Review.builder()
                 .users(users1)
                 .item(movie1)
@@ -567,41 +385,6 @@ public class ReviewRepositoryTest {
     @Test
     void findAllByUserYear() {
         //given
-        Users users1 = Users
-                .builder()
-                .email("test1@test.com")
-                .name("user1")
-                .pw("aa")
-                .createDate(LocalDateTime.now())
-                .build();
-        usersRepository.save(users1);
-        Movie movie1 = Movie.builder()
-                .title("m1")
-                .releaseDate(LocalDate.of(2019, 8, 13))
-                .image("url")
-                .description("desc")
-                .director("dir1")
-                .actors("a1, a2, a3")
-                .build();
-        Movie movie2 = Movie.builder()
-                .title("m2")
-                .releaseDate(LocalDate.of(2022, 4, 3))
-                .image("url")
-                .description("desc")
-                .director("dir2")
-                .actors("actors")
-                .build();
-        Movie movie3 = Movie.builder()
-                .title("m3")
-                .releaseDate(LocalDate.of(2023, 12, 7))
-                .image("url")
-                .description("desc")
-                .director("dir3")
-                .actors("actors")
-                .build();
-        itemRepository.save(movie1);
-        itemRepository.save(movie2);
-        itemRepository.save(movie3);
         Review review1 = Review.builder()
                 .users(users1)
                 .item(movie1)
@@ -639,6 +422,47 @@ public class ReviewRepositoryTest {
         assertThat(review1).isIn(reviews2022);
         assertThat(reviews2023.size()).isEqualTo(1);
         assertThat(review3).isIn(reviews2023);
+    }
 
+    @Test
+    void countByUserYear() {
+        //given
+        Review review1 = Review.builder()
+                .users(users1)
+                .item(movie1)
+                .date(LocalDate.of(2022, 8, 11))
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review2 = Review.builder()
+                .users(users1)
+                .item(movie3)
+                .date(LocalDate.of(2022, 3, 11))
+                .status(ReviewStatus.LIKE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review3 = Review.builder()
+                .users(users1)
+                .item(movie2)
+                .date(LocalDate.of(2023, 3, 11))
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+        reviewRepository.save(review2);
+        reviewRepository.save(review3);
+
+        //when
+        Long nReviews2021 = reviewRepository.countByUserYear(users1, 2021);
+        Long nReviews2022 = reviewRepository.countByUserYear(users1, 2022);
+        Long nReviews2023 = reviewRepository.countByUserYear(users1, 2023);
+
+        //then
+        assertThat(nReviews2021).isEqualTo(0);
+        assertThat(nReviews2022).isEqualTo(1);
+        assertThat(nReviews2023).isEqualTo(1);
     }
 }
