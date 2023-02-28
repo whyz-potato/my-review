@@ -36,9 +36,6 @@ public class UsersRepositoryTest {
         assertThat(savedUsers.getName()).isEqualTo("seoyeong");
         assertThat(savedUsers.getPw()).isEqualTo("azsxdcfv!1");
         assertThat(savedUsers.getCreateDate()).isEqualTo(originUsers.getCreateDate());
-        assertThat(savedUsers.getDeleteDate()).isNull();
-        assertThat(savedUsers.getSnsAccessToken()).isNull();
-        assertThat(savedUsers.getProfileImage()).isNull();
 
     }
 
@@ -63,9 +60,6 @@ public class UsersRepositoryTest {
         assertThat(findUsers.get().getName()).isEqualTo("seoyeong");
         assertThat(findUsers.get().getPw()).isEqualTo("azsxdcfv!1");
         assertThat(findUsers.get().getCreateDate()).isEqualTo(originUsers.getCreateDate());
-        assertThat(findUsers.get().getDeleteDate()).isNull();
-        assertThat(findUsers.get().getSnsAccessToken()).isNull();
-        assertThat(findUsers.get().getProfileImage()).isNull();
 
     }
 

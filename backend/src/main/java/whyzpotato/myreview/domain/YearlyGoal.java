@@ -34,4 +34,8 @@ public class YearlyGoal {
         this.target = target;
     }
 
+    public void updateGoal(int target) {
+        this.target = target;
+    }
+
 }
