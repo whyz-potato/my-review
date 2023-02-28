@@ -1,13 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert, ScrollView } from 'react-native';
-import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
 const Library = ({navigation}) => {
     const [search, setSearch] = useState('');  
     
     return(
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.headerBtn}>
                     <Pressable style={{marginRight: 20}}
@@ -46,8 +46,13 @@ const Library = ({navigation}) => {
                     </ScrollView>
                 </View>
             </View>
+            <Pressable
+            style={styles.floatingBtn}
+            onPress={()=>navigation.navigate('bookSearchResult')}>
+                <AntDesign name="pluscircle" size={60} color="#E1D7C6" />
+            </Pressable>
             <StatusBar style="auto" />
-        </ScrollView>
+        </View>
     );
 }
 
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
     focusTxt:{
         fontSize: 40,
         fontWeight: 'bold',
-        color: '#6DAFB5',
+        color: '#77BDC3',
     },
     unfocusTxt:{
         fontSize:30,
@@ -104,12 +109,17 @@ const styles = StyleSheet.create({
     },
     contentsTitle: {
         fontSize: 23,
-        // color: '#6DAFB5',
+        // color: '#77BDC3',
         fontWeight: 'bold',
     },
     contentsBox: {
         maxHeight:200
-    }
+    },
+    floatingBtn: {
+        position: 'absolute',
+        right: 30,
+        bottom:25,
+    },
 });
 
 export default Library;

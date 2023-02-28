@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    color: '#6DAFB5',
+    color: '#77BDC3',
     fontSize: 40,
     fontWeight: 'bold',
     marginBottom: 5,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   loginTxt: {
     color: '#ffffff',
-    backgroundColor: '#6DAFB5',
+    backgroundColor: '#77BDC3',
     borderRadius: 25,
     paddingVertical: 10,
     paddingHorizontal: 15,

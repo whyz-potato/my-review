@@ -4,9 +4,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, Keyboard } fr
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
 const ExploreLib = ({navigation}) => {
-    const [search, setSearch] = useState('');    
-
-    
+    const [search, setSearch] = useState('');     
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
@@ -35,7 +33,7 @@ const ExploreLib = ({navigation}) => {
                 />
                 <Pressable
                 style={styles.searchBtn}
-                onPressIn={()=>{console.log(search)}}>
+                onPress={()=>navigation.navigate('bookSearchResult')}>
                     <Entypo name="magnifying-glass" size={38} color="#E1D7C6" />
                 </Pressable>
             </View>
@@ -87,7 +85,7 @@ const styles = StyleSheet.create({
     focusTxt:{
         fontSize: 40,
         fontWeight: 'bold',
-        color: '#6DAFB5',
+        color: '#77BDC3',
     },
     unfocusTxt:{
         fontSize:30,
@@ -119,7 +117,7 @@ const styles = StyleSheet.create({
     },
     contentsTitle: {
         fontSize: 23,
-        // color: '#6DAFB5',
+        // color: '#77BDC3',
         fontWeight: 'bold',
     },
     contentsBox: {
