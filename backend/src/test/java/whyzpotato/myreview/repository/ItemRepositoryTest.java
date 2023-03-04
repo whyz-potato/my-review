@@ -310,7 +310,7 @@ public class ItemRepositoryTest {
         itemRepository.save(book3);
 
         //when
-        List<Book> newBooks = itemRepository.newBooks(10);
+        List<Book> newBooks = itemRepository.newBooks();
 
         //then
         assertThat(newBooks.get(0)).isSameAs(book1);
@@ -667,7 +667,7 @@ public class ItemRepositoryTest {
         itemRepository.save(movie3);
 
         //when
-        List<Movie> newMovies = itemRepository.newMovies(10);
+        List<Movie> newMovies = itemRepository.newMovies();
 
         //then
         assertThat(newMovies.get(0)).isSameAs(movie3);

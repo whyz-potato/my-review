@@ -2,7 +2,9 @@ package whyzpotato.myreview.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import whyzpotato.myreview.controller.ErrorCode;
 import whyzpotato.myreview.domain.*;
+import whyzpotato.myreview.exception.DuplicateResourceException;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -17,9 +19,20 @@ public class ItemRepository {
 
     private final EntityManager em;
 
-    public void save(Item item) {
-        if (item.getId() == null)
-            em.persist(item);
+    public Book save(Book book) {
+        if (book.getId() != null || findBookByIsbn(book.getIsbn()).isPresent())
+            em.merge(book);
+        else
+            em.persist(book);
+        return book;
+    }
+
+    public Movie save(Movie movie){
+        if (movie.getId()!=null || findMovieByTitleDirector(movie.getTitle(), movie.getDirector()).isPresent())
+            em.merge(movie);
+        else
+            em.persist(movie);
+        return movie;
     }
 
     public Item findById(Long id) {
@@ -70,13 +83,13 @@ public class ItemRepository {
         return books.subList(0, min(10, books.size()));
     }
 
-    public List<Book> newBooks(int max) {
+    public List<Book> newBooks() {
         List<Book> books = em.createQuery(
                         "select b" +
                                 " from Book b" +
                                 " order by release_date desc", Book.class)
                 .getResultList();
-        return books.subList(0, min(max, books.size()));
+        return books.subList(0, min(10, books.size()));
     }
 
 
@@ -127,13 +140,13 @@ public class ItemRepository {
         return movies.subList(0, min(10, movies.size()));
     }
 
-    public List<Movie> newMovies(int max) {
+    public List<Movie> newMovies() {
         List<Movie> movies = em.createQuery(
                         "select m" +
                                 " from Movie m" +
                                 " order by release_date desc", Movie.class)
                 .getResultList();
-        return movies.subList(0, min(max, movies.size()));
+        return movies.subList(0, min(10, movies.size()));
     }
 
 
