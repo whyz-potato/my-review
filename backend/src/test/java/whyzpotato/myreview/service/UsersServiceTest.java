@@ -1,4 +1,4 @@
-package whyzpotato.myreview.security;
+package whyzpotato.myreview.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,7 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.Users;
+import whyzpotato.myreview.dto.LoginResponseDto;
+import whyzpotato.myreview.dto.UsersResponseDto;
 import whyzpotato.myreview.repository.UsersRepository;
+import whyzpotato.myreview.security.JwtTokenProvider;
 import whyzpotato.myreview.service.UsersService;
 
 import java.util.Map;
@@ -69,11 +72,12 @@ public class UsersServiceTest {
         usersService.join(email, name, pw);
 
         //when
-        String token = usersService.login(email, pw);
+        LoginResponseDto loginResponseDto = usersService.login(email, pw);
 
         //given
-        assertThat(jwtTokenProvider.getUserPK(token)).isEqualTo(email);
-        System.out.println(">>> token: " + token);
+        assertThat(jwtTokenProvider.getUserPK(loginResponseDto.getAccessToken())).isEqualTo(email);
+        assertThat(passwordEncoder.matches(pw, usersRepository.findById(loginResponseDto.getId()).get().getPw())).isTrue();
+        System.out.println(">>> token: " + loginResponseDto.getAccessToken());
     }
 
     @Test
@@ -98,11 +102,12 @@ public class UsersServiceTest {
     public void 회원정보_조회() {
         //given
         usersService.join("test1234@test.com", "seoyeong", "azsxdcfv!1");
+        Users users = usersRepository.findByEmail("test1234@test.com").get();
         //when
-        Map<String, String> usersInfo = usersService.findUsersInfo(usersRepository.findByEmail("test1234@test.com").get().getId());
+        UsersResponseDto usersInfo = usersService.findUsersInfo(users.getId());
         //then
-        assertThat(usersInfo.get("email")).isEqualTo("test1234@test.com");
-        assertThat(usersInfo.get("name")).isEqualTo("seoyeong");
+        assertThat(usersInfo.getEmail()).isEqualTo("test1234@test.com");
+        assertThat(usersInfo.getName()).isEqualTo("seoyeong");
     }
 
     @Test

@@ -4,15 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import whyzpotato.myreview.domain.Users;
+import whyzpotato.myreview.dto.LoginResponseDto;
+import whyzpotato.myreview.dto.UsersResponseDto;
 import whyzpotato.myreview.repository.UsersRepository;
 import whyzpotato.myreview.security.CustomUserDetails;
 import whyzpotato.myreview.security.JwtTokenProvider;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -45,34 +45,32 @@ public class UsersService {
     /**
      * 로그인
      */
-    public String login(String email, String pw) {
+    public LoginResponseDto login(String email, String pw) {
         CustomUserDetails users = new CustomUserDetails(usersRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다.")));
         if (!passwordEncoder.matches(pw, users.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
-        return jwtTokenProvider.createToken(users.getUsername(), users.getRoles());
+        return new LoginResponseDto(users.getId(), jwtTokenProvider.createToken(users.getUsername(), users.getRoles()));
     }
 
     /**
      * 회원정보 조회
-     * TODO return DTO
      */
-    public Map<String, String> findUsersInfo(Long id) {
+    public UsersResponseDto findUsersInfo(Long id) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
-        Map<String, String> usersInfo = new HashMap<>();
-        usersInfo.put("email", users.getEmail());
-        usersInfo.put("name", users.getName());
-        return usersInfo;
+        UsersResponseDto usersResponseDto = new UsersResponseDto(users.getId(), users.getEmail(), users.getName());
+        return usersResponseDto;
     }
 
     /**
      * 회원정보 변경
      */
-    public void updateUsersInfo(Long id, String name, String pw) {
+    public Long updateUsersInfo(Long id, String name, String pw) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
         users.updateUsersInfo(name, passwordEncoder.encode(pw));
         usersRepository.save(users);
+        return users.getId();
     }
 
     /**
