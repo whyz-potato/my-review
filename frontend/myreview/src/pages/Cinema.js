@@ -1,13 +1,49 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Alert, ScrollView } from 'react-native';
-import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList } from 'react-native';
+import { Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
 const Cinema = ({navigation}) => {
-    const [search, setSearch] = useState('');  
+    const [search, setSearch] = useState(''); 
+    const Data = [
+        { id: '1', title: '므레모사', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '2', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '3', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '4', title: 'D', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '5', title: 'E', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '6', title: 'F', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '7', title: 'G', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '8', title: 'H', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '9', title: 'I', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '10', title: '므레모사', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '11', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '12', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '13', title: 'D', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '14', title: 'E', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '15', title: 'F', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '16', title: 'G', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '17', title: 'H', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '18', title: 'I', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '19', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
+        { id: '20', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
+      ];
+    
+    const itemView = ({item})=>{
+        return (
+            <View style={{marginBottom: 5, marginRight: 10}}>
+                <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'movie'})}>
+                    <Image
+                        style={styles.image}
+                        source={{ uri: item.img }}
+                    />
+                </Pressable>                
+                <Text style={{fontSize: 15, textAlign:'center'}}>{item.title}</Text>
+            </View>
+        );
+    };
     
     return(
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.headerBtn}>
                     <Pressable style={{marginRight: 20}}
@@ -32,22 +68,31 @@ const Cinema = ({navigation}) => {
                 />
                 <Pressable
                 style={styles.searchBtn}
-                onPress={()=>{console.log(search)}}>
+                onPressIn={()=>{console.log(search)}}>
                     <Entypo name="magnifying-glass" size={38} color="#E1D7C6" />
                 </Pressable>
             </View>
             <View style={styles.contentsArr}>
                 <View>
                     <Text style={styles.contentsTitle}>작성한 리뷰</Text>
-                    <ScrollView horizontal={true} style={styles.contentsBox}>
-                        <View>
-
-                        </View>
-                    </ScrollView>
+                    <View style={styles.contentBox}>
+                        <FlatList
+                            data={Data}
+                            key={'#'}
+                            keyExtractor={item => item.id}
+                            renderItem={itemView}
+                            numColumns={4}
+                        />
+                    </View>
                 </View>
             </View>
+            <Pressable
+            style={styles.floatingBtn}
+            onPress={()=>navigation.navigate('movieSearchResult')}>
+                <AntDesign name="pluscircle" size={60} color="#E1D7C6"/>
+            </Pressable>
             <StatusBar style="auto" />
-        </ScrollView>
+        </View>
     );
 }
 
@@ -98,18 +143,29 @@ const styles = StyleSheet.create({
     },
     contentsArr: {
         alignSelf: 'flex-start',
-        marginHorizontal:30,
+        marginLeft:30,
         marginTop: 20,
 
     },
     contentsTitle: {
         fontSize: 23,
-        // color: '#77BDC3',
         fontWeight: 'bold',
     },
-    contentsBox: {
-        maxHeight:200
-    }
+    contentBox:{
+        flexDirection: 'row',
+        marginTop: 15,
+        marginBottom: 480,
+    },
+    floatingBtn: {
+        position: 'absolute',
+        right: 30,
+        top: 655,   //25
+    },    
+    image: {
+        width: 80,
+        height: 110,
+        borderRadius: 7,
+    },
 });
 
 export default Cinema;

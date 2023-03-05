@@ -29,17 +29,22 @@ const MovieSearchResult=({navigation})=>{
     const itemView = ({item})=>{
         return (
             <View style={styles.content}>
-                <Image 
-                style={styles.image}
-                source={{uri:item.img}}/>
+                <Pressable onPress={()=>navigation.navigate('contentsDetail', {category: 'movie'})}>
+                    <Image
+                        style={styles.image}
+                        source={{ uri: item.img }} />
+                </Pressable>
                 <View>
                     <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.title}</Text>
                     <Text style={{fontSize: 17, marginBottom: 8}}>{item.author}</Text>
                     <View style={{flexDirection:'row', marginLeft: -5}}>
-                        <Pressable style={{marginRight: 7}}>
+                        <Pressable style={{marginRight: 7}}
+                        onPress={()=>Alert.alert('담겼습니다!')}>
                             <Text style={styles.contentBtn}>담기</Text>
                         </Pressable>
-                        <Pressable>
+                        <Pressable
+                        onPress={()=>navigation.navigate('newReview', {category: 'movie'})}
+                        >
                             <Text style={styles.contentBtn}>리뷰 쓰기</Text>
                         </Pressable>
                     </View>

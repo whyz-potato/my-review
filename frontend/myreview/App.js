@@ -9,6 +9,9 @@ import BookSearchResult from "./src/pages/BookSearchResult";
 import MovieSearchResult from "./src/pages/MovieSearchResult";
 import ProfileEdit from "./src/pages/ProfileEdit";
 import NewReview from "./src/pages/NewReview";
+import ContentsDetail from "./src/pages/ContentsDetail";
+import ReviewDetail from "./src/pages/ReviewDetail";
+import ReviewEdit from "./src/pages/ReviewEdit";
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -23,6 +26,9 @@ export default function App() {
                 <Stack.Screen name="bookSearchResult" component={BookSearchResult} options={{}}/>
                 <Stack.Screen name="movieSearchResult" component={MovieSearchResult} options={{}}/>
                 <Stack.Screen name="newReview" component={NewReview} options={{}}/>
+                <Stack.Screen name="contentsDetail" component={ContentsDetail} options={{}}/>
+                <Stack.Screen name="reviewDetail" component={ReviewDetail} options={{}}/>
+                <Stack.Screen name="reviewEdit" component={ReviewEdit} options={{}}/>
                 <Stack.Screen name="main" component={BottomTabNav} options={{headerShown: false}}/>
             </Stack.Navigator>
         </NavigationContainer>

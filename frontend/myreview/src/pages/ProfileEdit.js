@@ -50,7 +50,7 @@ const ProfileEdit = ({navigation}) => {
         <View style={styles.container}>
             <View style={{marginHorizontal: 40, marginVertical: 30}}>
                 <Text style={styles.title}>프로필 편집</Text>
-                <View style={{marginLeft: 15, marginTop: 30}}>
+                <View style={{marginLeft: 10, marginTop: 30}}>
                     <View style={styles.rowBetween}>
                         <Text style={styles.inputArea}>이메일</Text>
                         <Text style={{fontSize:15}}>{email}</Text>
@@ -87,7 +87,7 @@ const ProfileEdit = ({navigation}) => {
 
                     <View style={{flexDirection: 'row', alignSelf: 'center', marginTop: 70}}>
                         <Pressable
-                        style={{marginRight: 25}}
+                        style={{marginRight: 20}}
                         onPressIn={()=>{Alert.alert('로그아웃', '정말 로그아웃 하시겠습니까?', [
                             {
                                 text: '취소',
