@@ -28,19 +28,11 @@ const Signup = () => {
         }
     };
 
-    // const handlePwdChange = (onchangePwd) => {
-    //     setPwd(onchangePwd);
-    //     if (pwdValidation(password)) {
-    //         setPwdError("");
-    //         setValidPwd(true);
-    //     }else {
-    //         setPwdError("영문 소문자 또는 대문자, 숫자, 특수문자를 포함해 8-15자 내외로 설정해주세요.");
-    //         setValidPwd(false);
-    //     }
-    //  };
-
     useEffect(()=> {
-        if (pwdValidation(password)) {
+        if(password==''){
+            setPwdError("");
+            setValidPwd(true);
+        }else if (pwdValidation(password)) {
             setPwdError("");
             setValidPwd(true);
         } else {
@@ -50,7 +42,10 @@ const Signup = () => {
     }, [password])
 
     useEffect(()=> {
-        if (password===passwordCheck) {
+        if(passwordCheck==''){
+            setPwdCheckError("");
+            setValidPwdCheck(true);
+        }else if (password===passwordCheck) {
             setPwdCheckError("");
             setValidPwdCheck(true);
         }else {
@@ -143,7 +138,7 @@ const styles = StyleSheet.create({
     },
     title: {
         marginTop: 40,
-        color: '#6DAFB5',
+        color: '#77BDC3',
         fontSize: 35,
         fontWeight: 'bold'
     },
@@ -176,7 +171,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     emailTxt: {
-        backgroundColor: '#6DAFB5',
+        backgroundColor: '#77BDC3',
         borderRadius: 20,
         color: '#ffffff',
         paddingVertical: 5,
@@ -203,7 +198,7 @@ const styles = StyleSheet.create({
         marginTop: 30
     },
     signupTxt: {
-        backgroundColor: '#6DAFB5',
+        backgroundColor: '#77BDC3',
         borderRadius: 25,
         color: '#ffffff',
         paddingVertical: 10,

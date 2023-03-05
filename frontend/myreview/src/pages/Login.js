@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Login = ({ navigation }) => {
-  const [email, password] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>로그인</Text>
@@ -13,6 +14,7 @@ const Login = ({ navigation }) => {
           <Text style={styles.inputArea}>이메일</Text>
           <TextInput
             value={email}
+            onChangeText={setEmail}
             style={styles.input}
           />
         </View>
@@ -20,6 +22,7 @@ const Login = ({ navigation }) => {
           <Text style={styles.inputArea}>비밀번호</Text>
           <TextInput
             value={password}
+            onChangeText={setPassword}
             style={styles.input}
             secureTextEntry={true}
           />
@@ -30,12 +33,20 @@ const Login = ({ navigation }) => {
           <Text style={{ color: '#B4AA99' }}>회원가입</Text>
         </Pressable>
         <Pressable
-          onPress={() => Alert.alert('Login success')}
+          onPress={() => navigation.navigate('main')}
           style={styles.loginBtn}>
           <Text style={styles.loginTxt}>로그인</Text>
         </Pressable>
-        <StatusBar style="auto" />
       </View>
+      <View style={{ marginTop: 70 }}>
+        <Text style={{ color: '#B4AA99' }}>또는</Text>
+      </View>
+      <Pressable
+        onPress={() => Alert.alert('to kakao login')}
+        style={{ marginTop: 20 }}>
+        <Text style={styles.kakaoTxt}>카카오로 로그인</Text>
+      </Pressable>
+      <StatusBar style="auto" />
     </View>
   );
 }
@@ -48,14 +59,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    color: '#6DAFB5',
+    color: '#77BDC3',
     fontSize: 40,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   inputArea: {
     fontSize: 18,
-    marginTop: 20,
+    marginTop: 15,
     color: '#E1D7C6',
   },
   input: {
@@ -78,12 +89,22 @@ const styles = StyleSheet.create({
   },
   loginTxt: {
     color: '#ffffff',
-    backgroundColor: '#6DAFB5',
+    backgroundColor: '#77BDC3',
     borderRadius: 25,
     paddingVertical: 10,
     paddingHorizontal: 15,
     fontSize: 20,
     textAlign: 'center'
+  },
+  kakaoTxt: {
+    color: '#ffffff',
+    backgroundColor: '#F3D500',
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    fontSize: 20,
+    textAlign: 'center',
+    width: 300
   }
 });
 
