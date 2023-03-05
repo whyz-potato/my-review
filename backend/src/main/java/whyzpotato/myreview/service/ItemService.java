@@ -3,11 +3,12 @@ package whyzpotato.myreview.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.domain.Review;
 import whyzpotato.myreview.domain.Users;
-import whyzpotato.myreview.dto.item.BookSaveRequestDto;
-import whyzpotato.myreview.dto.item.ExploreResponseDto;
-import whyzpotato.myreview.dto.item.SimpleItemResponseDto;
+import whyzpotato.myreview.dto.item.*;
 import whyzpotato.myreview.repository.ItemRepository;
+import whyzpotato.myreview.repository.ReviewRepository;
 import whyzpotato.myreview.repository.UsersRepository;
 
 import java.util.List;
@@ -20,16 +21,16 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final UsersRepository usersRepository;
+    private final ReviewRepository reviewRepository;
 
-    public Long save(BookSaveRequestDto dto){
+    public Long save(BookSaveRequestDto dto) {
         return itemRepository.save(dto.toEntity()).getId();
     }
 
     //TODO Movie save
 
 
-
-    public ExploreResponseDto exploreBook(Long userId){
+    public ExploreResponseDto exploreBook(Long userId) {
 
         Users users = usersRepository.findById(userId).get();
         List<SimpleItemResponseDto> myContent = itemRepository.likeBooksByUser(users)
@@ -52,7 +53,7 @@ public class ItemService {
                 .build();
     }
 
-    public ExploreResponseDto exploreMovie(Long userId){
+    public ExploreResponseDto exploreMovie(Long userId) {
 
         Users users = usersRepository.findById(userId).get();
         List<SimpleItemResponseDto> myContent = itemRepository.likeMoviesByUser(users)
@@ -72,6 +73,35 @@ public class ItemService {
                 .myContent(myContent)
                 .top10(top10)
                 .newContent(newMovies)
+                .build();
+    }
+
+    public BookSearchResponseDto searchBook(Long usersId, NaverBookResponseDto naverBookResponseDto) {
+        Users users = usersRepository.findById(usersId).get();
+        return BookSearchResponseDto.builder()
+                .start(naverBookResponseDto.getStart())
+                .display(naverBookResponseDto.getDisplay())
+                .total(naverBookResponseDto.getTotal())
+                .items(naverBookResponseDto.getItems()
+                        .stream()
+                        .map(naverBook -> toDetailBookDto(users, naverBook))
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public DetailBookDto toDetailBookDto(Users users, NaverBookDto naverBookDto) {
+        Book book = itemRepository.findBookByIsbn(naverBookDto.getIsbn()).orElse(null);
+        Review review = reviewRepository.findByUsersItem(users, book).orElse(null);
+
+        return DetailBookDto.builder()
+                .itemId(book != null ? book.getId() : null)
+                .reviewId(review != null ? review.getId() : null)
+                .title(naverBookDto.getTitle())
+                .image(naverBookDto.getImage())
+                .author(naverBookDto.getAuthor())
+                .description(naverBookDto.getDescription())
+                .isbn(naverBookDto.getIsbn())
+                .releaseDate(naverBookDto.getPubdate())
                 .build();
     }
 

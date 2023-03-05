@@ -2,11 +2,13 @@ package whyzpotato.myreview.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import whyzpotato.myreview.domain.Item;
 import whyzpotato.myreview.domain.Review;
 import whyzpotato.myreview.domain.Users;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,6 +34,17 @@ public class ReviewRepository {
     public List<Review> findAll() {
         return em.createQuery("select r from Review r", Review.class)
                 .getResultList();
+    }
+
+    public Optional<Review> findByUsersItem(Users users, Item item) {
+        return em.createQuery(
+                        "select r" +
+                                " from Review r" +
+                                " where r.users = :users and r.item = :item", Review.class)
+                .setParameter("users", users)
+                .setParameter("item", item)
+                .getResultList()
+                .stream().findAny();
     }
 
     public List<Review> findAllByUserYear(Users users, int year) {

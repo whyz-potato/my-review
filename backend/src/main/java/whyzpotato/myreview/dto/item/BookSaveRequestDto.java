@@ -18,7 +18,7 @@ public class BookSaveRequestDto {
     public Book toEntity() {
         return Book.builder()
                 .title(this.title)
-                .releaseDate(stringToLocalDate(this.releaseDate))
+                .releaseDate(toLocalDate(this.releaseDate))
                 .image(this.image)
                 .description(this.description)
                 .author(this.author)
@@ -26,7 +26,7 @@ public class BookSaveRequestDto {
                 .build();
     }
 
-    public LocalDate stringToLocalDate(String date) {
+    public LocalDate toLocalDate(String date) {
         return LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
     }
 

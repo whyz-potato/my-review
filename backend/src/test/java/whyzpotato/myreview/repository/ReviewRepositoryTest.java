@@ -29,7 +29,7 @@ public class ReviewRepositoryTest {
     Movie movie1, movie2, movie3;
 
     @BeforeEach
-    void init(){
+    void init() {
         users1 = Users
                 .builder()
                 .email("test1@test.com")
@@ -180,6 +180,38 @@ public class ReviewRepositoryTest {
         assertThat(reviews.size()).isEqualTo(2);
         assertThat(review1).isIn(reviews);
         assertThat(review2).isIn(reviews);
+    }
+
+    @Test
+    void findByUsersItem() {
+        //given
+        Review review1 = Review.builder()
+                .users(users1)
+                .item(movie1)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+
+        //when
+        Review findReview = reviewRepository.findByUsersItem(users1, movie1).get();
+
+        //then
+        assertThat(findReview).isEqualTo(review1);
+    }
+
+    @Test
+    void findByUsersItemNull() {
+        //given
+
+        //when
+        Review findReview = reviewRepository.findByUsersItem(users1, null).orElse(null);
+
+        //then
+        assertThat(findReview).isNull();
+
     }
 
     @Test
