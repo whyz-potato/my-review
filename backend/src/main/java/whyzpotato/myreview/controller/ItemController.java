@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import whyzpotato.myreview.dto.item.BookSearchResponseDto;
-import whyzpotato.myreview.dto.item.ExploreResponseDto;
-import whyzpotato.myreview.dto.item.NaverBookResponseDto;
+import whyzpotato.myreview.dto.item.*;
 import whyzpotato.myreview.service.ItemService;
 
 import static java.lang.Math.min;
@@ -46,10 +44,6 @@ public class ItemController {
         return new ResponseEntity<>(itemService.exploreBook(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/v1/content/movie/{id}")
-    public ResponseEntity<ExploreResponseDto> exploreMovie(@PathVariable("id") Long userId) {
-        return new ResponseEntity<>(itemService.exploreMovie(userId), HttpStatus.OK);
-    }
 
     @GetMapping("/v1/content/book/search")
     public ResponseEntity<BookSearchResponseDto> searchBook(@RequestParam("id") Long usersId,
@@ -72,5 +66,32 @@ public class ItemController {
         return new ResponseEntity<>(bookSearchResponseDto, HttpStatus.OK);
 
     }
+
+    @GetMapping("/v1/content/movie/{id}")
+    public ResponseEntity<ExploreResponseDto> exploreMovie(@PathVariable("id") Long userId) {
+        return new ResponseEntity<>(itemService.exploreMovie(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/v1/content/movie/search")
+    public ResponseEntity<MovieSearchResponseDto> searchMovie(@RequestParam("id") Long usersId,
+                                                              @RequestParam("q") String query,
+                                                              @RequestParam("start") String start,
+                                                              @RequestParam("display") String display) {
+
+        Mono<NaverMovieResponseDto> naverDto = searchWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/movie.json")
+                        .queryParam("query", query)
+                        .queryParam("start", startToInt(start))
+                        .queryParam("display", displayToInt(display))
+                        .build()).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(NaverMovieResponseDto.class);
+        NaverMovieResponseDto responseDto = naverDto.block();
+        MovieSearchResponseDto movieSearchResponseDto = itemService.searchMovie(usersId, responseDto);
+
+        return new ResponseEntity<>(movieSearchResponseDto, HttpStatus.OK);
+    }
+
 
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.domain.Movie;
 import whyzpotato.myreview.domain.Review;
 import whyzpotato.myreview.domain.Users;
 import whyzpotato.myreview.dto.item.*;
@@ -106,4 +107,31 @@ public class ItemService {
     }
 
 
+    public MovieSearchResponseDto searchMovie(Long usersId, NaverMovieResponseDto naverMovieResponseDto) {
+        Users users = usersRepository.findById(usersId).get();
+        return MovieSearchResponseDto.builder()
+                .start(naverMovieResponseDto.getStart())
+                .display(naverMovieResponseDto.getDisplay())
+                .total(naverMovieResponseDto.getTotal())
+                .items(naverMovieResponseDto.getItems()
+                        .stream()
+                        .map(naverMovie -> toDetailMovieDto(users, naverMovie))
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public DetailMovieDto toDetailMovieDto(Users users, NaverMovieDto naverMovieDto) {
+        Movie movie = itemRepository.findMovieByTitleDirector(naverMovieDto.getTitle(), naverMovieDto.getDirector()).orElse(null);
+        Review review = reviewRepository.findByUsersItem(users, movie).orElse(null);
+
+        return DetailMovieDto.builder()
+                .itemId(movie != null ? movie.getId() : null)
+                .reviewId(review != null ? review.getId() : null)
+                .title(naverMovieDto.getTitle())
+                .image(naverMovieDto.getImage())
+                .director(naverMovieDto.getDirector())
+                .actors(naverMovieDto.getActor())
+                .releaseDate(naverMovieDto.getPubDate())
+                .build();
+    }
 }

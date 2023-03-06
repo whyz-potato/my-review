@@ -49,7 +49,6 @@ public class ItemRepositoryTest {
                 .title("test")
                 .releaseDate(LocalDate.of(2022, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir")
                 .actors("a1, a2, a3")
                 .build();
@@ -138,7 +137,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -146,7 +144,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -154,7 +151,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -357,7 +353,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -365,7 +360,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -373,7 +367,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -450,7 +443,6 @@ public class ItemRepositoryTest {
                 .title("test")
                 .releaseDate(LocalDate.of(2022, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir")
                 .actors("a1, a2, a3")
                 .build();
@@ -496,7 +488,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -504,7 +495,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -512,7 +502,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -561,7 +550,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -569,7 +557,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -577,7 +564,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -642,7 +628,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -650,7 +635,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -658,7 +642,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -690,7 +673,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -698,7 +680,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -706,7 +687,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();

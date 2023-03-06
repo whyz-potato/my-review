@@ -18,11 +18,10 @@ public class Movie extends Item {
     private String actors;
 
     @Builder
-    public Movie(String title, LocalDate releaseDate, String image, String description, String director, String actors){
+    public Movie(String title, LocalDate releaseDate, String image, String director, String actors) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.image = image;
-        this.description = description;
         this.director = director;
         this.actors = actors;
     }

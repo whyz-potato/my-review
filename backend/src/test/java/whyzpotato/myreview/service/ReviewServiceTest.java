@@ -57,7 +57,6 @@ class ReviewServiceTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -65,7 +64,6 @@ class ReviewServiceTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -73,7 +71,6 @@ class ReviewServiceTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
