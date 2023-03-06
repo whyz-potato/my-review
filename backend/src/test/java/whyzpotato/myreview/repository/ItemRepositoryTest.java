@@ -49,7 +49,6 @@ public class ItemRepositoryTest {
                 .title("test")
                 .releaseDate(LocalDate.of(2022, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir")
                 .actors("a1, a2, a3")
                 .build();
@@ -138,7 +137,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -146,7 +144,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -154,7 +151,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -270,7 +266,7 @@ public class ItemRepositoryTest {
                 .build());
 
         //when
-        List<Book> topBooks = itemRepository.top10Book();
+        List<Book> topBooks = itemRepository.top10Books();
 
         //then
         assertThat(topBooks.size()).isEqualTo(2);
@@ -310,7 +306,7 @@ public class ItemRepositoryTest {
         itemRepository.save(book3);
 
         //when
-        List<Book> newBooks = itemRepository.newBooks(10);
+        List<Book> newBooks = itemRepository.newBooks();
 
         //then
         assertThat(newBooks.get(0)).isSameAs(book1);
@@ -329,7 +325,6 @@ public class ItemRepositoryTest {
                 .pw("aa")
                 .createDate(LocalDateTime.now())
                 .build();
-        usersRepository.save(users1);
         Book book1 = Book.builder()
                 .title("b1")
                 .releaseDate(LocalDate.of(2022, 8, 13))
@@ -354,41 +349,87 @@ public class ItemRepositoryTest {
                 .image("img")
                 .isbn("101112")
                 .build();
+        Movie movie1 = Movie.builder()
+                .title("m1")
+                .releaseDate(LocalDate.of(2019, 8, 13))
+                .image("url")
+                .director("dir1")
+                .actors("a1, a2, a3")
+                .build();
+        Movie movie2 = Movie.builder()
+                .title("m2")
+                .releaseDate(LocalDate.of(2022, 4, 3))
+                .image("url")
+                .director("dir2")
+                .actors("actors")
+                .build();
+        Movie movie3 = Movie.builder()
+                .title("m3")
+                .releaseDate(LocalDate.of(2023, 12, 7))
+                .image("url")
+                .director("dir3")
+                .actors("actors")
+                .build();
+        usersRepository.save(users1);
         itemRepository.save(book1);
         itemRepository.save(book2);
         itemRepository.save(book3);
-        reviewRepository.save(Review.builder()
+        itemRepository.save(movie1);
+        itemRepository.save(movie2);
+        itemRepository.save(movie3);
+        Review review1 = Review.builder()
                 .users(users1)
                 .item(book1)
                 .date(LocalDate.now())
                 .status(ReviewStatus.DONE)
                 .rate(5)
-                .content("content")
-                .build());
-        reviewRepository.save(Review.builder()
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review2 = Review.builder()
                 .users(users1)
                 .item(book3)
                 .date(LocalDate.now())
                 .status(ReviewStatus.LIKE)
                 .rate(5)
-                .content("content")
-                .build());
-        reviewRepository.save(Review.builder()
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review3 = Review.builder()
                 .users(users1)
-                .item(book2)
+                .item(movie2)
                 .date(LocalDate.now())
                 .status(ReviewStatus.LIKE)
                 .rate(5)
-                .content("content")
-                .build());
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+        reviewRepository.save(review2);
+        reviewRepository.save(review3);
 
         //when
-        List<Book> likeBooksByUser = itemRepository.findLikeBooksByUser(users1);
+        List<Book> bookList = itemRepository.likeBooksByUser(users1);
 
         //then
-        assertThat(likeBooksByUser.size()).isEqualTo(2);
-        assertThat(likeBooksByUser.get(0)).isSameAs(book3);
-        assertThat(likeBooksByUser.get(1)).isSameAs(book2);
+        assertThat(bookList.size()).isEqualTo(1);
+        assertThat(bookList.get(0)).isEqualTo(book3);
+    }
+
+    @Test
+    void noLikeBooksByUser() {
+        //given
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        usersRepository.save(users1);
+
+        //when
+        List<Book> bookList = itemRepository.likeBooksByUser(users1);
+
+        //then
+        assertThat(bookList).isEmpty();
     }
 
     /*
@@ -402,7 +443,6 @@ public class ItemRepositoryTest {
                 .title("test")
                 .releaseDate(LocalDate.of(2022, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir")
                 .actors("a1, a2, a3")
                 .build();
@@ -448,7 +488,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -456,7 +495,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -464,7 +502,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -513,7 +550,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -521,7 +557,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -529,7 +564,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -579,7 +613,7 @@ public class ItemRepositoryTest {
                 .build());
 
         //when
-        List<Movie> topMovies = itemRepository.top10Movie();
+        List<Movie> topMovies = itemRepository.top10Movies();
 
         //then
         assertThat(topMovies.size()).isEqualTo(2);
@@ -594,7 +628,6 @@ public class ItemRepositoryTest {
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -602,7 +635,6 @@ public class ItemRepositoryTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -610,7 +642,6 @@ public class ItemRepositoryTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
@@ -619,13 +650,85 @@ public class ItemRepositoryTest {
         itemRepository.save(movie3);
 
         //when
-        List<Movie> newMovies = itemRepository.newMovies(10);
+        List<Movie> newMovies = itemRepository.newMovies();
 
         //then
         assertThat(newMovies.get(0)).isSameAs(movie3);
         assertThat(newMovies.get(1)).isSameAs(movie2);
         assertThat(newMovies.get(2)).isSameAs(movie1);
 
+    }
+
+    @Test
+    void findLikeMovieByUser() {
+        //given
+        Users users1 = Users
+                .builder()
+                .email("test1@test.com")
+                .name("user1")
+                .pw("aa")
+                .createDate(LocalDateTime.now())
+                .build();
+        Movie movie1 = Movie.builder()
+                .title("m1")
+                .releaseDate(LocalDate.of(2019, 8, 13))
+                .image("url")
+                .director("dir1")
+                .actors("a1, a2, a3")
+                .build();
+        Movie movie2 = Movie.builder()
+                .title("m2")
+                .releaseDate(LocalDate.of(2022, 4, 3))
+                .image("url")
+                .director("dir2")
+                .actors("actors")
+                .build();
+        Movie movie3 = Movie.builder()
+                .title("m3")
+                .releaseDate(LocalDate.of(2023, 12, 7))
+                .image("url")
+                .director("dir3")
+                .actors("actors")
+                .build();
+        usersRepository.save(users1);
+        itemRepository.save(movie1);
+        itemRepository.save(movie2);
+        itemRepository.save(movie3);
+        Review review1 = Review.builder()
+                .users(users1)
+                .item(movie1)
+                .date(LocalDate.now())
+                .status(ReviewStatus.LIKE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review2 = Review.builder()
+                .users(users1)
+                .item(movie2)
+                .date(LocalDate.now())
+                .status(ReviewStatus.WATCHING)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        Review review3 = Review.builder()
+                .users(users1)
+                .item(movie3)
+                .date(LocalDate.now())
+                .status(ReviewStatus.LIKE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+        reviewRepository.save(review2);
+        reviewRepository.save(review3);
+
+        //when
+        List<Movie> movieList = itemRepository.likeMoviesByUser(users1);
+
+        //then
+        assertThat(movieList.size()).isEqualTo(2);
+        assertThat(movie1).isIn(movieList);
+        assertThat(movie3).isIn(movieList);
     }
 
 }

@@ -2,14 +2,14 @@ package whyzpotato.myreview.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import whyzpotato.myreview.domain.Book;
-import whyzpotato.myreview.domain.Item;
-import whyzpotato.myreview.domain.Movie;
-import whyzpotato.myreview.domain.Users;
+import whyzpotato.myreview.controller.ErrorCode;
+import whyzpotato.myreview.domain.*;
+import whyzpotato.myreview.exception.DuplicateResourceException;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
 
@@ -19,15 +19,27 @@ public class ItemRepository {
 
     private final EntityManager em;
 
-    public void save(Item item) {
-        if (item.getId() == null)
-            em.persist(item);
+    public Book save(Book book) {
+        if (book.getId() != null || findBookByIsbn(book.getIsbn()).isPresent())
+            em.merge(book);
+        else
+            em.persist(book);
+        return book;
+    }
+
+    public Movie save(Movie movie){
+        if (movie.getId()!=null || findMovieByTitleDirector(movie.getTitle(), movie.getDirector()).isPresent())
+            em.merge(movie);
+        else
+            em.persist(movie);
+        return movie;
     }
 
     public Item findById(Long id) {
         return em.find(Item.class, id);
     }
 
+    //--책 조회--//
     public Optional<Book> findBookByIsbn(String isbn) {
         return em.createQuery(
                         "select b" +
@@ -46,7 +58,21 @@ public class ItemRepository {
     }
 
 
-    public List<Book> top10Book() {
+    //--추천 페이지용 책 조회--//
+    public List<Book> likeBooksByUser(Users users) {
+        return em.createQuery(
+                        "select i" +
+                                " from Review r" +
+                                " join r.item i" +
+                                " where r.users = :user and type(i) = 'Book' and r.status = 'LIKE'", Item.class)
+                .setParameter("user", users)
+                .getResultList()
+                .stream()
+                .map(i -> (Book)i)
+                .collect(Collectors.toList());
+    }
+
+    public List<Book> top10Books() {
         List<Book> books = em.createNativeQuery(
                         "select *" +
                                 " from item i" +
@@ -57,28 +83,18 @@ public class ItemRepository {
         return books.subList(0, min(10, books.size()));
     }
 
-    public List<Book> newBooks(int max) {
+    public List<Book> newBooks() {
         List<Book> books = em.createQuery(
                         "select b" +
                                 " from Book b" +
                                 " order by release_date desc", Book.class)
                 .getResultList();
-        return books.subList(0, min(max, books.size()));
+        return books.subList(0, min(10, books.size()));
     }
 
-    //사용하지 말 것 (ReviewRepository에 있는 메소드 사용 권장)
-    public List<Book> findLikeBooksByUser(Users users) {
-        return em.createNativeQuery(
-                        "select * from item i" +
-                                " join (select *" +
-                                " from review r" +
-                                " where r.users_id = :users_id and r.status = 'LIKE') as r" +
-                                " on r.item_id = i.item_id "
-                        , Book.class)
-                .setParameter("users_id", users.getId())
-                .getResultList();
-    }
 
+
+    //-- Movie 조회 --//
     public Optional<Movie> findMovieByTitleDirector(String title, String director) {
         return em.createQuery(
                         "select m" +
@@ -98,7 +114,22 @@ public class ItemRepository {
     }
 
 
-    public List<Movie> top10Movie() {
+    //--추천 페이지 용 Movie 조회--//
+
+    public List<Movie> likeMoviesByUser(Users users) {
+        return em.createQuery(
+                        "select i" +
+                                " from Review r" +
+                                " join r.item i" +
+                                " where r.users = :user and type(i) = 'Movie' and r.status = 'LIKE'", Item.class)
+                .setParameter("user", users)
+                .getResultList()
+                .stream()
+                .map(i -> (Movie)i)
+                .collect(Collectors.toList());
+    }
+
+    public List<Movie> top10Movies() {
         List<Movie> movies = em.createNativeQuery(
                         "select *" +
                                 " from item i" +
@@ -109,13 +140,14 @@ public class ItemRepository {
         return movies.subList(0, min(10, movies.size()));
     }
 
-    public List<Movie> newMovies(int max) {
+    public List<Movie> newMovies() {
         List<Movie> movies = em.createQuery(
                         "select m" +
                                 " from Movie m" +
                                 " order by release_date desc", Movie.class)
                 .getResultList();
-        return movies.subList(0, min(max, movies.size()));
+        return movies.subList(0, min(10, movies.size()));
     }
+
 
 }

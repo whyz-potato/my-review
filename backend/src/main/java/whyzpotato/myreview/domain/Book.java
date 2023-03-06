@@ -17,8 +17,10 @@ public class Book extends Item {
 
     private String isbn;
 
+    private String description;
+
     @Builder
-    public Book(String title, LocalDate releaseDate, String image, String description, String author, String isbn){
+    public Book(String title, LocalDate releaseDate, String image, String description, String author, String isbn) {
         this.title = title;
         this.releaseDate = releaseDate;
         this.image = image;

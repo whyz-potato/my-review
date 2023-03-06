@@ -21,6 +21,4 @@ public abstract class Item {
 
     protected String image;
 
-    protected String description;
-
 }

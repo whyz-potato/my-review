@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.*;
+import whyzpotato.myreview.repository.ItemRepository;
 import whyzpotato.myreview.repository.ReviewRepository;
 import whyzpotato.myreview.repository.UsersRepository;
 
@@ -24,7 +25,7 @@ class ReviewServiceTest {
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired
-    private ItemService itemService;
+    private ItemRepository itemRepository;
     @Autowired
     private UsersRepository usersRepository;
 
@@ -51,12 +52,11 @@ class ReviewServiceTest {
                 .image("img")
                 .isbn("7813")
                 .build();
-        itemService.save(book);
+        itemRepository.save(book);
         movie1 = Movie.builder()
                 .title("m1")
                 .releaseDate(LocalDate.of(2019, 8, 13))
                 .image("url")
-                .description("desc")
                 .director("dir1")
                 .actors("a1, a2, a3")
                 .build();
@@ -64,7 +64,6 @@ class ReviewServiceTest {
                 .title("m2")
                 .releaseDate(LocalDate.of(2022, 4, 3))
                 .image("url")
-                .description("desc")
                 .director("dir2")
                 .actors("actors")
                 .build();
@@ -72,13 +71,12 @@ class ReviewServiceTest {
                 .title("m3")
                 .releaseDate(LocalDate.of(2023, 12, 7))
                 .image("url")
-                .description("desc")
                 .director("dir3")
                 .actors("actors")
                 .build();
-        itemService.save(movie1);
-        itemService.save(movie2);
-        itemService.save(movie3);
+        itemRepository.save(movie1);
+        itemRepository.save(movie2);
+        itemRepository.save(movie3);
     }
 
     @Test
