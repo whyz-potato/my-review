@@ -12,23 +12,21 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    @Transactional
     public Long save(Review review) {
         reviewRepository.save(review);
         return review.getId();
     }
 
-    @Transactional
     public void update(Long id, ReviewStatus status) {
         Review findReview = reviewRepository.findById(id);
         findReview.changeStatus(status);
     }
 
-    @Transactional
     public void update(Long id, ReviewStatus status, LocalDate date, int rate, String content) {
         if (status == ReviewStatus.LIKE)
             throw new IllegalArgumentException("관심 상태에서는 리뷰를 작성할 수 없습니다.");
