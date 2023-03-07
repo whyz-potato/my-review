@@ -38,6 +38,8 @@ public class CustomUserDetails implements UserDetails {
         return users.getRoles();
     }
 
+    public Long getId() { return users.getId(); }
+
     //JWT 사용을 위해 아래 4가지 속성은 true
     @Override
     public boolean isAccountNonExpired() {
