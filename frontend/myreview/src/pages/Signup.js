@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert, ScrollView } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { emailValidation, pwdValidation } from '../util/Validation';
+import URL from '../api/axios';
 
-const Signup = () => {
+const Signup = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [validEmail, setValidEmail] = useState(true);
+    const [checkedEmail, setCheckedEmail] = useState(false);
     const [name, setName] = useState('');
     const [password, setPwd] = useState('');
     const [pwdError, setPwdError] = useState('');
@@ -16,6 +18,62 @@ const Signup = () => {
     const [pwdCheckError, setPwdCheckError] = useState('');
     const [validPwdCheck, setValidPwdCheck] = useState(false);
     const [isSelected, setSelect] = useState(false);
+
+    const submit = () => {
+        console.log('signup '+ email+" "+name+" "+password);
+
+        if (!checkedEmail) {
+            Alert.alert('이메일 중복 체크 먼저 해주세요!');
+        }else if(!validPwd || !validPwdCheck) {
+            Alert.alert('비밀번호를 확인해주세요.');
+        }else if (email==="" || name==="" || password ==="" || passwordCheck==="") {
+            Alert.alert('빈 칸을 입력해주세요.');
+        }else {
+            URL.post(
+                "/v1/signup", {
+                    "email": email,
+                    "name": name,
+                    "password": password,
+                }
+            )
+            .then((res)=>{
+                console.log(res.data);
+                Alert.alert('회원가입 완료','반가워요!', [{
+                    text: 'ok',
+                    onPress: () => { navigation.navigate('login') }
+                }])
+            })
+            .catch((err)=>{
+                console.log('error');
+                console.log(err);
+            })
+        }
+    }
+
+    // email 중복 확인
+    const emailCheck = () => {
+        console.log('email check '+email);
+
+        if (!validEmail) Alert.alert('유효하지 않은 이메일 형식입니다.');
+        else {
+            URL.post(
+                "/v1/signup", {
+                "email": email,
+                "name": "",
+                password: "",
+            }
+            )
+                .then((res) => {
+                    console.log(res.data);
+                    Alert.alert('사용 가능한 이메일입니다.');
+                    setCheckedEmail(true);
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                    setCheckedEmail(false);
+                })
+        }
+    }
 
     const handleEmailChange = (onchangeEmail) => {
         setEmail(onchangeEmail);
@@ -70,7 +128,7 @@ const Signup = () => {
                 </View>
                 {!validEmail && <Text style={styles.errorMsg}>{emailError}</Text>}
                 <Pressable style={styles.emailBtn}
-                            onPress={()=>{Alert.alert('사용 가능')}}>
+                            onPress={()=>{emailCheck()}}>
                     <Text style={styles.emailTxt}>중복 확인</Text>
                 </Pressable>
                 <View style={styles.row}>
@@ -120,7 +178,7 @@ const Signup = () => {
                     </View>
                 </View>
                 <Pressable style={styles.signupBtn}
-                            onPress={()=>{isSelected ? Alert.alert('success'):Alert.alert('agree first')}}>
+                            onPress={()=>{isSelected ? submit():Alert.alert('개인정보 활용 동의를 체크해주세요.')}}>
                     <Text style={styles.signupTxt}>회원 가입</Text>
                 </Pressable>
             </View>
