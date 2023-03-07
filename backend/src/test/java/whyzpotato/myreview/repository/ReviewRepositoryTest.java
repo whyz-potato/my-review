@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import whyzpotato.myreview.InitDB;
 import whyzpotato.myreview.domain.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,8 @@ public class ReviewRepositoryTest {
     ItemRepository itemRepository;
     @Autowired
     UsersRepository usersRepository;
+    @Autowired
+    InitDB initDB;
 
     Users users1, users2, users3;
     Book book1, book2, book3;
@@ -30,6 +33,7 @@ public class ReviewRepositoryTest {
 
     @BeforeEach
     void init() {
+        initDB.cleanUp();
         users1 = Users
                 .builder()
                 .email("test1@test.com")
@@ -242,7 +246,7 @@ public class ReviewRepositoryTest {
         reviewRepository.save(review3);
 
         //when
-        List<Review> reviews = reviewRepository.findAllBookReviewByUser(users1);
+        List<Review> reviews = reviewRepository.findAllBookReviewByUser(users1, 0, 100);
 
         //then
         assertThat(reviews.size()).isEqualTo(3);

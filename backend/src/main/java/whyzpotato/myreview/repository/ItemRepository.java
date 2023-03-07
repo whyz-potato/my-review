@@ -2,9 +2,10 @@ package whyzpotato.myreview.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import whyzpotato.myreview.controller.ErrorCode;
-import whyzpotato.myreview.domain.*;
-import whyzpotato.myreview.exception.DuplicateResourceException;
+import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.domain.Item;
+import whyzpotato.myreview.domain.Movie;
+import whyzpotato.myreview.domain.Users;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -27,8 +28,8 @@ public class ItemRepository {
         return book;
     }
 
-    public Movie save(Movie movie){
-        if (movie.getId()!=null || findMovieByTitleDirector(movie.getTitle(), movie.getDirector()).isPresent())
+    public Movie save(Movie movie) {
+        if (movie.getId() != null || findMovieByTitleDirector(movie.getTitle(), movie.getDirector()).isPresent())
             em.merge(movie);
         else
             em.persist(movie);
@@ -37,6 +38,10 @@ public class ItemRepository {
 
     public Item findById(Long id) {
         return em.find(Item.class, id);
+    }
+
+    public void deleteAll(){
+        em.createQuery("delete from item i");
     }
 
     //--책 조회--//
@@ -68,7 +73,7 @@ public class ItemRepository {
                 .setParameter("user", users)
                 .getResultList()
                 .stream()
-                .map(i -> (Book)i)
+                .map(i -> (Book) i)
                 .collect(Collectors.toList());
     }
 
@@ -91,7 +96,6 @@ public class ItemRepository {
                 .getResultList();
         return books.subList(0, min(10, books.size()));
     }
-
 
 
     //-- Movie 조회 --//
@@ -125,7 +129,7 @@ public class ItemRepository {
                 .setParameter("user", users)
                 .getResultList()
                 .stream()
-                .map(i -> (Movie)i)
+                .map(i -> (Movie) i)
                 .collect(Collectors.toList());
     }
 

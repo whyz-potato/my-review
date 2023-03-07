@@ -1,8 +1,12 @@
 package whyzpotato.myreview;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import whyzpotato.myreview.domain.*;
+import whyzpotato.myreview.repository.ItemRepository;
+import whyzpotato.myreview.repository.ReviewRepository;
+import whyzpotato.myreview.repository.UsersRepository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -10,12 +14,21 @@ import javax.transaction.Transactional;
 
 @RequiredArgsConstructor
 @Component
-public class initDB {
+public class InitDB {
     private final InitService initService;
+    private final UsersRepository usersRepository;
+    private final ReviewRepository reviewRepository;
+    private final ItemRepository itemRepository;
 
     @PostConstruct
     public void init() {
         initService.init();
+    }
+
+    public void cleanUp(){
+        usersRepository.deleteAll();
+        reviewRepository.deleteAll();
+        itemRepository.deleteAll();
     }
 
     @Component
@@ -86,6 +99,9 @@ public class initDB {
             createReview(user3, book2, ReviewStatus.DONE);
             createReview(user3, book3, ReviewStatus.LIKE);
         }
+
+
+
 
     }
 

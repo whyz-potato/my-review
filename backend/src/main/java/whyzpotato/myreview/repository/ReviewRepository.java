@@ -37,6 +37,10 @@ public class ReviewRepository {
                 .getResultList();
     }
 
+    public void deleteAll(){
+        em.createQuery("delete from review r");
+    }
+
     public Optional<Review> findByUsersItem(Users users, Item item) {
         return em.createQuery(
                         "select r" +
@@ -70,13 +74,15 @@ public class ReviewRepository {
     }
 
     //리뷰 목록을 보여줄 때 item 정보(제목, 사진 등)도 함께 보여주기 때문에 item도 fetch join
-    public List<Review> findAllBookReviewByUser(Users users) {
+    public List<Review> findAllBookReviewByUser(Users users, int start, int display) {
         return em.createQuery(
                         "select r" +
                                 " from Review r" +
                                 " join fetch r.item i" +
                                 " where r.users = :users and type(i) = 'Book'", Review.class)
                 .setParameter("users", users)
+                .setFirstResult(start)
+                .setMaxResults(display)
                 .getResultList();
     }
 
