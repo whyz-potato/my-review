@@ -29,26 +29,26 @@ public class UsersController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/v1/login")
     @ResponseStatus(HttpStatus.OK)
     public LoginResponseDto login(@RequestBody @Valid LoginRequestDto request) {
         LoginResponseDto loginResponseDto = usersService.login(request.getEmail(), request.getPassword());
         return loginResponseDto;
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/v1/users/{id}")
     public ResponseEntity<UsersResponseDto> getUsers(@PathVariable("id") Long id) {
         UsersResponseDto usersResponseDto = usersService.findUsersInfo(id);
         return new ResponseEntity<>(usersResponseDto,HttpStatus.OK);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/v1/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Long postUsers(@PathVariable("id") Long id, @RequestBody @Valid UsersRequestDto request) {
         return usersService.updateUsersInfo(id, request.getName(), request.getPassword());
     }
 
-    @PostMapping("/users/resign/{id}")
+    @PostMapping("/v1/users/resign/{id}")
     public ResponseEntity resign(@PathVariable("id") Long id, @RequestBody @Valid String email) {
         usersService.deleteUsers(id);
         return new ResponseEntity(HttpStatus.OK);
