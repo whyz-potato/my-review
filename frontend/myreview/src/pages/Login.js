@@ -1,10 +1,45 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import URL from '../api/axios';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const submit = () => {
+    console.log('login '+ email+" "+password);
+
+        if (email==="" || password ==="") {
+            Alert.alert('빈 칸을 입력해주세요.');
+        }else {
+            URL.post(
+                "/login", {
+                    "email": email,
+                    "password": password,
+                }
+            )
+              .then(async (res) => {
+                console.log(res.data);
+
+                try {
+                  await AsyncStorage.multiSet([
+                    ['accessToken', res.data.body.accessToken],
+                    ['refreshToken', res.data.body.accessToken],
+                    ['userId', JSON.stringify(res.data.body.userId)]]);
+                } catch (error) {
+                  console.log(error);
+                }
+                navigation.navigate('auth');
+              })
+            .catch((err)=>{
+                console.log('login error');
+                console.log(err);
+                Alert.alert('이메일 또는 비밀번호를 확인하세요.');
+            })
+        }
+  }
 
   return (
     <View style={styles.container}>
@@ -33,7 +68,7 @@ const Login = ({ navigation }) => {
           <Text style={{ color: '#B4AA99' }}>회원가입</Text>
         </Pressable>
         <Pressable
-          onPress={() => navigation.navigate('main')}
+          onPress={() => submit()}
           style={styles.loginBtn}>
           <Text style={styles.loginTxt}>로그인</Text>
         </Pressable>

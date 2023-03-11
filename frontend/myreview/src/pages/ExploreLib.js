@@ -2,9 +2,41 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, Keyboard } from 'react-native';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import URL from '../api/axios';
 
 const ExploreLib = ({navigation}) => {
-    const [search, setSearch] = useState('');     
+    const [search, setSearch] = useState('');    
+    const [newContent, setNewContent] = useState([]);
+    const [top, setTop] = useState([]);
+    const [myContent, setMyContent] = useState([]);
+    let userId=0;
+
+    async() => {
+        try {
+            userId=await AsyncStorage.getItem('userId');
+            if (userId!=null) userId = JSON.parse(userId);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // 신작, 담은, 탑10
+    /*
+    useEffect(()=>{
+        URL.get(`/content/book/${userId}`)
+        .then((res)=>{
+            console.log(res.data);
+            setMyContent(res.data.body.myContent);
+            setNewContent(res.data.body.newContent);
+            setTop(res.data.body.top10);
+        })
+        .catch((err)=>{
+            console.log('get content fail');
+            console.log(err);
+        })
+    },[])
+    */
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
@@ -18,8 +50,7 @@ const ExploreLib = ({navigation}) => {
                         <Text style={styles.unfocusTxt}>극장</Text>
                     </Pressable>
                 </View>
-                <Pressable style={{ justifyContent: 'center' }} onPress={() => navigation.navigate('mypage')}>
-                    {/* <Text>Mypage</Text> */}
+                <Pressable style={{ justifyContent: 'center' }} onPress={() => navigation.navigate('mypage', {user_id: userId})}>
                     <MaterialIcons name="face" size={40} color="#E1D7C6" />
                 </Pressable>
             </View>
@@ -33,7 +64,8 @@ const ExploreLib = ({navigation}) => {
                 />
                 <Pressable
                 style={styles.searchBtn}
-                onPress={()=>navigation.navigate('bookSearchResult')}>
+                onPress={()=>navigation.navigate('bookSearchResult', 
+                {query: search, user_id: userId})}>
                     <Entypo name="magnifying-glass" size={38} color="#E1D7C6" />
                 </Pressable>
             </View>

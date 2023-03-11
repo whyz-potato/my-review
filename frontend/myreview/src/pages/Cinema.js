@@ -27,6 +27,16 @@ const Cinema = ({navigation}) => {
         { id: '19', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
         { id: '20', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
       ];
+    let userId = 0;
+
+    async () => {
+        try {
+            userId = await AsyncStorage.getItem('userId');
+            if (userId != null) userId = JSON.parse(userId);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     
     const itemView = ({item})=>{
         return (
@@ -54,7 +64,7 @@ const Cinema = ({navigation}) => {
                         <Text style={styles.focusTxt}>극장</Text>
                     </Pressable>
                 </View>
-                <Pressable style={{ justifyContent: 'center'}} onPress={()=>navigation.navigate('mypage')}>
+                <Pressable style={{ justifyContent: 'center'}} onPress={()=>navigation.navigate('mypage', {user_id:userId})}>
                     <MaterialIcons name="face" size={40} color="#E1D7C6" />
                 </Pressable>
             </View>

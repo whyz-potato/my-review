@@ -1,17 +1,37 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Alert, Modal } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Pressable, Modal } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import URL from '../api/axios';
 
-const Mypage = ({navigation}) => {
+const Mypage = ({navigation, route}) => {
+    let userId = route.params.user_id;
     const [modal, setModal] = useState(false);
     const [goal, setGoal] = useState(10);
+    const [year, setYear] = useState(2023);
+    const [cnt, setCnt] = useState(0);
+    const [history, setHistory] = useState([]);
+
+    // const changeGoal = (goalChange) => {
+    //     URL.put(
+    //         `/users/goal/${userId}`, {
+    //             "target": goal,
+    //         }
+    //         .then((res)=>{
+    //             console.log(res.data);
+    //             setGoal(goalChange);
+    //         })
+    //         .catch((err)=>{
+    //             console.log('change goal fail');
+    //         })
+    //     )
+    // }
 
     const handleGoalChange = (goalChange) => {
-        if (goalChange==NaN || goalChange==0) {
+        if (goalChange===NaN || goalChange===0) {
             setGoal(10);
         }else{
-            setGoal(goalChange);
+            changeGoal(goalChange);
         }
     }
 
@@ -21,19 +41,44 @@ const Mypage = ({navigation}) => {
             headerTintColor: '#E1D7C6',
             headerRight:()=>(
                 <Pressable
-                onPress={()=>navigation.navigate('profileEdit')}>
-                    <Text style={{color: '#E1D7C6', fontWeight:'bold'}}>프로필 편집</Text>
+                onPress={()=>navigation.navigate('profileEdit', {user_id: userId})}>
+                    <Text style={{color: '#E1D7C6', fontWeight:'bold', fontSize:16}}>프로필 편집</Text>
                 </Pressable>
             ),
         })
     })
+
+    // 올해 목표 가져오기
+    /*
+    useEffect(()=>{
+        URL.get(`/goal/${userId}`)
+        .then((res)=>{
+            console.log(res.data);
+            setGoal(res.data.body.target);
+            setYear(res.data.body.year);
+            setCnt(res.data.body.cnt);
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+    },[goal])
+
+    // 기록 가져오기
+    useEffect(()=> {
+        URL.get(`/users/goal/history/${userId}`)
+        .then((res)=>{
+            console.log(res.data);
+            setHistory(res.data.body.goals);
+        })
+    },[])
+    */
     
     return(
         <View style={styles.container}>
             <View style={{marginHorizontal: 50}}>
                 <Text style={styles.title}>내 기록</Text>
                 <View style={styles.rowBetween}>
-                    <Text style={{fontSize: 25}}>2023 목표</Text>
+                    <Text style={{fontSize: 25}}>{year} 목표</Text>
                     {/* 올해 목표 수정 모달 */}
                     <Modal
                         animationType="fade"
@@ -65,8 +110,8 @@ const Mypage = ({navigation}) => {
                     </Pressable>
                 </View>
                 <View style={styles.rowBetween}>
-                    <Text style={styles.txt}>2023 본 개수</Text>
-                    <Text style={styles.txt}>5</Text>
+                    <Text style={styles.txt}>{year} 본 개수</Text>
+                    <Text style={styles.txt}>{cnt}</Text>
                 </View>
                 <View style={{marginTop: 60}}>
                     <Text style={{ fontSize: 25 }}>과거 기록</Text>

@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList } from 'react-native';
 import { Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Library = ({navigation}) => {
     const [search, setSearch] = useState(''); 
@@ -27,6 +28,16 @@ const Library = ({navigation}) => {
         { id: '19', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
         { id: '20', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
       ];
+      let userId=0;
+
+    async() => {
+        try {
+            userId=await AsyncStorage.getItem('userId');
+            if (userId!=null) userId = JSON.parse(userId);
+        } catch (error) {
+            console.log(error);
+        }
+    } 
     
     const itemView = ({item})=>{
         return (
@@ -54,7 +65,7 @@ const Library = ({navigation}) => {
                         <Text style={styles.unfocusTxt}>극장</Text>
                     </Pressable>
                 </View>
-                <Pressable style={{ justifyContent: 'center'}} onPress={()=>navigation.navigate('mypage')}>
+                <Pressable style={{ justifyContent: 'center'}} onPress={()=>navigation.navigate('mypage', {user_id: userId})}>
                     <MaterialIcons name="face" size={40} color="#E1D7C6" />
                 </Pressable>
             </View>

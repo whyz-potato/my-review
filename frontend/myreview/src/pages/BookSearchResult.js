@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert, FlatList, Image } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 
-const BookSearchResult=({navigation})=>{
-    const [search, setSearch] = useState('');  
+const BookSearchResult=({navigation, route})=>{
+    let query = route.params.query;
+    let userId = route.params.user_id;
+    const [search, setSearch] = useState(query);  
+    const [item, setItem] = useState([]);
     const Data = [
         { id: '1', title: '므레모사', author: '김초엽', img: 'https://reactnative.dev/img/tiny_logo.png' },
         { id: '2', title: 'B', author: 'Abc', img: 'https://reactnative.dev/img/tiny_logo.png' },
@@ -18,6 +21,27 @@ const BookSearchResult=({navigation})=>{
         { id: '10', title: 'J', author: 'Abc', img: 'https://reactnative.dev/img/tiny_logo.png' },
         { id: '11', title: 'k', author: 'Abc', img: 'https://reactnative.dev/img/tiny_logo.png' },
       ];
+  
+    // search
+    // useEffect(()=>{
+    //     URL.get(`/content/book/search/${userId}/${search}/1/10`)
+    //     .then((res)=>{
+    //         console.log(res.data);
+    //         setItem(res.data.body.items);
+    //     })
+    //     .catch((err)=>{
+    //         console.log('search fail');
+    //         console.log(err);
+    //     })
+    // }, [query])
+
+    const handleInput = (input) =>{
+        if (input!==""){
+            query=input;
+        }else{
+            Alert.alert('제목을 입력해주세요!');
+        }
+    }
 
     React.useLayoutEffect(()=>{
         navigation.setOptions({
@@ -66,7 +90,7 @@ const BookSearchResult=({navigation})=>{
                 />
                 <Pressable
                 style={styles.searchBtn}
-                onPress={()=>{navigation.navigate('bookSearchResult')}}>
+                onPress={()=>{handleInput(search)}}>
                     <Entypo name="magnifying-glass" size={38} color="#E1D7C6" />
                 </Pressable>
             </View>

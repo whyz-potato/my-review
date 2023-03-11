@@ -30,7 +30,7 @@ const Signup = ({navigation}) => {
             Alert.alert('빈 칸을 입력해주세요.');
         }else {
             URL.post(
-                "/v1/signup", {
+                "/signup", {
                     "email": email,
                     "name": name,
                     "password": password,
@@ -57,7 +57,7 @@ const Signup = ({navigation}) => {
         if (!validEmail) Alert.alert('유효하지 않은 이메일 형식입니다.');
         else {
             URL.post(
-                "/v1/signup", {
+                "/signup", {
                 "email": email,
                 "name": "",
                 password: "",
