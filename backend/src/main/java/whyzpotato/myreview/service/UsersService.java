@@ -42,6 +42,10 @@ public class UsersService {
         });
     }
 
+    public Long checkEmail(String email) {
+        return usersRepository.countByEmail(email);
+    }
+
     /**
      * 로그인
      */
