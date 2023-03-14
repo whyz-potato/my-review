@@ -98,64 +98,6 @@ class ReviewServiceTest {
         assertThat(review.getId()).isNotNull();
     }
 
-    @Test
-    void updateToLike() {
-        //given
-        Review review = (Review.builder()
-                .users(users)
-                .item(book)
-                .date(LocalDate.now())
-                .status(ReviewStatus.WATCHING)
-                .rate(4)
-                .content("보고있는데 재밌음")
-                .build());
-        reviewService.save(review);
-
-        //when
-        reviewService.update(review.getId(), ReviewStatus.LIKE);
-
-        //then
-        Review findReview = reviewRepository.findById(review.getId());
-        assertThat(findReview.getStatus()).isEqualTo(ReviewStatus.LIKE);
-    }
-
-    @Test
-    void updateToLikeFail() {
-        //given
-        Review review = (Review.builder()
-                .users(users)
-                .item(book)
-                .date(LocalDate.now())
-                .status(ReviewStatus.WATCHING)
-                .rate(4)
-                .content("보고있는데 재밌음")
-                .build());
-        reviewService.save(review);
-
-        //then
-        assertThrows(IllegalArgumentException.class,
-                () -> reviewService.update(review.getId(), ReviewStatus.LIKE, LocalDate.now(), 4, "관심인데"));
-    }
-
-    @Test
-    void updateToDone() {
-        //given
-        Review review = (Review.builder()
-                .users(users)
-                .item(book)
-                .status(ReviewStatus.LIKE)
-                .build());
-        reviewService.save(review);
-
-        //when
-        reviewService.update(review.getId(), ReviewStatus.DONE, LocalDate.now(), 5, "아주 재밌다");
-
-        //then
-        Review findReview = reviewRepository.findById(review.getId());
-        assertThat(findReview.getStatus()).isEqualTo(ReviewStatus.DONE);
-        assertThat(findReview.getRate()).isEqualTo(5);
-        assertThat(findReview.getContent()).isEqualTo("아주 재밌다");
-    }
 
 
     @Test

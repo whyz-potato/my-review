@@ -1,15 +1,13 @@
 package whyzpotato.myreview.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.criteria.internal.SelectionImplementor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.Book;
 import whyzpotato.myreview.domain.Review;
-import whyzpotato.myreview.domain.ReviewStatus;
 import whyzpotato.myreview.domain.Users;
 import whyzpotato.myreview.dto.item.DetailBookDto;
-import whyzpotato.myreview.dto.review.NewBookReviewRequestDto;
+import whyzpotato.myreview.dto.review.BookReviewDto;
 import whyzpotato.myreview.dto.review.ReviewDto;
 import whyzpotato.myreview.dto.review.ReviewListResponseDto;
 import whyzpotato.myreview.dto.review.SimpleReviewResponseDto;
@@ -17,12 +15,12 @@ import whyzpotato.myreview.repository.ItemRepository;
 import whyzpotato.myreview.repository.ReviewRepository;
 import whyzpotato.myreview.repository.UsersRepository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
 import static whyzpotato.myreview.CommonUtils.toLocalDate;
+import static whyzpotato.myreview.CommonUtils.toReviewStatus;
 
 @Service
 @RequiredArgsConstructor
@@ -36,19 +34,6 @@ public class ReviewService {
     public Long save(Review review) {
         reviewRepository.save(review);
         return review.getId();
-    }
-
-
-    public void update(Long id, ReviewStatus status) {
-        Review findReview = reviewRepository.findById(id);
-        findReview.changeStatus(status);
-    }
-
-    public void update(Long id, ReviewStatus status, LocalDate date, int rate, String content) {
-        if (status == ReviewStatus.LIKE)
-            throw new IllegalArgumentException("관심 상태에서는 리뷰를 작성할 수 없습니다.");
-        Review findReview = reviewRepository.findById(id);
-        findReview.update(status, date, rate, content);
     }
 
     @Transactional(readOnly = true)
@@ -74,18 +59,37 @@ public class ReviewService {
 
     public Long save(Long usersId, DetailBookDto bookDto, ReviewDto reviewDto) {
         Users users = usersRepository.findById(usersId).get();
-        
+
         Book book = itemRepository.save(bookDto.toEntity());
+
+        if(reviewDto.getStatus().equals("WATCHING")){
+            Review review = Review.builder()
+                    .users(users)
+                    .item(book)
+                    .status(toReviewStatus(reviewDto.getStatus()))
+                    .build();
+            return reviewRepository.save(review).getId();
+        }
 
         Review review = Review.builder()
                 .users(users)
                 .item(book)
-                .content(reviewDto.getContent())
+                .status(toReviewStatus(reviewDto.getStatus()))
                 .date(toLocalDate(reviewDto.getViewDate()))
+                .content(reviewDto.getContent())
                 .rate(reviewDto.getRate())
                 .build();
-        reviewRepository.save(review);
+        return reviewRepository.save(review).getId();
+    }
 
-        return review.getId();
+
+    public BookReviewDto findBookReview(Long userId, Long reviewId) {
+        Review findReview = reviewRepository.findById(reviewId);
+        Users users = usersRepository.findById(userId).get();
+
+        if(findReview.getUsers().equals(users)){
+            return new BookReviewDto(findReview);
+        }
+        throw new IllegalStateException();
     }
 }

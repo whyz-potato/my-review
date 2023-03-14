@@ -14,30 +14,14 @@ import whyzpotato.myreview.dto.item.*;
 import whyzpotato.myreview.service.ItemService;
 
 import static java.lang.Math.min;
+import static whyzpotato.myreview.CommonUtils.displayToInt;
+import static whyzpotato.myreview.CommonUtils.startToInt;
 
 @RestController
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
     private final WebClient searchWebClient;
-
-    static int startToInt(String start) {
-        try {
-            Integer number = Integer.valueOf(start);
-            return min(1000, number);
-        } catch (NumberFormatException ex) {
-            return 1;
-        }
-    }
-
-    static int displayToInt(String display) {
-        try {
-            Integer number = Integer.valueOf(display);
-            return min(100, number);
-        } catch (NumberFormatException ex) {
-            return 10;
-        }
-    }
 
     @GetMapping("/v1/content/book/{id}")
     public ResponseEntity<ExploreResponseDto> exploreBook(@PathVariable("id") Long userId) {

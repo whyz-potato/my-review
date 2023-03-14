@@ -18,6 +18,10 @@ public class ReviewRepository {
     public Review save(Review review) {
         if (review.getId() != null)
             return em.merge(review);
+
+        Optional<Review> optional = findByUsersItem(review.getUsers(), review.getItem());
+        if(optional.isPresent())
+            return em.merge(optional.get().update(review));
         else
             em.persist(review);
         return review;

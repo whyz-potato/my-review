@@ -21,16 +21,24 @@ public class ItemRepository {
     private final EntityManager em;
 
     public Book save(Book book) {
-        if (book.getId() != null || findBookByIsbn(book.getIsbn()).isPresent())
+        if (book.getId() != null)
             return em.merge(book);
+
+        Optional<Book> optional = findBookByIsbn(book.getIsbn());
+        if(optional.isPresent())
+            return optional.get();
         else
             em.persist(book);
         return book;
     }
 
     public Movie save(Movie movie) {
-        if (movie.getId() != null || findMovieByTitleDirector(movie.getTitle(), movie.getDirector()).isPresent())
+        if (movie.getId() != null)
             return em.merge(movie);
+
+        Optional<Movie> optional = findMovieByTitleDirector(movie.getTitle(), movie.getDirector());
+        if(optional.isPresent())
+            return optional.get();
         else
             em.persist(movie);
         return movie;
