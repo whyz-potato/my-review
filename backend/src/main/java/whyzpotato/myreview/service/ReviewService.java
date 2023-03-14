@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.domain.Item;
 import whyzpotato.myreview.domain.Review;
 import whyzpotato.myreview.domain.Users;
 import whyzpotato.myreview.dto.item.DetailBookDto;

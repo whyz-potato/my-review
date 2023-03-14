@@ -1,5 +1,6 @@
 package whyzpotato.myreview;
 
+import org.hibernate.proxy.HibernateProxy;
 import whyzpotato.myreview.domain.ReviewStatus;
 
 import java.time.LocalDate;
@@ -40,6 +41,15 @@ public class CommonUtils {
         } catch (NumberFormatException ex) {
             return 10;
         }
+    }
+
+    public static <T> T unProxy(Object entity) {
+        if(entity instanceof HibernateProxy){
+            entity = ((HibernateProxy) entity)
+                    .getHibernateLazyInitializer()
+                    .getImplementation();
+        }
+        return (T) entity;
     }
 
 

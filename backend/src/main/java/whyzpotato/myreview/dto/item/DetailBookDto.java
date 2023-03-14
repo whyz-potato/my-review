@@ -6,6 +6,7 @@ import whyzpotato.myreview.domain.Book;
 import whyzpotato.myreview.domain.Item;
 
 import static whyzpotato.myreview.CommonUtils.toLocalDate;
+import static whyzpotato.myreview.CommonUtils.unProxy;
 
 @Data
 public class DetailBookDto {
@@ -30,15 +31,15 @@ public class DetailBookDto {
         this.isbn = isbn;
     }
 
-    public DetailBookDto(Item item){
-        this.itemId = item.getId();
-        this.title = item.getTitle();
-        this.image = item.getImage();
-        Book book = (Book)item;
-        this.description = book.getDescription();
-        this.releaseDate = book.getReleaseDate().toString();
-        this.author = book.getAuthor();
-        this.isbn = book.getIsbn();
+    public DetailBookDto(Item book){
+        Book unProxyBook = (Book)unProxy(book);
+        this.itemId = unProxyBook.getId();
+        this.title = unProxyBook.getTitle();
+        this.image = unProxyBook.getImage();
+        this.description = unProxyBook.getDescription();
+        this.releaseDate = unProxyBook.getReleaseDate().toString();
+        this.author = unProxyBook.getAuthor();
+        this.isbn = unProxyBook.getIsbn();
     }
 
     public Book toEntity(){
