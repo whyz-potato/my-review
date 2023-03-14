@@ -8,37 +8,37 @@ const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const submit = () => {
-    console.log('login '+ email+" "+password);
+  const handleSubmit = () => {
+    console.log('login ' + email + " " + password);
 
-        if (email==="" || password ==="") {
-            Alert.alert('빈 칸을 입력해주세요.');
-        }else {
-            URL.post(
-                "/login", {
-                    "email": email,
-                    "password": password,
-                }
-            )
-              .then(async (res) => {
-                console.log(res.data);
+    if (email === "" || password === "") {
+      Alert.alert('빈 칸을 입력해주세요.');
+    } else {
+      URL.post(
+        "/login", {
+        "email": email,
+        "password": password,
+      }
+      )
+        .then(async (res) => {
+          console.log(res.data);
 
-                try {
-                  await AsyncStorage.multiSet([
-                    ['accessToken', res.data.body.accessToken],
-                    ['refreshToken', res.data.body.accessToken],
-                    ['userId', JSON.stringify(res.data.body.userId)]]);
-                } catch (error) {
-                  console.log(error);
-                }
-                navigation.navigate('auth');
-              })
-            .catch((err)=>{
-                console.log('login error');
-                console.log(err);
-                Alert.alert('이메일 또는 비밀번호를 확인하세요.');
-            })
-        }
+          try {
+            await AsyncStorage.multiSet([
+              ['accessToken', res.data.body.accessToken],
+              ['refreshToken', res.data.body.accessToken],
+              ['userId', JSON.stringify(res.data.body.userId)]]);
+          } catch (error) {
+            console.log(error);
+          }
+          navigation.navigate('auth');
+        })
+        .catch((err) => {
+          console.log('login error');
+          console.log(err);
+          Alert.alert('이메일 또는 비밀번호를 확인하세요.');
+        })
+    }
   }
 
   return (
@@ -68,7 +68,7 @@ const Login = ({ navigation }) => {
           <Text style={{ color: '#B4AA99' }}>회원가입</Text>
         </Pressable>
         <Pressable
-          onPress={() => submit()}
+          onPress={() => { handleSubmit() }}
           style={styles.loginBtn}>
           <Text style={styles.loginTxt}>로그인</Text>
         </Pressable>

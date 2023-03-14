@@ -1,21 +1,24 @@
 import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Network from 'expo-network';
 
-let accessToken="";
-async() => {
-    try {
-       accessToken = await AsyncStorage.getItem('accessToken');
-    } catch (error) {
-        console.log(error);
-    }
-}
+// let hostIP = "192.168.0.13";
+// let hostIP = "";
+
+// async () => {
+//     try {
+//         hostIP = await Network.getIpAddressAsync();
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
+
 
 const URL = axios.create({
-    baseURL: "https://p3q4govhwg.execute-api.ap-northeast-2.amazonaws.com/v1/",    //for test
+    baseURL: "http://192.168.0.13:8080/v1",
     headers: {
         "Content-Type": "application/json",
-        "Access-Token": accessToken,
-    }
+        "Accept": "application/json",
+    },
 });
 
 export default URL;
