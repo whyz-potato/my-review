@@ -16,10 +16,10 @@ public class ReviewRepository {
     private final EntityManager em;
 
     public Review save(Review review) {
-        if (review.getId() == null)
-            em.persist(review);
+        if (review.getId() != null)
+            return em.merge(review);
         else
-            em.merge(review);
+            em.persist(review);
         return review;
     }
 
@@ -87,14 +87,18 @@ public class ReviewRepository {
     }
 
     //리뷰 목록을 보여줄 때 item 정보(제목, 사진 등)도 함께 보여주기 때문에 item도 fetch join
-    public List<Review> findBookReviewByUserTitle(Users users, String title) {
+    public List<Review> findBookReviewByUserTitle(Users users, String title, int start, int display) {
+        if(title == null)
+            return findAllBookReviewByUser(users, start, display);
         return em.createQuery(
                         "select r" +
                                 " from Review r" +
                                 " join fetch r.item i" +
-                                " where r.users = :users and type(i) = 'Book' and i.title like %:title%", Review.class)
+                                " where r.users = :users and type(i) = 'Book' and i.title like concat('%', :title, '%')", Review.class)
                 .setParameter("users", users)
                 .setParameter("title", title)
+                .setFirstResult(start)
+                .setMaxResults(display)
                 .getResultList();
     }
 

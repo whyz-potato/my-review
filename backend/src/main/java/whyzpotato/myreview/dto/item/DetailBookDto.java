@@ -1,11 +1,15 @@
 package whyzpotato.myreview.dto.item;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
+import whyzpotato.myreview.domain.Book;
 
-@Getter
-@ToString
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import static whyzpotato.myreview.CommonUtils.toLocalDate;
+
+@Data
 public class DetailBookDto {
     private Long itemId;
     private Long reviewId;
@@ -27,5 +31,18 @@ public class DetailBookDto {
         this.author = author;
         this.isbn = isbn;
     }
+
+    public Book toEntity(){
+        return Book.builder()
+                .title(this.title)
+                .isbn(this.isbn)
+                .author(this.author)
+                .releaseDate(toLocalDate(this.releaseDate))
+                .image(this.image)
+                .description(this.description)
+                .build();
+    }
+
+
 }
 

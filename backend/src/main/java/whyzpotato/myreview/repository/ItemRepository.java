@@ -22,7 +22,7 @@ public class ItemRepository {
 
     public Book save(Book book) {
         if (book.getId() != null || findBookByIsbn(book.getIsbn()).isPresent())
-            em.merge(book);
+            return em.merge(book);
         else
             em.persist(book);
         return book;
@@ -30,7 +30,7 @@ public class ItemRepository {
 
     public Movie save(Movie movie) {
         if (movie.getId() != null || findMovieByTitleDirector(movie.getTitle(), movie.getDirector()).isPresent())
-            em.merge(movie);
+            return em.merge(movie);
         else
             em.persist(movie);
         return movie;
