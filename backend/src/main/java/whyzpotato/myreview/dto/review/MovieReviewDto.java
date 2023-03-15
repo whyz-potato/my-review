@@ -3,20 +3,20 @@ package whyzpotato.myreview.dto.review;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import whyzpotato.myreview.domain.Review;
-import whyzpotato.myreview.dto.item.DetailBookDto;
+import whyzpotato.myreview.dto.item.DetailMovieDto;
 
 import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class BookReviewDto {
+public class MovieReviewDto {
     @NotNull
-    private DetailBookDto item;
+    private DetailMovieDto item;
     @NotNull
     private ReviewDto review;
 
-    public BookReviewDto(Review review) {
-        this.item = new DetailBookDto(review.getItem());
+    public MovieReviewDto(Review review) {
+        this.item = new DetailMovieDto(review.getItem());
         this.review = new ReviewDto(review);
     }
 

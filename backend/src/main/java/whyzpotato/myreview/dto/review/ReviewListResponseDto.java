@@ -13,7 +13,7 @@ public class ReviewListResponseDto {
     List<SimpleReviewResponseDto> reviews;
 
     @Builder
-    public ReviewListResponseDto(int total, int start, int display, List<SimpleReviewResponseDto> reviews){
+    public ReviewListResponseDto(int total, int start, int display, List<SimpleReviewResponseDto> reviews) {
         this.total = total;
         this.start = start;
         this.display = display;

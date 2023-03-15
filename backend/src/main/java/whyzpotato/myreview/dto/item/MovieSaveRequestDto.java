@@ -4,8 +4,6 @@ import lombok.Getter;
 import whyzpotato.myreview.domain.Movie;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static whyzpotato.myreview.CommonUtils.toLocalDate;
 

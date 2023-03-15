@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -14,7 +13,8 @@ import whyzpotato.myreview.exception.DuplicateResourceException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
-import static whyzpotato.myreview.controller.ErrorCode.*;
+import static whyzpotato.myreview.controller.ErrorCode.BAD_REQUEST;
+import static whyzpotato.myreview.controller.ErrorCode.DUPLICATE_EMAIL;
 
 @Slf4j
 @RestControllerAdvice
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         private String error;
         private String message;
 
-        public static ResponseEntity createErrorResponseEntity(int status){
+        public static ResponseEntity createErrorResponseEntity(int status) {
             return ResponseEntity
                     .status(status)
                     .build();
@@ -60,7 +60,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                             .build()
                     );
         }
-
 
 
     }

@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import whyzpotato.myreview.dto.item.*;
 import whyzpotato.myreview.service.ItemService;
 
-import static java.lang.Math.min;
 import static whyzpotato.myreview.CommonUtils.displayToInt;
 import static whyzpotato.myreview.CommonUtils.startToInt;
 
@@ -27,7 +26,6 @@ public class ItemController {
     public ResponseEntity<ExploreResponseDto> exploreBook(@PathVariable("id") Long userId) {
         return new ResponseEntity<>(itemService.exploreBook(userId), HttpStatus.OK);
     }
-
 
     @GetMapping("/v1/content/book/search")
     public ResponseEntity<BookSearchResponseDto> searchBook(@RequestParam("id") Long usersId,
@@ -44,8 +42,9 @@ public class ItemController {
                         .build()).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(NaverBookResponseDto.class);
-        NaverBookResponseDto responseDto = naverResponse.block();
-        BookSearchResponseDto bookSearchResponseDto = itemService.searchBook(usersId, responseDto);
+        NaverBookResponseDto naverSearchResultDto = naverResponse.block();
+
+        BookSearchResponseDto bookSearchResponseDto = itemService.naverSearchBook(usersId, naverSearchResultDto);
 
         return new ResponseEntity<>(bookSearchResponseDto, HttpStatus.OK);
 

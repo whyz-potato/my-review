@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Getter
 @AllArgsConstructor
@@ -17,7 +18,6 @@ public enum ErrorCode {
     MISMATCH_ACCESS_TOKEN(UNAUTHORIZED, "Access Token의 사용자 정보와 일치하지 않습니다."),
 
     //404 NOT FOUND
-
 
 
     //409 CONFLICT

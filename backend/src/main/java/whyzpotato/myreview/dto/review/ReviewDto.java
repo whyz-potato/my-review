@@ -3,10 +3,6 @@ package whyzpotato.myreview.dto.review;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import whyzpotato.myreview.domain.Review;
-import whyzpotato.myreview.domain.ReviewStatus;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor

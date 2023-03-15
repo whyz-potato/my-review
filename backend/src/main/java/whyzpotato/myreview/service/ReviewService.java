@@ -3,15 +3,10 @@ package whyzpotato.myreview.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import whyzpotato.myreview.domain.Book;
-import whyzpotato.myreview.domain.Item;
-import whyzpotato.myreview.domain.Review;
-import whyzpotato.myreview.domain.Users;
+import whyzpotato.myreview.domain.*;
 import whyzpotato.myreview.dto.item.DetailBookDto;
-import whyzpotato.myreview.dto.review.BookReviewDto;
-import whyzpotato.myreview.dto.review.ReviewDto;
-import whyzpotato.myreview.dto.review.ReviewListResponseDto;
-import whyzpotato.myreview.dto.review.SimpleReviewResponseDto;
+import whyzpotato.myreview.dto.item.DetailMovieDto;
+import whyzpotato.myreview.dto.review.*;
 import whyzpotato.myreview.repository.ItemRepository;
 import whyzpotato.myreview.repository.ReviewRepository;
 import whyzpotato.myreview.repository.UsersRepository;
@@ -90,6 +85,42 @@ public class ReviewService {
 
         if(findReview.getUsers().equals(users)){
             return new BookReviewDto(findReview);
+        }
+        throw new IllegalStateException();
+    }
+
+    public Long save(Long usersId, DetailMovieDto movieDto, ReviewDto reviewDto) {
+        Users users = usersRepository.findById(usersId).get();
+
+        Movie movie = itemRepository.save(movieDto.toEntity());
+
+        if(reviewDto.getStatus().equals("WATCHING")){
+            Review review = Review.builder()
+                    .users(users)
+                    .item(movie)
+                    .status(toReviewStatus(reviewDto.getStatus()))
+                    .build();
+            return reviewRepository.save(review).getId();
+        }
+
+        Review review = Review.builder()
+                .users(users)
+                .item(movie)
+                .status(toReviewStatus(reviewDto.getStatus()))
+                .date(toLocalDate(reviewDto.getViewDate()))
+                .content(reviewDto.getContent())
+                .rate(reviewDto.getRate())
+                .build();
+        return reviewRepository.save(review).getId();
+    }
+
+
+    public MovieReviewDto findMovieReview(Long userId, Long reviewId) {
+        Review findReview = reviewRepository.findById(reviewId);
+        Users users = usersRepository.findById(userId).get();
+
+        if(findReview.getUsers().equals(users)){
+            return new MovieReviewDto(findReview);
         }
         throw new IllegalStateException();
     }
