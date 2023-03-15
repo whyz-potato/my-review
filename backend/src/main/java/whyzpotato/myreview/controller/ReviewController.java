@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import whyzpotato.myreview.dto.review.BookReviewDto;
 import whyzpotato.myreview.dto.review.MovieReviewDto;
+import whyzpotato.myreview.dto.review.ReviewDto;
 import whyzpotato.myreview.dto.review.ReviewListResponseDto;
 import whyzpotato.myreview.service.ReviewService;
 
@@ -43,6 +44,13 @@ public class ReviewController {
         return new ResponseEntity<>(reviewService.findBookReview(userId, reviewId), HttpStatus.OK);
     }
 
+    @PutMapping("/v1/review/book/{userId}/{reviewId}")
+    public ResponseEntity<BookReviewDto> updateBookReview(@PathVariable("userId") Long userId,
+                                                          @PathVariable("reviewId") Long reviewId,
+                                                          @RequestBody @Valid ReviewDto requestDto) {
+        return new ResponseEntity<>(reviewService.updateBookReview(userId, reviewId, requestDto), HttpStatus.OK);
+    }
+
 
     @PostMapping("/v1/review/movie/new")
     public ResponseEntity newMovieReview(@RequestParam("id") Long userId,
@@ -63,6 +71,13 @@ public class ReviewController {
     public ResponseEntity<MovieReviewDto> myMovieReview(@PathVariable("userId") Long userId,
                                                         @PathVariable("reviewId") Long reviewId) {
         return new ResponseEntity<>(reviewService.findMovieReview(userId, reviewId), HttpStatus.OK);
+    }
+
+    @PutMapping("/v1/review/movie/{userId}/{reviewId}")
+    public ResponseEntity<MovieReviewDto> updateMovieReview(@PathVariable("userId") Long userId,
+                                                            @PathVariable("reviewId") Long reviewId,
+                                                            @RequestBody @Valid ReviewDto requestDto) {
+        return new ResponseEntity<>(reviewService.updateMovieReview(userId, reviewId, requestDto), HttpStatus.OK);
     }
 
     @Data
