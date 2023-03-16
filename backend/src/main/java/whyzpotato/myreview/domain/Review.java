@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -21,6 +23,7 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,11 +58,12 @@ public class Review {
         this.content = null;
     }
 
-    public void update(ReviewStatus status, LocalDate date, int rate, String content) {
-        this.status = status;
-        this.date = date;
-        this.rate = rate;
-        this.content = content;
+    public Review update(Review review) {
+        this.status = review.getStatus();
+        this.date = review.getDate();
+        this.rate = review.getRate();
+        this.content = review.getContent();
+        return this;
     }
 
 

@@ -2,9 +2,10 @@ package whyzpotato.myreview.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import whyzpotato.myreview.controller.ErrorCode;
-import whyzpotato.myreview.domain.*;
-import whyzpotato.myreview.exception.DuplicateResourceException;
+import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.domain.Item;
+import whyzpotato.myreview.domain.Movie;
+import whyzpotato.myreview.domain.Users;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -20,16 +21,24 @@ public class ItemRepository {
     private final EntityManager em;
 
     public Book save(Book book) {
-        if (book.getId() != null || findBookByIsbn(book.getIsbn()).isPresent())
-            em.merge(book);
+        if (book.getId() != null)
+            return em.merge(book);
+
+        Optional<Book> optional = findBookByIsbn(book.getIsbn());
+        if(optional.isPresent())
+            return optional.get();
         else
             em.persist(book);
         return book;
     }
 
-    public Movie save(Movie movie){
-        if (movie.getId()!=null || findMovieByTitleDirector(movie.getTitle(), movie.getDirector()).isPresent())
-            em.merge(movie);
+    public Movie save(Movie movie) {
+        if (movie.getId() != null)
+            return em.merge(movie);
+
+        Optional<Movie> optional = findMovieByTitleDirector(movie.getTitle(), movie.getDirector());
+        if(optional.isPresent())
+            return optional.get();
         else
             em.persist(movie);
         return movie;
@@ -37,6 +46,10 @@ public class ItemRepository {
 
     public Item findById(Long id) {
         return em.find(Item.class, id);
+    }
+
+    public void deleteAll(){
+        em.createQuery("delete from item i");
     }
 
     //--책 조회--//
@@ -68,7 +81,7 @@ public class ItemRepository {
                 .setParameter("user", users)
                 .getResultList()
                 .stream()
-                .map(i -> (Book)i)
+                .map(i -> (Book) i)
                 .collect(Collectors.toList());
     }
 
@@ -91,7 +104,6 @@ public class ItemRepository {
                 .getResultList();
         return books.subList(0, min(10, books.size()));
     }
-
 
 
     //-- Movie 조회 --//
@@ -125,7 +137,7 @@ public class ItemRepository {
                 .setParameter("user", users)
                 .getResultList()
                 .stream()
-                .map(i -> (Movie)i)
+                .map(i -> (Movie) i)
                 .collect(Collectors.toList());
     }
 

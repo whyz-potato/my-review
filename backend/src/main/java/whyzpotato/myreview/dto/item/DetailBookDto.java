@@ -1,11 +1,14 @@
 package whyzpotato.myreview.dto.item;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
+import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.domain.Item;
 
-@Getter
-@ToString
+import static whyzpotato.myreview.CommonUtils.toLocalDate;
+import static whyzpotato.myreview.CommonUtils.unProxy;
+
+@Data
 public class DetailBookDto {
     private Long itemId;
     private Long reviewId;
@@ -27,5 +30,29 @@ public class DetailBookDto {
         this.author = author;
         this.isbn = isbn;
     }
+
+    public DetailBookDto(Item book){
+        Book unProxyBook = (Book)unProxy(book);
+        this.itemId = unProxyBook.getId();
+        this.title = unProxyBook.getTitle();
+        this.image = unProxyBook.getImage();
+        this.description = unProxyBook.getDescription();
+        this.releaseDate = unProxyBook.getReleaseDate().toString();
+        this.author = unProxyBook.getAuthor();
+        this.isbn = unProxyBook.getIsbn();
+    }
+
+    public Book toEntity(){
+        return Book.builder()
+                .title(this.title)
+                .isbn(this.isbn)
+                .author(this.author)
+                .releaseDate(toLocalDate(this.releaseDate))
+                .image(this.image)
+                .description(this.description)
+                .build();
+    }
+
+
 }
 

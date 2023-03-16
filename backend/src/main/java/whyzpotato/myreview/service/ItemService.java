@@ -77,7 +77,7 @@ public class ItemService {
                 .build();
     }
 
-    public BookSearchResponseDto searchBook(Long usersId, NaverBookResponseDto naverBookResponseDto) {
+    public BookSearchResponseDto naverSearchBook(Long usersId, NaverBookResponseDto naverBookResponseDto) {
         Users users = usersRepository.findById(usersId).get();
         return BookSearchResponseDto.builder()
                 .start(naverBookResponseDto.getStart())

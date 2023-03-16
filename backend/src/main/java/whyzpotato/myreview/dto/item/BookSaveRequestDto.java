@@ -3,15 +3,20 @@ package whyzpotato.myreview.dto.item;
 import lombok.Getter;
 import whyzpotato.myreview.domain.Book;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import javax.validation.constraints.NotNull;
+
+import static whyzpotato.myreview.CommonUtils.toLocalDate;
 
 @Getter
 public class BookSaveRequestDto {
+    @NotNull
     private String title;
+    @NotNull
     private String releaseDate;
+    @NotNull
     private String image;
     private String description;
+    @NotNull
     private String author;
     private String isbn;
 
@@ -24,10 +29,6 @@ public class BookSaveRequestDto {
                 .author(this.author)
                 .isbn(this.isbn)
                 .build();
-    }
-
-    public LocalDate toLocalDate(String date) {
-        return LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
     }
 
 

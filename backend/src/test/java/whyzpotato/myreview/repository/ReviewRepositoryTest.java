@@ -242,7 +242,7 @@ public class ReviewRepositoryTest {
         reviewRepository.save(review3);
 
         //when
-        List<Review> reviews = reviewRepository.findAllBookReviewByUser(users1);
+        List<Review> reviews = reviewRepository.findAllBookReviewByUser(users1, 0, 100);
 
         //then
         assertThat(reviews.size()).isEqualTo(3);
@@ -417,4 +417,123 @@ public class ReviewRepositoryTest {
         assertThat(nReviews2022).isEqualTo(1);
         assertThat(nReviews2023).isEqualTo(1);
     }
+
+    @Test
+    void searchReview() {
+        //given
+        Review review1 = Review.builder()
+                .users(users1)
+                .item(book1)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+        Review review2 = Review.builder()
+                .users(users1)
+                .item(book3)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review2);
+        Review review3 = Review.builder()
+                .users(users1)
+                .item(book2)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review3);
+
+        //when
+        List<Review> reviews = reviewRepository.findBookReviewByUserTitle(users1, "1", 0, 100);
+
+        //then
+        assertThat(reviews.size()).isEqualTo(1);
+        assertThat(review1).isIn(reviews);
+    }
+
+    @Test
+    void searchReviewNoResult() {
+        //given
+        Review review1 = Review.builder()
+                .users(users1)
+                .item(book1)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+        Review review2 = Review.builder()
+                .users(users1)
+                .item(book3)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review2);
+        Review review3 = Review.builder()
+                .users(users1)
+                .item(book2)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review3);
+
+        //when
+        List<Review> reviews = reviewRepository.findBookReviewByUserTitle(users1, "m", 0, 100);
+
+        //then
+        assertThat(reviews).isEmpty();
+    }
+
+    @Test
+    void searchReviewEmptyString() {
+        //given
+        Review review1 = Review.builder()
+                .users(users1)
+                .item(book1)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review1);
+        Review review2 = Review.builder()
+                .users(users1)
+                .item(book3)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review2);
+        Review review3 = Review.builder()
+                .users(users1)
+                .item(book2)
+                .date(LocalDate.now())
+                .status(ReviewStatus.DONE)
+                .rate(5)
+                .content("다시 봐도 재밌을 것 같음")
+                .build();
+        reviewRepository.save(review3);
+
+        //when
+        List<Review> reviews = reviewRepository.findBookReviewByUserTitle(users1, null, 0, 100);
+
+        //then
+        assertThat(reviews.size()).isEqualTo(3);
+        assertThat(review1).isIn(reviews);
+        assertThat(review2).isIn(reviews);
+        assertThat(review3).isIn(reviews);
+    }
+
 }

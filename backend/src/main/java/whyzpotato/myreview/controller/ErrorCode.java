@@ -11,11 +11,13 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 @AllArgsConstructor
 public enum ErrorCode {
     //400
-
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 접근입니다."),
 
     //401 UNAUTHORIZED
     INVALID_ACCESS_TOKEN(UNAUTHORIZED, "Access Token이 유효하지 않습니다"),
     MISMATCH_ACCESS_TOKEN(UNAUTHORIZED, "Access Token의 사용자 정보와 일치하지 않습니다."),
+
+    //404 NOT FOUND
 
 
     //409 CONFLICT
