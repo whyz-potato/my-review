@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, Alert, ScrollView } from 
 import Checkbox from 'expo-checkbox';
 import { emailValidation, pwdValidation } from '../util/Validation';
 import URL from '../api/axios';
+import axios from 'axios';
 
 const Signup = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -20,8 +21,6 @@ const Signup = ({navigation}) => {
     const [isSelected, setSelect] = useState(false);
 
     const submit = () => {
-        console.log('signup '+ email+" "+name+" "+password);
-
         if (!checkedEmail) {
             Alert.alert('이메일 중복 체크 먼저 해주세요!');
         }else if(!validPwd || !validPwdCheck) {
@@ -29,24 +28,53 @@ const Signup = ({navigation}) => {
         }else if (email==="" || name==="" || password ==="" || passwordCheck==="") {
             Alert.alert('빈 칸을 입력해주세요.');
         }else {
-            URL.post(
-                "/v1/signup", {
-                    "email": email,
-                    "name": name,
-                    "password": password,
-                }
-            )
-            .then((res)=>{
-                console.log(res.data);
-                Alert.alert('회원가입 완료','반가워요!', [{
-                    text: 'ok',
-                    onPress: () => { navigation.navigate('login') }
-                }])
-            })
-            .catch((err)=>{
-                console.log('error');
-                console.log(err);
-            })
+            console.log('signup '+ email+" "+name+" "+password);
+             URL.post(
+                 "/v1/signup", {
+                     email: email,
+                     password: password,
+                     name: name,
+                 },
+                 {withCredentials: true}
+             )
+             .then((res)=>{
+                 console.log(res.data);
+                 Alert.alert('회원가입 완료','반가워요!', [{
+                     text: 'ok',
+                     onPress: () => { navigation.navigate('login') }
+                 }])
+             })
+             .catch((err)=>{
+                 console.log('signup fail');
+                 console.log(err);
+             })
+
+//            fetch("http://192.168.0.13:8080/v1/signup", {
+//                method: 'POST',
+//                headers: {
+//                    "Access-Control-Allow-Origin": "*",
+//                    "Access-Control-Allow-Method": "*",
+//                    "Access-Control-Allow-Headers": "Content-Type, Accept",
+//                    'Content-Type': 'application/json',
+//                    Accept: 'application/json',
+//                },
+//                body: JSON.stringify({
+//                    email: email,
+//                    password: password,
+//                    name: name,
+//                })
+//            })
+//            .then(res=>{
+//                console.log(res);
+//                Alert.alert('회원가입 완료','반가워요!', [{
+//                    text: 'ok',
+//                    onPress: () => { navigation.navigate('login') }
+//                }])
+//            })
+//            .catch(err=>{
+//                console.log('signup fail');
+//                console.error(err);
+//            })
         }
     }
 
@@ -56,22 +84,24 @@ const Signup = ({navigation}) => {
 
         if (!validEmail) Alert.alert('유효하지 않은 이메일 형식입니다.');
         else {
-            URL.post(
-                "/v1/signup", {
-                "email": email,
-                "name": "",
-                password: "",
-            }
-            )
-                .then((res) => {
-                    console.log(res.data);
-                    Alert.alert('사용 가능한 이메일입니다.');
-                    setCheckedEmail(true);
-                })
-                .catch((err) => {
-                    console.log(err.response);
-                    setCheckedEmail(false);
-                })
+            // URL.post(
+            //     "/signup", {
+            //     "email": email,
+            //     "name": "",
+            //     password: "",
+            // }
+            // )
+            //     .then((res) => {
+            //         console.log(res.data);
+            //         Alert.alert('사용 가능한 이메일입니다.');
+            //         setCheckedEmail(true);
+            //     })
+            //     .catch((err) => {
+            //         console.log(err.response);
+            //         setCheckedEmail(false);
+            //     })
+            setCheckedEmail(true);
+            Alert.alert('ok');
         }
     }
 
@@ -117,7 +147,7 @@ const Signup = ({navigation}) => {
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>회원가입</Text>
 
-            <View style={{ marginTop: 30}}>
+            <View style={{ marginTop: 30 , marginHorizontal: 35}}>
                 <View style={styles.row}>
                     <Text style={styles.inputArea}>이메일</Text>
                     <TextInput
@@ -191,14 +221,14 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
         justifyContent: 'center',
     },
     title: {
-        marginTop: 40,
+        marginTop: 30,
         color: '#77BDC3',
         fontSize: 35,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        alignSelf: 'center'
     },
     row: {
         flexDirection: 'row',
@@ -211,8 +241,8 @@ const styles = StyleSheet.create({
         color: '#E1D7C6',
     },
     input: {
-        width: 250,
-        height: 50,
+        width: 200,
+        height: 45,
         padding: 10,
         marginBottom: 10,
         marginLeft: 15,
@@ -221,8 +251,9 @@ const styles = StyleSheet.create({
         borderRadius: 7,
     },
     errorMsg: {
-        justifyContent: 'flex-end',
+        alignSelf: 'flex-end',
         color: 'red',
+        marginBottom: 7,
     },
     emailBtn:{
         alignItems: 'flex-end',
