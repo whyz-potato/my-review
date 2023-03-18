@@ -6,32 +6,40 @@ import Svg, {Path} from 'react-native-svg';
 import URL from '../api/axios';
 
 const Home = ({ navigation }) => {
-  const [goal, setGoal] = useState(3);
-  const [cnt, setCnt] = useState(2);
-  let achievement = Math.round(cnt / goal * 100);
-  let userId = 0;
+  const [goal, setGoal] = useState(10);
+  const [cnt, setCnt] = useState(0);
+  const [achievement, setAchievement] = useState('');
+  const [userId, setUserId] = useState(0);
 
-  async () => {
+  const getId = async () => {
     try {
-      userId = await AsyncStorage.getItem('userId');
-      if (userId != null) userId = JSON.parse(userId);
+      const val = await AsyncStorage.getItem('userId');
+      if (val !== null) setUserId(val);
     } catch (error) {
-      console.log(error);
+        console.log("get id fail");
+        console.log(error);
     }
   }
 
-  // useEffect(() => {
-  //   URL.get(`/goal/${userId}`)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setGoal(res.data.body.target);
-  //       setCnt(res.data.body.cnt);
-  //     })
-  //     .catch((err) => {
-  //       console.log('get goal fail');
-  //       console.log(err);
-  //     })
-  // }, [])
+  useEffect(() => {
+    getId();
+  }, []);
+
+  useEffect(() => {
+    if (userId !== 0) {
+      URL.get(`/v1/goal/${userId}`)
+        .then((res) => {
+          console.log(res.data);
+          setGoal(res.data.target);
+          setCnt(res.data.cnt);
+          setAchievement(res.data.attainmentRate);
+        })
+        .catch((err) => {
+          console.log('get goal fail');
+          console.error(err);
+        })
+    }
+  }, [userId])
 
   return (
     <View style={styles.container}>

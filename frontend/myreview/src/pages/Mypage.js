@@ -8,30 +8,35 @@ const Mypage = ({navigation, route}) => {
     let userId = route.params.user_id;
     const [modal, setModal] = useState(false);
     const [goal, setGoal] = useState(10);
+    const [goalChange, setGoalChange] = useState(10);
     const [year, setYear] = useState(2023);
     const [cnt, setCnt] = useState(0);
     const [history, setHistory] = useState([]);
 
-    // const changeGoal = (goalChange) => {
-    //     URL.put(
-    //         `/users/goal/${userId}`, {
-    //             "target": goal,
-    //         }
-    //         .then((res)=>{
-    //             console.log(res.data);
-    //             setGoal(goalChange);
-    //         })
-    //         .catch((err)=>{
-    //             console.log('change goal fail');
-    //         })
-    //     )
-    // }
+    const changeGoal = () => {
+        // error 400
+        URL.put(
+            `/v1/goal/${userId}`, {
+            "target": goal,
+        })
+            .then((res) => {
+                console.log(res.data);
+                setGoal(goal);
+                setModal(false);
+            })
+            .catch((err) => {
+                console.log('change goal fail');
+                console.error(err);
+                console.log(err.response);
+            })
+        
+    }
 
-    const handleGoalChange = (goalChange) => {
-        if (goalChange===NaN || goalChange===0) {
+    const handleGoalChange = (input) => {
+        if (input===NaN || input===0) {
             setGoal(10);
         }else{
-            changeGoal(goalChange);
+            setGoalChange(input);
         }
     }
 
@@ -49,23 +54,23 @@ const Mypage = ({navigation, route}) => {
     })
 
     // 올해 목표 가져오기
-    /*
     useEffect(()=>{
-        URL.get(`/goal/${userId}`)
+        URL.get(`/v1/goal/${userId}`)
         .then((res)=>{
             console.log(res.data);
-            setGoal(res.data.body.target);
-            setYear(res.data.body.year);
-            setCnt(res.data.body.cnt);
+            setGoal(res.data.target);
+            setYear(res.data.year);
+            setCnt(res.data.cnt);
         })
         .catch((err)=>{
-            console.log(err);
+            console.log("get goal fail");
+            console.error(err);
         })
     },[goal])
-
+ /*
     // 기록 가져오기
     useEffect(()=> {
-        URL.get(`/users/goal/history/${userId}`)
+        URL.get(`/v1/users/goal/history/${userId}`)
         .then((res)=>{
             console.log(res.data);
             setHistory(res.data.body.goals);
@@ -88,12 +93,12 @@ const Mypage = ({navigation, route}) => {
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
                                 <Pressable
-                                    style={styles.closeBtn}
+                                    style={styles.endBtn}
                                     onPress={() => setModal(!modal)}>
                                     <AntDesign name="close" size={20} color="#E1D7C6" />
                                 </Pressable>
                                 <View style={styles.modalInput}>
-                                    <Text style={styles.modalText}>목표수정</Text>
+                                    <Text style={styles.modalText}>새 목표</Text>
                                     <TextInput
                                         value={goal}
                                         style={styles.input}
@@ -101,6 +106,11 @@ const Mypage = ({navigation, route}) => {
                                         keyboardType='number-pad'
                                     />
                                 </View>
+                                <Pressable
+                                    style={styles.endBtn}
+                                    onPress={()=>changeGoal()}>
+                                    <Text style={styles.editBtn}>수정</Text>
+                                </Pressable>
                             </View>
                         </View>
                     </Modal>
@@ -158,10 +168,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
       },
     modalView: {
-        width: 200,
+        width: 250,
         backgroundColor: 'white',
         borderRadius: 20,
-        paddingHorizontal: 15,
+        paddingHorizontal: 20,
         paddingBottom: 20,
         paddingTop: 10,
         shadowColor: '#000',
@@ -175,25 +185,30 @@ const styles = StyleSheet.create({
       },
       modalInput: {
         flexDirection: 'row',
-        marginTop: 10,
+        marginVertical: 15,
         justifyContent: 'space-around',
         alignItems: 'center'
       },
       modalText: {
         fontSize: 18,
-        marginRight: 20,
+        marginRight: 30,
       },
       input: {
-        width: 90,
+        width: 120,
         height: 35,
         // alignItems: 'center',
         paddingHorizontal: 15,
         backgroundColor: '#E1D7C6',
         borderRadius: 20,
     },
-    closeBtn: {
+    endBtn: {
         alignSelf: 'flex-end'
-    }
+    },
+    editBtn: {
+        color: '#E1D7C6',
+        fontWeight: 'bold',
+        fontSize: 15,
+    },
 });
 
 export default Mypage;

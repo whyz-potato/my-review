@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, Alert, ScrollView } from 
 import Checkbox from 'expo-checkbox';
 import { emailValidation, pwdValidation } from '../util/Validation';
 import URL from '../api/axios';
+import axios from 'axios';
 
 const Signup = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -20,8 +21,6 @@ const Signup = ({navigation}) => {
     const [isSelected, setSelect] = useState(false);
 
     const submit = () => {
-        console.log('signup '+ email+" "+name+" "+password);
-
         if (!checkedEmail) {
             Alert.alert('이메일 중복 체크 먼저 해주세요!');
         }else if(!validPwd || !validPwdCheck) {
@@ -29,47 +28,53 @@ const Signup = ({navigation}) => {
         }else if (email==="" || name==="" || password ==="" || passwordCheck==="") {
             Alert.alert('빈 칸을 입력해주세요.');
         }else {
-            URL.post(
-                "/signup", {
-                    "email": email,
-                    "name": name,
-                    "password": password,
-                }
-            )
-            .then((res)=>{
-                console.log(res.data);
-                Alert.alert('회원가입 완료','반가워요!', [{
-                    text: 'ok',
-                    onPress: () => { navigation.navigate('login') }
-                }])
-            })
-            .catch((err)=>{
-                console.log('signup fail');
-                console.log(err);
-            })
-            // fetch("http://localhost:8080/v1/signup", {
-            //     method: 'POST',
-            //     headers: {
-            //         Accept: 'application/json',
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         email: email,
-            //         name: name,
-            //         password: password,
-            //     })
-            // })
-            // .then(res=>{
-            //     console.log(res.data);
-            //     Alert.alert('회원가입 완료','반가워요!', [{
-            //         text: 'ok',
-            //         onPress: () => { navigation.navigate('login') }
-            //     }])
-            // })
-            // .catch(err=>{
-            //     console.log('signup fail');
-            //     console.log(err);
-            // })
+            console.log('signup '+ email+" "+name+" "+password);
+             URL.post(
+                 "/v1/signup", {
+                     email: email,
+                     password: password,
+                     name: name,
+                 },
+                 {withCredentials: true}
+             )
+             .then((res)=>{
+                 console.log(res.data);
+                 Alert.alert('회원가입 완료','반가워요!', [{
+                     text: 'ok',
+                     onPress: () => { navigation.navigate('login') }
+                 }])
+             })
+             .catch((err)=>{
+                 console.log('signup fail');
+                 console.log(err);
+             })
+
+//            fetch("http://192.168.0.13:8080/v1/signup", {
+//                method: 'POST',
+//                headers: {
+//                    "Access-Control-Allow-Origin": "*",
+//                    "Access-Control-Allow-Method": "*",
+//                    "Access-Control-Allow-Headers": "Content-Type, Accept",
+//                    'Content-Type': 'application/json',
+//                    Accept: 'application/json',
+//                },
+//                body: JSON.stringify({
+//                    email: email,
+//                    password: password,
+//                    name: name,
+//                })
+//            })
+//            .then(res=>{
+//                console.log(res);
+//                Alert.alert('회원가입 완료','반가워요!', [{
+//                    text: 'ok',
+//                    onPress: () => { navigation.navigate('login') }
+//                }])
+//            })
+//            .catch(err=>{
+//                console.log('signup fail');
+//                console.error(err);
+//            })
         }
     }
 

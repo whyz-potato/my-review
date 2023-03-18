@@ -7,6 +7,7 @@ import URL from '../api/axios';
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [id, setId] = useState(0);
 
   const handleSubmit = () => {
     console.log('login ' + email + " " + password);
@@ -15,19 +16,19 @@ const Login = ({ navigation }) => {
       Alert.alert('빈 칸을 입력해주세요.');
     } else {
       URL.post(
-        "/login", {
+        "/v1/login", {
         "email": email,
         "password": password,
       }
       )
         .then(async (res) => {
           console.log(res.data);
-
+          setId(res.data.id);
           try {
             await AsyncStorage.multiSet([
-              ['accessToken', res.data.body.accessToken],
-              ['refreshToken', res.data.body.accessToken],
-              ['userId', JSON.stringify(res.data.body.userId)]]);
+              ['accessToken', res.data.accessToken],
+              ['refreshToken', res.data.refreshToken],
+              ['userId', JSON.stringify(res.data.id)]]);
           } catch (error) {
             console.log(error);
           }

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, FlatList, Image } from 'react-native';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
@@ -10,33 +10,61 @@ const ExploreCinema = ({navigation}) => {
     const [newContent, setNewContent] = useState([]);
     const [top, setTop] = useState([]);
     const [myContent, setMyContent] = useState([]);
-    let userId=0;
+    const [userId, setUserId] = useState(0);
+    const [myContentCnt, setMyContentCnt] = useState(0);
+    const [topCnt, setTopCnt] = useState(0);
+    const [newContentCnt, setNewContentCnt] = useState(0);
 
-    async() => {
+      const getId = async () => {
         try {
-            userId=await AsyncStorage.getItem('userId');
-            if (userId!=null) userId = JSON.parse(userId);
+          const val = await AsyncStorage.getItem('userId');
+          if (val !== null) setUserId(val);
+          console.log("user id: "+userId);
         } catch (error) {
-            console.log(error);
+            console.log("get id fail");
+          console.log(error);
         }
-    }    
+      }
+
+      useEffect(() => {
+        getId();
+      }, []);
 
     // 신작, 담은, 탑10
-    /*
     useEffect(()=>{
-        URL.get(`/content/movie/${userId}`)
-        .then((res)=>{
-            console.log(res.data);
-            setMyContent(res.data.body.myContent);
-            setNewContent(res.data.body.newContent);
-            setTop(res.data.body.top10);
-        })
-        .catch((err)=>{
-            console.log('get movie fail');
-            console.log(err);
-        })
-    },[])
-    */
+        if (userId !== 0) {
+            URL.get(`/v1/content/movie/${userId}`)
+                .then((res) => {
+                    console.log(res.data);
+                    setMyContent(res.data.myContent.items);
+                    setNewContent(res.data.newContent.items);
+                    setTop(res.data.top10.items);
+
+                    setMyContentCnt(res.data.myContent.count);
+                    setNewContentCnt(res.data.newContent.count);
+                    setTopCnt(res.data.top10.count);
+                })
+                .catch((err) => {
+                    console.log('get movie fail');
+                    console.error(err);
+                })
+        }
+    },[userId])
+
+    const itemView = ({item})=>{
+        return (
+            <View style={{marginBottom: 5, marginRight: 20, width: 80}}>
+                <Pressable onPress={()=>navigation.navigate('contentsDetail', {category: 'movie'})}>
+                    <Image
+                        style={styles.image}
+                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}   //item.image
+                    />
+                </Pressable>
+                {/* html 태그 제거 */}
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
+            </View>
+        );
+    };
 
     return(
         <ScrollView contentContainerStyle={styles.container}>
@@ -71,23 +99,54 @@ const ExploreCinema = ({navigation}) => {
             <View style={styles.contentsArr}>
                 <View>
                     <Text style={styles.contentsTitle}>담은 영화</Text>
-                    <ScrollView horizontal={true} style={styles.contentsBox}>
-                        <View>
-
-                        </View>
-                    </ScrollView>
+                    <View style={styles.contentsBox}>
+                        {myContentCnt !== 0 &&
+                            <FlatList
+                                data={myContent}
+                                key="#"
+                                keyExtractor={item=>item.itemId}
+                                renderItem={itemView}
+                                horizontal={true}
+                            />}
+                        {myContentCnt === 0 &&
+                            <View>
+                                <Text style={styles.emptyMsg}>담은 영화가 없습니다!</Text>
+                            </View>}
+                    </View>
                 </View>
                 <View>
                     <Text style={styles.contentsTitle}>이달의 신작</Text>
-                    <ScrollView horizontal={true} style={styles.contentsBox}>
-                        
-                    </ScrollView>
+                    <View style={styles.contentsBox}>
+                        {newContentCnt !== 0 &&
+                            <FlatList
+                                data={newContent}
+                                key="#"
+                                keyExtractor={item => item.itemId}
+                                renderItem={itemView}
+                                horizontal={true}
+                            />}
+                        {newContentCnt === 0 &&
+                            <View>
+                                <Text>이달의 신작이 없습니다!</Text>
+                            </View>}
+                    </View>
                 </View>
                 <View>
                     <Text style={styles.contentsTitle}>인기 영화</Text>
-                    <ScrollView horizontal={true} style={styles.contentsBox}>
-                        
-                    </ScrollView>
+                    <View style={styles.contentsBox}>
+                    {topCnt !== 0 &&
+                            <FlatList
+                                data={top}
+                                key="#"
+                                keyExtractor={item=>item.itemId}
+                                renderItem={itemView}
+                                horizontal={true}
+                            />}
+                        {topCnt === 0 &&
+                            <View>
+                                <Text>인기 영화가 없습니다!</Text>
+                            </View>}                        
+                    </View>
                 </View>
             </View>
             <StatusBar style="auto" />
@@ -99,7 +158,6 @@ const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
       backgroundColor: '#fff',
-      alignItems: 'center',
     },
     header: {
         flexDirection: 'row',
@@ -142,9 +200,9 @@ const styles = StyleSheet.create({
     },
     contentsArr: {
         alignSelf: 'flex-start',
-        marginHorizontal:30,
+        marginLeft:30,
         marginTop: 20,
-
+        width: '85%'
     },
     contentsTitle: {
         fontSize: 23,
@@ -152,8 +210,25 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     contentsBox: {
-        maxHeight:200
-    }
+        height: 150,
+        marginVertical: 15,
+    },
+    image: {
+        width: 90,
+        height: 120,
+        borderRadius: 7,
+    },
+    itemTitle: {
+        fontSize: 15, 
+        textAlign:'center',
+        marginTop: 8,
+    },
+    emptyMsg: {
+        fontSize: 20,
+        color: '#77BDC3',
+        alignSelf: 'center',
+        paddingVertical: 50
+    },
 });
 
 export default ExploreCinema;

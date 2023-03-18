@@ -6,8 +6,8 @@ import { logout, resign } from '../util/User';
 import URL from '../api/axios';
 
 const ProfileEdit = ({navigation, route}) => {
-    let userId = route.params.user_id;
-    const userEmail='myreview@naver.com';
+    const userId = route.params.user_id;
+    const [userEmail, setUserEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [pwdCheck, setPwdCheck] = useState('');
@@ -18,6 +18,21 @@ const ProfileEdit = ({navigation, route}) => {
     const [modal, setModal] = useState(false);
     const [email, setEmail] = useState('');
 
+    // email 가져오기
+    useEffect(()=>{
+        console.log('get email '+userId)
+        URL.get(`/v1/users/${userId}`)
+        .then((res)=>{
+            console.log(res.data);
+            setUserEmail(res.data.email);
+        })
+        .catch((err)=>{
+            console.log('get user info fail');
+            console.log(err);
+        })
+    },[])
+
+    // 비밀번호 유효성 검사
     useEffect(()=> {
         if(password==''){
             setPwdError("");
@@ -44,59 +59,60 @@ const ProfileEdit = ({navigation, route}) => {
         }
     }, [pwdCheck])
 
-    // const changeProfile = () =>{
-    //     if (name !== "" && password !== "") {
-    //         if (validPwd && validPwdCheck) {
-    //             URL.put(
-    //                 `/users/${userId}`, {
-    //                 "name": name,
-    //                 "password": password
-    //             })
-    //                 .then((res) => {
-    //                     console.log('edit success');
-    //                     console.log(res);
-    //                 })
-    //                 .catch((err) => {
-    //                     console.log('fail');
-    //                     console.log(err);
-    //                 })
-    //         }else {
-    //             Alert.alert('비밀번호를 확인해주세요.');
-    //         }
-    //     }else if (name ==="" || password!==""){
-    //         if (validPwd && validPwdCheck) {
-    //             URL.put(
-    //                 `/users/${userId}`, {
-    //                 "password": password,
-    //             })
-    //                 .then((res) => {
-    //                     console.log('pwd edit success');
-    //                     console.log(res);
-    //                 })
-    //                 .catch((err) => {
-    //                     console.log('fail');
-    //                     console.log(err);
-    //                 })
-    //         } else {
-    //             Alert.alert('비밀번호를 확인해주세요.');
-    //         }
-    //     }else if (name !=="" || password===""){
-    //         URL.put(
-    //             `/users/${userId}`, {
-    //             "name": name,
-    //         })
-    //             .then((res) => {
-    //                 console.log('name edit success');
-    //                 console.log(res);
-    //             })
-    //             .catch((err) => {
-    //                 console.log('fail');
-    //                 console.log(err);
-    //             })
-    //     }else {
-    //         Alert.alert('이름 또는 비밀번호를 입력해주세요.')
-    //     }
-    // }
+    const changeProfile = () =>{
+        console.log("name: "+name+", pwd: "+password);
+        if (name.length!==0 && password.length!==0) {
+            if (validPwd && validPwdCheck) {
+                URL.put(
+                    `/v1/users/${userId}`, {
+                    "name": name,
+                    "password": password
+                })
+                    .then((res) => {
+                        console.log('edit success');
+                        console.log(res);
+                    })
+                    .catch((err) => {
+                        console.log('edit fail');
+                        console.error(err);
+                    })
+            }else {
+                Alert.alert('비밀번호를 확인해주세요.');
+            }
+        }else if (name.length===0 && password.length!==0){
+            if (validPwd && validPwdCheck) {
+                URL.put(
+                    `/v1/users/${userId}`, {
+                    "password": password
+                })
+                    .then((res) => {
+                        console.log('pwd edit success');
+                        console.log(res.data);
+                    })
+                    .catch((err) => {
+                        console.log('pwd fail');
+                        console.error(err);
+                    })
+            } else {
+                Alert.alert('비밀번호를 확인해주세요.');
+            }
+        }else if (name.length!==0 && password.length===0){
+            URL.put(
+                `/v1/users/${userId}`, {
+                "name": name
+            })
+                .then((res) => {
+                    console.log('name edit success');
+                    console.log(res.data);
+                })
+                .catch((err) => {
+                    console.log('name fail');
+                    console.error(err);
+                })
+        }else {
+            Alert.alert('이름 또는 비밀번호를 입력해주세요.');
+        }
+    }
 
     React.useLayoutEffect(()=>{
         navigation.setOptions({
@@ -146,7 +162,7 @@ const ProfileEdit = ({navigation, route}) => {
 
                     <View style={{alignSelf:'flex-end'}}>
                         <Pressable
-                            onPress={() => {changeProfile}}>
+                            onPress={() => {changeProfile()}}>
                             <Text style={styles.editBtn}>변경</Text>
                         </Pressable>
                     </View>
