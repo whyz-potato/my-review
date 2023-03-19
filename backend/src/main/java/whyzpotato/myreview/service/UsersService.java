@@ -70,7 +70,10 @@ public class UsersService {
      */
     public Long updateUsersInfo(Long id, String name, String pw) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
-        users.updateUsersInfo(name, passwordEncoder.encode(pw));
+        if(pw!=null)
+            users.updateUsersInfo(name, passwordEncoder.encode(pw));
+        else
+            users.updateUsersInfo(name);
         usersRepository.save(users);
         return users.getId();
     }
