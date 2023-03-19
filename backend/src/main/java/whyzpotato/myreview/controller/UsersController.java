@@ -49,7 +49,7 @@ public class UsersController {
     }
 
     @PostMapping("/v1/users/resign/{id}")
-    public ResponseEntity resign(@PathVariable("id") Long id, @RequestBody @Valid String email) {
+    public ResponseEntity resign(@PathVariable("id") Long id) {
         usersService.deleteUsers(id);
         return new ResponseEntity(HttpStatus.OK);
     }
