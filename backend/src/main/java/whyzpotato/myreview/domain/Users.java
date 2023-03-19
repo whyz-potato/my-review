@@ -40,13 +40,17 @@ public class Users {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
+    @Column
+    private String socialId = null;
+
     @Builder
-    public Users(String email, String name, String pw, LocalDateTime createDate, List<String> roles) {
+    public Users(String email, String name, String pw, LocalDateTime createDate, List<String> roles, String socialId) {
         this.email = email;
         this.name = name;
         this.pw = pw;
         this.createDate = createDate;
         this.roles = roles;
+        this.socialId = socialId;
     }
 
     public void updateUsersInfo(String name, String pw) {
