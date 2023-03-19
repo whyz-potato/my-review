@@ -14,5 +14,12 @@ spring:
         default_batch_fetch_size : 100
 
 logging.level :
-  org.hibernate.SQL : debug #logger??
-  org.hibernate.type : trace #?? ???? ??
+  org.hibernate.SQL : debug
+  org.hibernate.type : trace
+
+server:
+  error:
+    include-exception : true
+    include-message : always
+    include-stacktrace : never
+    whitelabel.enabled : true
