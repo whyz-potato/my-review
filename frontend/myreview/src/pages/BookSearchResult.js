@@ -2,7 +2,9 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert, FlatList, Image } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
+import { replaceTxt } from '../util/replaceTxt';
 
 const BookSearchResult=({navigation, route})=>{
     let query = route.params.query;
@@ -50,20 +52,45 @@ const BookSearchResult=({navigation, route})=>{
         })
     })
 
+    const handleData= async (item) => {
+        try {
+            await AsyncStorage.setItem('bookInfo', JSON.stringify({
+                title: item.title,
+                img: item.image,
+                releaseDate: item.releaseDate,
+                description: item.description,
+                author: item.author, isbn: item.isbn
+            }))
+            navigation.navigate('newReview', { category: 'book' });
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+
     // 검색결과 flatlist
     const itemView = ({item})=>{
         return (
             <View style={styles.content}>
                 <Pressable 
                     style={{ marginRight: 25 }}
-                    onPress={() => navigation.navigate('contentsDetail', { category: 'book' })}>
+                    onPress={() => navigation.navigate('contentsDetail', 
+                        {
+                            category: 'book',
+                            title: item.title,
+                            img: item.image,
+                            releaseDate: item.releaseDate,
+                            description: item.description,
+                            author: item.author,
+                            isbn: item.isbn
+                        })}>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.image }}
+                        source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}}
                     />
                 </Pressable>
                 <View style={{width: '70%'}}>
-                    <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 20, fontWeight: 'bold'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 20, fontWeight: 'bold'}}>{replaceTxt(item.title)}</Text>
                     <Text style={{fontSize: 17, marginBottom: 8}}>{item.author}</Text>
                     <View style={{flexDirection:'row', marginLeft: -5}}>
                         <Pressable 
@@ -99,7 +126,7 @@ const BookSearchResult=({navigation, route})=>{
                 </Pressable>
             </View>
             {itemCnt > 0 &&
-                <View style={{ marginTop: 20, marginLeft: 25, marginBottom: 100 }}>
+                <View style={{ marginTop: 20, marginLeft: 25, marginBottom: 120 }}>
                     <FlatList
                         data={item}
                         key='#'
@@ -126,7 +153,7 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 15,
+        marginTop: 20,
     },
     searchInput: {
         backgroundColor:'#E1D7C6',

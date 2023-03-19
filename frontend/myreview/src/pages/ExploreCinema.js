@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, FlatList, Ima
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
+import { replaceTxt } from '../util/replaceTxt';
 
 const ExploreCinema = ({navigation}) => {
     const [search, setSearch] = useState('');     
@@ -60,8 +61,7 @@ const ExploreCinema = ({navigation}) => {
                         source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}   //item.image
                     />
                 </Pressable>
-                {/* html 태그 제거 */}
-                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{replaceTxt(item.title)}</Text>
             </View>
         );
     };
@@ -127,7 +127,7 @@ const ExploreCinema = ({navigation}) => {
                             />}
                         {newContentCnt === 0 &&
                             <View>
-                                <Text>이달의 신작이 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>이달의 신작이 없습니다!</Text>
                             </View>}
                     </View>
                 </View>
@@ -144,7 +144,7 @@ const ExploreCinema = ({navigation}) => {
                             />}
                         {topCnt === 0 &&
                             <View>
-                                <Text>인기 영화가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>인기 영화가 없습니다!</Text>
                             </View>}                        
                     </View>
                 </View>

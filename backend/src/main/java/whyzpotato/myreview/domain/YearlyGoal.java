@@ -3,6 +3,8 @@ package whyzpotato.myreview.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -19,6 +21,7 @@ public class YearlyGoal {
 
     @ManyToOne(targetEntity = Users.class)
     @JoinColumn(name = "users_id", updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Users users;
 
     @Column

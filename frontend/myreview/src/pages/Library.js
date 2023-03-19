@@ -3,41 +3,40 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList } from 'react-native';
 import { Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { replaceTxt } from '../util/replaceTxt';
+import URL from '../api/axios';
 
 const Library = ({navigation}) => {
     const [search, setSearch] = useState(''); 
-    const Data = [
-        { id: '1', title: '므레모사', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '2', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '3', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '4', title: 'D', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '5', title: 'E', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '6', title: 'F', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '7', title: 'G', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '8', title: 'H', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '9', title: 'I', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '10', title: '므레모사', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '11', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '12', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '13', title: 'D', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '14', title: 'E', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '15', title: 'F', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '16', title: 'G', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '17', title: 'H', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '18', title: 'I', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '19', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '20', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
-      ];
-      let userId=0;
+    const [userId, setUserId] = useState(0);
+    const [review, setReview] = useState(0);
 
-    async() => {
+    const getId = async () => {
         try {
-            userId=await AsyncStorage.getItem('userId');
-            if (userId!=null) userId = JSON.parse(userId);
+            const val = await AsyncStorage.getItem('userId');
+            if (val !== null) setUserId(val);
         } catch (error) {
+            console.log("get id fail");
             console.log(error);
         }
-    } 
+    }
+
+    useEffect(() => {
+        getId();
+    }, []);
+
+    // get book
+    useEffect(()=>{
+        URL.get(`/v1/review/book/search?id=${userId}`)
+        .then((res)=>{
+            console.log(res.data);
+            setReview(res.data.reviews.item);
+        })
+        .catch((err)=>{
+            console.log('get book fail');
+            console.error(err);
+        })
+    },[])
     
     const itemView = ({item})=>{
         return (
@@ -45,10 +44,10 @@ const Library = ({navigation}) => {
                 <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'book'})}>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.img }}
+                        source={{ uri: item.image }}
                     />
                 </Pressable>                
-                <Text style={{fontSize: 15, textAlign:'center'}}>{item.title}</Text>
+                <Text style={{fontSize: 15, textAlign:'center'}}>{replaceTxt(item.title)}</Text>
             </View>
         );
     };
@@ -88,9 +87,9 @@ const Library = ({navigation}) => {
                     <Text style={styles.contentsTitle}>작성한 리뷰</Text>
                     <View style={styles.contentBox}>
                         <FlatList
-                            data={Data}
+                            data={review}
                             key={'#'}
-                            keyExtractor={item => item.id}
+                            keyExtractor={item => item.reviewId}
                             renderItem={itemView}
                             numColumns={4}
                         />
@@ -99,7 +98,7 @@ const Library = ({navigation}) => {
             </View>
             <Pressable
             style={styles.floatingBtn}
-            onPress={()=>navigation.navigate('bookSearchResult')}>
+            onPress={()=>{}}>
                 <AntDesign name="pluscircle" size={60} color="#E1D7C6"/>
             </Pressable>
             <StatusBar style="auto" />

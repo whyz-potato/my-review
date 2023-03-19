@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, FlatList, Ima
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
+import { replaceTxt } from '../util/replaceTxt';
 
 const ExploreLib = ({navigation}) => {
     const [search, setSearch] = useState('');    
@@ -58,9 +59,8 @@ const ExploreLib = ({navigation}) => {
                         style={styles.image}
                         source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}   //item.image
                     />
-                </Pressable> 
-                {/* html 태그 제거 */}               
-                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
+                </Pressable>             
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{replaceTxt(item.title)}</Text>
             </View>
         );
     };
@@ -126,7 +126,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {newContentCnt === 0 &&
                             <View>
-                                <Text>이달의 신작이 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>이달의 신작이 없습니다!</Text>
                             </View>}
                     </View>
                 </View>
@@ -143,7 +143,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {topCnt === 0 &&
                             <View>
-                                <Text>인기 도서가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>인기 도서가 없습니다!</Text>
                             </View>}                        
                     </View>
                 </View>

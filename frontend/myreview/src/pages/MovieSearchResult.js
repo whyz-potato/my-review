@@ -53,10 +53,19 @@ const MovieSearchResult=({navigation, route})=>{
             <View style={styles.content}>
                 <Pressable 
                     style={{ marginRight: 25 }}
-                    onPress={() => navigation.navigate('contentsDetail', { category: 'movie' })}>
+                    onPress={() => navigation.navigate('contentsDetail', 
+                        {
+                            category: 'movie',
+                            title: item.title,
+                            img: item.image,
+                            releaseDate: item.releaseDate,
+                            // description: item.description,
+                            director: item.director,
+                            actors: item.actors
+                        })}>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.image }} />
+                        source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}} />
                 </Pressable>
                 <View style={{width: '70%'}}>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 20, fontWeight: 'bold'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
@@ -98,7 +107,7 @@ const MovieSearchResult=({navigation, route})=>{
                 </Pressable>
             </View>
             {itemCnt > 0 &&
-                <View style={{ marginTop: 20, marginLeft: 45, marginBottom: 100 }}>
+                <View style={{ marginTop: 20, marginLeft: 25, marginBottom: 120 }}>
                     <FlatList
                         data={item}
                         key='#'

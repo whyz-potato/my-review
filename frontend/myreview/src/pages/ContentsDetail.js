@@ -1,9 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Pressable, Alert, Image } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Alert, Image, ScrollView } from 'react-native';
+import { replaceTxt } from '../util/replaceTxt';
 
 const ContentsDetail = ({route, navigation}) => {
-    const {category} = route.params;    // book? movie?
+    const {category} = route.params.category;    // book? movie?
+    const title = route.params.title;
+    const img = route.params.img;
+    const releaseDate = route.params.releaseDate;
+    const description = category == 'book' ? route.params.description : "";
+    const author = category == 'book' ? route.params.author : route.params.director;
+    const extraInfo = category == 'book' ? route.params.isbn : route.params.actors;
+
+    console.log(route.params);
 
     React.useLayoutEffect(()=>{
         navigation.setOptions({
@@ -14,12 +23,12 @@ const ContentsDetail = ({route, navigation}) => {
                 <View style={{flexDirection: 'row'}}>
                     <Pressable
                         onPress={() => { Alert.alert('담겼습니다') }}>
-                        <Text style={{ color: '#E1D7C6', fontWeight: 'bold' }}>담기</Text>
+                        <Text style={styles.headerBtn}>담기</Text>
                     </Pressable>
                     <Pressable
                         style={{ marginLeft: 13 }}
-                        onPress={() => { navigation.navigate('newReview', {category: 'book'}) }}>
-                        <Text style={{ color: '#E1D7C6', fontWeight: 'bold' }}>저장</Text>
+                        onPress={() => { navigation.navigate('newReview', {category: category}) }}>
+                        <Text style={styles.headerBtn}>저장</Text>
                     </Pressable>
                 </View>
             ),
@@ -28,24 +37,23 @@ const ContentsDetail = ({route, navigation}) => {
 
     return(
         <View style={styles.container}>
-            <View style={{marginHorizontal: 40, marginTop: 30}}>
+            <Text style={styles.title}>{replaceTxt(title)}</Text>
+            <View style={{marginHorizontal: 40, marginTop: 20}}>
                 <View style={{flexDirection: 'row', marginBottom: 40}}>
                     <Image
                         style={styles.image}
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} />
-                    <View style={{justifyContent:'flex-end'}}>
-                        <Text style={styles.size}>제목</Text>
-                        <Text style={styles.size}>작가</Text>
-                        <Text style={styles.size}>발매일</Text>
-                        <Text style={styles.size}>ISBN</Text>
+                        source={{ uri: img }} />
+                    <View style={{justifyContent:'flex-end', width: '55%'}}>
+                        <Text style={styles.size}>{author}</Text>
+                        <Text style={styles.size}>{releaseDate}</Text>
+                        <Text style={styles.size}>{extraInfo}</Text>
                     </View>
                 </View>
-                <View>
-                    <Text style={{fontSize: 20, fontWeight: 'bold'}}>줄거리</Text>
-                    <Text style={[styles.size, styles.summary]}>
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
-                    It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-                    </Text>
+                <View style={{maxHeight: 420}}>
+                    <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom:5}}>줄거리</Text>
+                    <ScrollView contentContainerStyle={{flexGrow:1}}>
+                        <Text style={[styles.size, styles.summary]}>{replaceTxt(description)}</Text>
+                    </ScrollView>
                 </View>
             </View>
             <StatusBar style='auto'/>
@@ -80,7 +88,14 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         paddingVertical: 15,
         paddingHorizontal: 20,
-        marginTop: 10
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop: 25,
+        alignSelf: 'center',
+        color: '#4E4637',
+        marginHorizontal: 20,
     }
 });
 

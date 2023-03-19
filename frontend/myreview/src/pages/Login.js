@@ -32,6 +32,8 @@ const Login = ({ navigation }) => {
           } catch (error) {
             console.log(error);
           }
+          setEmail("");
+          setPassword("");
           navigation.navigate('auth');
         })
         .catch((err) => {

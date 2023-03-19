@@ -14,14 +14,14 @@ const Mypage = ({navigation, route}) => {
     const [history, setHistory] = useState([]);
 
     const changeGoal = () => {
-        // error 400
+        console.log('goal to: '+goalChange);
         URL.put(
             `/v1/goal/${userId}`, {
-            "target": goal,
+            "target": goalChange,
         })
             .then((res) => {
                 console.log(res.data);
-                setGoal(goal);
+                setGoal(goalChange);
                 setModal(false);
             })
             .catch((err) => {
@@ -34,7 +34,7 @@ const Mypage = ({navigation, route}) => {
 
     const handleGoalChange = (input) => {
         if (input===NaN || input===0) {
-            setGoal(10);
+            setGoalChange(10);
         }else{
             setGoalChange(input);
         }
