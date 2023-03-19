@@ -54,4 +54,8 @@ public class Users {
         this.pw = pw;
     }
 
+    public void updateUsersInfo(String name) {
+        this.name = name;
+    }
+
 }

@@ -20,7 +20,7 @@ public class ReviewRepository {
             return em.merge(review);
 
         Optional<Review> optional = findByUsersItem(review.getUsers(), review.getItem());
-        if(optional.isPresent())
+        if (optional.isPresent())
             return em.merge(optional.get().update(review));
         else
             em.persist(review);
@@ -41,7 +41,7 @@ public class ReviewRepository {
                 .getResultList();
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         em.createQuery("delete from review r");
     }
 
@@ -77,7 +77,7 @@ public class ReviewRepository {
 
     }
 
-    public List<Object[]> countByUserYears(Users users) {
+    public List<Object[]> countByUsers(Users users) {
         return em.createQuery(
                         "select year(r.date), count(r)" +
                                 " from Review r" +
@@ -103,7 +103,7 @@ public class ReviewRepository {
 
     //리뷰 목록을 보여줄 때 item 정보(제목, 사진 등)도 함께 보여주기 때문에 item도 fetch join
     public List<Review> findBookReviewByUserTitle(Users users, String title, int start, int display) {
-        if(title == null)
+        if (title == null)
             return findAllBookReviewByUser(users, start, display);
         return em.createQuery(
                         "select r" +

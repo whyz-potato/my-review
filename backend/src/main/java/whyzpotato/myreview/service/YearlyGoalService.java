@@ -1,8 +1,6 @@
 package whyzpotato.myreview.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import whyzpotato.myreview.domain.Users;
 import whyzpotato.myreview.domain.YearlyGoal;
@@ -65,7 +63,7 @@ public class YearlyGoalService {
      */
     public List<GoalResponseDto> historyYearlyGoal(Long id) {
         Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
-        List<Object[]> resultList = reviewRepository.countByUserYears(users);
+        List<Object[]> resultList = reviewRepository.countByUsers(users);
         /*
             >>>year, cnt: 2023, 2
             >>>year, cnt: 2022, 3

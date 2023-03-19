@@ -2,6 +2,7 @@ package whyzpotato.myreview.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import whyzpotato.myreview.dto.GoalResponseDto;
 import whyzpotato.myreview.service.YearlyGoalService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +26,8 @@ public class YearlyGoalController {
 
     @PutMapping("/v1/goal/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<GoalResponseDto> postGoal(@PathVariable("id") Long id, @RequestBody @Valid int target) {
-        return new ResponseEntity<>(yearlyGoalService.updateYearlyGoal(id, target), HttpStatus.OK);
+    public ResponseEntity<GoalResponseDto> postGoal(@PathVariable("id") Long id, @RequestBody @Valid UpdateTargetDto dto) {
+        return new ResponseEntity<>(yearlyGoalService.updateYearlyGoal(id, dto.getTarget()), HttpStatus.OK);
     }
 
     @GetMapping("/v1/goal/history/{id}")
@@ -39,4 +41,12 @@ public class YearlyGoalController {
         private Long id;
         private T goals;
     }
+
+    @Data
+    @NoArgsConstructor
+    static class UpdateTargetDto {
+        @NotNull
+        private int target;
+    }
+
 }
