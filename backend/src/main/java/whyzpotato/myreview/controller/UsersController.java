@@ -16,6 +16,7 @@ import whyzpotato.myreview.service.UsersService;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +28,12 @@ public class UsersController {
     public ResponseEntity joinUsers(@RequestBody @Valid JoinRequestDto request) {
         usersService.join(request.getEmail(), request.getName(), request.getPassword());
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @ResponseBody
+    @PostMapping("/v1/emChk")
+    public Long checkEmail(@RequestBody @Valid Map<String, String> email) {
+        return usersService.checkEmail(email.get("email"));
     }
 
     @PostMapping("/v1/login")
