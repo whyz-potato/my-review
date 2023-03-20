@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, Pressable, Alert, FlatList, Image } 
 import { Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
-import { replaceTxt } from '../util/replaceTxt';
+import { Like } from '../util/Like';
 
 const BookSearchResult=({navigation, route})=>{
     let query = route.params.query;
@@ -16,17 +16,19 @@ const BookSearchResult=({navigation, route})=>{
     // 검색 결과 조회
     const handleSearch = () => {
         console.log("query: "+search);
-        URL.get(`/v1/content/book/search?id=${userId}&q=${search}&start=1&display=15`)
-        .then((res)=>{
-            console.log(res.data);
-            setItem(res.data.items);
-            setItemCnt(res.data.total);
-        })
-        .catch((err)=>{
-            console.log('search fail');
-            console.error(err);
-            console.log(err.response);
-        })
+        if (search !== "") {
+            URL.get(`/v1/content/book/search?id=${userId}&q=${search}&start=1&display=15`)
+                .then((res) => {
+                    console.log(res.data);
+                    setItem(res.data.items);
+                    setItemCnt(res.data.total);
+                })
+                .catch((err) => {
+                    console.log('search fail');
+                    console.error(err);
+                    console.log(err.response);
+                })
+        }
     }
 
     useEffect(()=>{
@@ -52,21 +54,22 @@ const BookSearchResult=({navigation, route})=>{
         })
     })
 
-    const handleData= async (item) => {
-        try {
-            await AsyncStorage.setItem('bookInfo', JSON.stringify({
-                title: item.title,
-                img: item.image,
-                releaseDate: item.releaseDate,
-                description: item.description,
-                author: item.author, isbn: item.isbn
-            }))
-            navigation.navigate('newReview', { category: 'book' });
-        } catch (error) {
-            console.error(error);
-        }
+    // asyncstorage에 데이터 저장
+    // const handleData= async (item) => {
+    //     try {
+    //         await AsyncStorage.setItem('bookInfo', JSON.stringify({
+    //             title: item.title,
+    //             img: item.image,
+    //             releaseDate: item.releaseDate,
+    //             description: item.description,
+    //             author: item.author, isbn: item.isbn
+    //         }))
+    //         navigation.navigate('newReview', { category: 'book' });
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
 
-    }
+    // }
 
     // 검색결과 flatlist
     const itemView = ({item})=>{
@@ -82,7 +85,9 @@ const BookSearchResult=({navigation, route})=>{
                             releaseDate: item.releaseDate,
                             description: item.description,
                             author: item.author,
-                            isbn: item.isbn
+                            isbn: item.isbn,
+                            userId: userId,
+                            itemId: item.itemId
                         })}>
                     <Image
                         style={styles.image}
@@ -90,12 +95,14 @@ const BookSearchResult=({navigation, route})=>{
                     />
                 </Pressable>
                 <View style={{width: '70%'}}>
-                    <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 20, fontWeight: 'bold'}}>{replaceTxt(item.title)}</Text>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 20, fontWeight: 'bold'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
                     <Text style={{fontSize: 17, marginBottom: 8}}>{item.author}</Text>
                     <View style={{flexDirection:'row', marginLeft: -5}}>
                         <Pressable 
                             style={[item.reviewId == null ? styles.ableBack : styles.disableBack, styles.contentBtn, { marginRight: 7 }]}
-                            onPress={() => Alert.alert('담겼습니다!')}>
+                            onPress={() => {
+                                Like('book', userId, item.itemId, item.title, item.image, item.releaseDate, item.description, item.author, item.isbn);
+                            }}>
                             <Text style={{color: '#fff'}}>담기</Text>
                         </Pressable>
                         <Pressable
@@ -136,7 +143,7 @@ const BookSearchResult=({navigation, route})=>{
                 </View>}
             {itemCnt == 0 &&
                 <View style={{ alignSelf: 'center', justifyContent: 'center', height: '90%' }}>
-                    <Text style={styles.emptyMsg}>검색 결과가 없습니다..😢</Text>
+                    <Text style={styles.emptyMsg}>검색 결과가 없습니다😢</Text>
                 </View>}
             <StatusBar style='auto'/>
         </View>

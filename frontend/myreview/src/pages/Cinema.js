@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList } from 'react-native';
 import { Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import URL from '../api/axios';
-import { replaceTxt } from '../util/replaceTxt';
 
 const Cinema = ({navigation}) => {
     const [search, setSearch] = useState(''); 
     const [userId, setUserId] = useState(0);
-    const [review, setReview] = useState(0);
+    const [review, setReview] = useState([]);
+    const [reviewCnt, setReviewCnt] = useState(0);
 
     const getId = async () => {
         try {
@@ -22,20 +22,23 @@ const Cinema = ({navigation}) => {
 
     useEffect(() => {
         getId();
-    }, []); 
+    }, []);
 
     // get movie
     useEffect(()=>{
-        URL.get(`/v1/review/movie/search?id=${userId}`)
-        .then((res)=>{
-            console.log(res.data);
-            setReview(res.data.reviews.item);
-        })
-        .catch((err)=>{
-            console.log('get movie fail');
-            console.error(err);
-        })
-    },[])
+        if (userId !== 0) {
+            URL.get(`/v1/review/movie/search?id=${userId}`)
+                .then((res) => {
+                    console.log(res.data);
+                    setReview(res.data.reviews);
+                    setReviewCnt(res.data.total);
+                })
+                .catch((err) => {
+                    console.log('get movie fail');
+                    console.error(err);
+                })
+        }
+    },[userId])
     
     const itemView = ({item})=>{
         return (
@@ -46,7 +49,7 @@ const Cinema = ({navigation}) => {
                         source={{ uri: item.image }}
                     />
                 </Pressable>                
-                <Text style={{fontSize: 15, textAlign:'center'}}>{replaceTxt(item.title)}</Text>
+                <Text style={{fontSize: 15, textAlign:'center'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
             </View>
         );
     };
@@ -81,23 +84,28 @@ const Cinema = ({navigation}) => {
                     <Entypo name="magnifying-glass" size={38} color="#E1D7C6" />
                 </Pressable>
             </View>
-            <View style={styles.contentsArr}>
-                <View>
-                    <Text style={styles.contentsTitle}>작성한 리뷰</Text>
-                    <View style={styles.contentBox}>
-                        <FlatList
-                            data={review}
-                            key={'#'}
-                            keyExtractor={item => item.reviewId}
-                            renderItem={itemView}
-                            numColumns={4}
-                        />
+            {reviewCnt == 0 &&
+                <View style={{ alignSelf: 'center', justifyContent: 'center', height: '75%' }}>
+                    <Text style={styles.emptyMsg}>작성한 리뷰가 없습니다.{'\n'}새로운 리뷰를 작성해주세요😃</Text>
+                </View>}
+            {reviewCnt > 0 &&
+                <View style={styles.contentsArr}>
+                    <View>
+                        <Text style={styles.contentsTitle}>작성한 리뷰</Text>
+                        <View style={styles.contentBox}>
+                            <FlatList
+                                data={review}
+                                key={'#'}
+                                keyExtractor={item => item.reviewId}
+                                renderItem={itemView}
+                                numColumns={4}
+                            />
+                        </View>
                     </View>
-                </View>
-            </View>
+                </View>}
             <Pressable
             style={styles.floatingBtn}
-            onPress={()=>navigation.navigate('movieSearchResult')}>
+            onPress={()=>navigation.navigate('movieSearchResult', {query: "", user_id: userId})}>
                 <AntDesign name="pluscircle" size={60} color="#E1D7C6"/>
             </Pressable>
             <StatusBar style="auto" />
@@ -174,6 +182,11 @@ const styles = StyleSheet.create({
         width: 80,
         height: 110,
         borderRadius: 7,
+    },
+    emptyMsg: {
+        fontSize: 20,
+        color: '#E1D7C6',
+        textAlign: 'center',
     },
 });
 

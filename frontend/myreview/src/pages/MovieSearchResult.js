@@ -13,18 +13,20 @@ const MovieSearchResult=({navigation, route})=>{
   
     // 검색 결과 조회
     const handleSearch = () => {
-        console.log("query: "+search);
-        URL.get(`/v1/content/movie/search?id=${userId}&q=${search}&start=1&display=15`)
-        .then((res)=>{
-            console.log(res.data);
-            setItem(res.data.items);
-            setItemCnt(res.data.total);
-        })
-        .catch((err)=>{
-            console.log('search fail');
-            console.error(err);
-            console.log(err.response);
-        })
+        if (search !== "") {
+            console.log("query: " + search);
+            URL.get(`/v1/content/movie/search?id=${userId}&q=${search}&start=1&display=15`)
+                .then((res) => {
+                    console.log(res.data);
+                    setItem(res.data.items);
+                    setItemCnt(res.data.total);
+                })
+                .catch((err) => {
+                    console.log('search fail');
+                    console.error(err);
+                    console.log(err.response);
+                })
+        }
     }
 
     useEffect(()=>{
@@ -55,11 +57,12 @@ const MovieSearchResult=({navigation, route})=>{
                     style={{ marginRight: 25 }}
                     onPress={() => navigation.navigate('contentsDetail', 
                         {
+                            userId: userId,
+                            itemId: item.itemId,
                             category: 'movie',
                             title: item.title,
                             img: item.image,
                             releaseDate: item.releaseDate,
-                            // description: item.description,
                             director: item.director,
                             actors: item.actors
                         })}>
@@ -74,7 +77,9 @@ const MovieSearchResult=({navigation, route})=>{
                         <Pressable 
                             disabled={item.reviewId == null ? false : true}
                             style={[styles.contentBtn, item.reviewId==null?styles.ableBack:styles.disableBack, {marginRight: 7}]}
-                            onPress={() => Alert.alert('담겼습니다!')}>
+                            onPress={() => {
+                                Like('movie', userId, item.itemId, item.title, item.image, item.releaseDate, "", item.director, item.actors);
+                            }}>
                             <Text style={{color:'#fff'}}>담기</Text>
                         </Pressable>
                         <Pressable
@@ -117,7 +122,7 @@ const MovieSearchResult=({navigation, route})=>{
                 </View>}
             {itemCnt == 0 &&
                 <View style={{alignSelf:'center', justifyContent:'center', height: '90%'}}>
-                    <Text style={styles.emptyMsg}>검색 결과가 없습니다..😢</Text>
+                    <Text style={styles.emptyMsg}>검색 결과가 없습니다😢</Text>
                 </View>}
             <StatusBar style='auto'/>
         </View>

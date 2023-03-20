@@ -1,16 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Pressable, Alert, Image, ScrollView } from 'react-native';
-import { replaceTxt } from '../util/replaceTxt';
+import { Like } from '../util/Like';
 
 const ContentsDetail = ({route, navigation}) => {
-    const {category} = route.params.category;    // book? movie?
-    const title = route.params.title;
-    const img = route.params.img;
+    const category = route.params.category;    // book? movie?
+    const title = route.params.title.replace(/(<([^>]+)>)/ig,"");
+    const img = route.params.img==""?'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png':route.params.img;
     const releaseDate = route.params.releaseDate;
-    const description = category == 'book' ? route.params.description : "";
-    const author = category == 'book' ? route.params.author : route.params.director;
-    const extraInfo = category == 'book' ? route.params.isbn : route.params.actors;
+    const description = (category === "book") ? route.params.description.replace(/(<([^>]+)>)/ig,"") : "";
+    const author = (category === "book") ? route.params.author : route.params.director;
+    const extraInfo = (category === "book") ? route.params.isbn : route.params.actors;
+    const userId = route.params.userId;
+    const itemId = route.params.itemId;
 
     console.log(route.params);
 
@@ -22,7 +24,7 @@ const ContentsDetail = ({route, navigation}) => {
             headerRight:()=>(
                 <View style={{flexDirection: 'row'}}>
                     <Pressable
-                        onPress={() => { Alert.alert('담겼습니다') }}>
+                        onPress={() => { Like(category, userId, itemId, title, img, releaseDate, description, author, extraInfo) }}>
                         <Text style={styles.headerBtn}>담기</Text>
                     </Pressable>
                     <Pressable
@@ -37,8 +39,8 @@ const ContentsDetail = ({route, navigation}) => {
 
     return(
         <View style={styles.container}>
-            <Text style={styles.title}>{replaceTxt(title)}</Text>
-            <View style={{marginHorizontal: 40, marginTop: 20}}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={{marginHorizontal: 35, marginTop: 20}}>
                 <View style={{flexDirection: 'row', marginBottom: 40}}>
                     <Image
                         style={styles.image}
@@ -49,10 +51,10 @@ const ContentsDetail = ({route, navigation}) => {
                         <Text style={styles.size}>{extraInfo}</Text>
                     </View>
                 </View>
-                <View style={{maxHeight: 420}}>
+                <View style={{maxHeight: 410}}>
                     <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom:5}}>줄거리</Text>
                     <ScrollView contentContainerStyle={{flexGrow:1}}>
-                        <Text style={[styles.size, styles.summary]}>{replaceTxt(description)}</Text>
+                        <Text style={[styles.size, styles.summary]}>{description}</Text>
                     </ScrollView>
                 </View>
             </View>

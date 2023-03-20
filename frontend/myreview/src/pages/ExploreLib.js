@@ -4,7 +4,6 @@ import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, FlatList, Ima
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
-import { replaceTxt } from '../util/replaceTxt';
 
 const ExploreLib = ({navigation}) => {
     const [search, setSearch] = useState('');    
@@ -54,13 +53,18 @@ const ExploreLib = ({navigation}) => {
     const itemView = ({item})=>{
         return (
             <View style={{marginBottom: 5, marginRight: 20, width: 80}}>
-                <Pressable onPress={()=>navigation.navigate('contentsDetail', {category: 'book'})}>
+                <Pressable onPress={()=>navigation.navigate('contentsDetail', 
+                    {
+                        category: 'book',
+                        itemId: item.id,
+                        userId: userId
+                    })}>
                     <Image
                         style={styles.image}
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}   //item.image
+                        source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}}
                     />
                 </Pressable>             
-                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{replaceTxt(item.title)}</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
             </View>
         );
     };
@@ -109,7 +113,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {myContentCnt === 0 &&
                             <View>
-                                <Text style={styles.emptyMsg}>담은 도서가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>담은 도서가 없습니다😶</Text>
                             </View>}
                     </View>
                 </View>
@@ -126,7 +130,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {newContentCnt === 0 &&
                             <View>
-                                <Text style={styles.emptyMsg}>이달의 신작이 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>이달의 신작이 없습니다😶</Text>
                             </View>}
                     </View>
                 </View>
@@ -143,7 +147,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {topCnt === 0 &&
                             <View>
-                                <Text style={styles.emptyMsg}>인기 도서가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>인기 도서가 없습니다😶</Text>
                             </View>}                        
                     </View>
                 </View>
@@ -224,7 +228,8 @@ const styles = StyleSheet.create({
     },
     emptyMsg: {
         fontSize: 20,
-        color: '#77BDC3',
+        fontWeight: 'bold',
+        color: '#E1D7C6',
         alignSelf: 'center',
         paddingVertical: 50
     },
