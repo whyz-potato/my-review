@@ -27,6 +27,12 @@ public class ItemController {
         return new ResponseEntity<>(itemService.exploreBook(userId), HttpStatus.OK);
     }
 
+    @GetMapping("/v1/content/book/{userId}/{itemId}")
+    public ResponseEntity<DetailBookDto> detailBook(@PathVariable("userId") Long userId,
+                                                          @PathVariable("itemId") Long itemId) {
+        return new ResponseEntity<>(itemService.findBookById(userId, itemId), HttpStatus.OK);
+    }
+
     @GetMapping("/v1/content/book/search")
     public ResponseEntity<BookSearchResponseDto> searchBook(@RequestParam("id") Long usersId,
                                                             @RequestParam(value = "q", required = false) String query,
@@ -53,6 +59,12 @@ public class ItemController {
     @GetMapping("/v1/content/movie/{id}")
     public ResponseEntity<ExploreResponseDto> exploreMovie(@PathVariable("id") Long userId) {
         return new ResponseEntity<>(itemService.exploreMovie(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/v1/content/movie/{userId}/{itemId}")
+    public ResponseEntity<DetailMovieDto> detailMovie(@PathVariable("userId") Long userId,
+                                                    @PathVariable("itemId") Long itemId) {
+        return new ResponseEntity<>(itemService.findMovieById(userId, itemId), HttpStatus.OK);
     }
 
     @GetMapping("/v1/content/movie/search")
