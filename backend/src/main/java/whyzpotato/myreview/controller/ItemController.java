@@ -29,15 +29,15 @@ public class ItemController {
 
     @GetMapping("/v1/content/book/search")
     public ResponseEntity<BookSearchResponseDto> searchBook(@RequestParam("id") Long usersId,
-                                                            @RequestParam("q") String query,
-                                                            @RequestParam("start") String start,
-                                                            @RequestParam("display") String display) {
+                                                            @RequestParam(value = "q", required = false) String query,
+                                                            @RequestParam(value = "start", required = false) String start,
+                                                            @RequestParam(value = "display", required = false) String display) {
 
         Mono<NaverBookResponseDto> naverResponse = searchWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/book.json")
                         .queryParam("query", query)
-                        .queryParam("start", startToInt(start))
+                        .queryParam("start", startToInt(start, 1))
                         .queryParam("display", displayToInt(display))
                         .build()).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -57,15 +57,15 @@ public class ItemController {
 
     @GetMapping("/v1/content/movie/search")
     public ResponseEntity<MovieSearchResponseDto> searchMovie(@RequestParam("id") Long usersId,
-                                                              @RequestParam("q") String query,
-                                                              @RequestParam("start") String start,
-                                                              @RequestParam("display") String display) {
+                                                              @RequestParam(value = "q", required = false) String query,
+                                                              @RequestParam(value = "start", required = false) String start,
+                                                              @RequestParam(value = "display", required = false) String display) {
 
         Mono<NaverMovieResponseDto> naverDto = searchWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/movie.json")
                         .queryParam("query", query)
-                        .queryParam("start", startToInt(start))
+                        .queryParam("start", startToInt(start, 1))
                         .queryParam("display", displayToInt(display))
                         .build()).accept(MediaType.APPLICATION_JSON)
                 .retrieve()

@@ -36,12 +36,12 @@ public class CommonUtils {
         throw new IllegalStateException();
     }
 
-    public static int startToInt(String start) {
+    public static int startToInt(String start, int defaultValue) {
         try {
             Integer number = Integer.valueOf(start);
             return min(1000, number);
         } catch (NumberFormatException ex) {
-            return 1;
+            return defaultValue;
         }
     }
 
