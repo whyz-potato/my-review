@@ -30,11 +30,11 @@ public class ReviewController {
 
     @GetMapping("/v1/review/book/search")
     public ResponseEntity<ReviewListResponseDto> myBookReview(@RequestParam("id") Long userId,
-                                                              @RequestParam("q") String query,
-                                                              @RequestParam("start") String start,
-                                                              @RequestParam("display") String display) {
+                                                              @RequestParam(value = "q", required = false) String query,
+                                                              @RequestParam(value = "start", required = false) String start,
+                                                              @RequestParam(value = "display", required = false) String display) {
 
-        return new ResponseEntity<>(reviewService.search(userId, query, startToInt(start), displayToInt(display)), HttpStatus.OK);
+        return new ResponseEntity<>(reviewService.search(userId, query, startToInt(start, 0), displayToInt(display)), HttpStatus.OK);
     }
 
 
@@ -60,11 +60,11 @@ public class ReviewController {
 
     @GetMapping("/v1/review/movie/search")
     public ResponseEntity<ReviewListResponseDto> myMovieReview(@RequestParam("id") Long userId,
-                                                               @RequestParam("q") String query,
-                                                               @RequestParam("start") String start,
-                                                               @RequestParam("display") String display) {
+                                                               @RequestParam(value = "q", required = false) String query,
+                                                               @RequestParam(value = "start", required = false) String start,
+                                                               @RequestParam(value = "display", required = false) String display) {
 
-        return new ResponseEntity<>(reviewService.search(userId, query, startToInt(start), displayToInt(display)), HttpStatus.OK);
+        return new ResponseEntity<>(reviewService.search(userId, query, startToInt(start, 0), displayToInt(display)), HttpStatus.OK);
     }
 
     @GetMapping("/v1/review/movie/{userId}/{reviewId}")
