@@ -3,7 +3,10 @@ package whyzpotato.myreview.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import whyzpotato.myreview.domain.*;
+import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.domain.Movie;
+import whyzpotato.myreview.domain.Review;
+import whyzpotato.myreview.domain.Users;
 import whyzpotato.myreview.dto.item.*;
 import whyzpotato.myreview.repository.ItemRepository;
 import whyzpotato.myreview.repository.ReviewRepository;
@@ -28,12 +31,12 @@ public class ItemService {
     //TODO MovieDto save
 
     public DetailBookDto findBookById(Long userId, Long itemId) {
-        Book book = (Book) itemRepository.findById(itemId);
+        Book book = (Book) itemRepository.findById(itemId).get();
         return new DetailBookDto(book);
     }
 
     public DetailMovieDto findMovieById(Long userId, Long itemId) {
-        Movie movie = (Movie) itemRepository.findById(itemId);
+        Movie movie = (Movie) itemRepository.findById(itemId).get();
         return new DetailMovieDto(movie);
     }
 

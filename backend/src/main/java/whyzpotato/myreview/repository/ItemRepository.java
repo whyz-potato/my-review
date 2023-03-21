@@ -25,7 +25,7 @@ public class ItemRepository {
             return em.merge(book);
 
         Optional<Book> optional = findBookByIsbn(book.getIsbn());
-        if(optional.isPresent())
+        if (optional.isPresent())
             return optional.get();
         else
             em.persist(book);
@@ -37,18 +37,18 @@ public class ItemRepository {
             return em.merge(movie);
 
         Optional<Movie> optional = findMovieByTitleDirector(movie.getTitle(), movie.getDirector());
-        if(optional.isPresent())
+        if (optional.isPresent())
             return optional.get();
         else
             em.persist(movie);
         return movie;
     }
 
-    public Item findById(Long id) {
-        return em.find(Item.class, id);
+    public Optional<Item> findById(Long id) {
+        return Optional.ofNullable(em.find(Item.class, id));
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         em.createQuery("delete from item i");
     }
 

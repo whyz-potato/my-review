@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -30,9 +32,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.createErrorResponseEntity(BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {NoSuchElementException.class})
+    @ExceptionHandler(value = {NoSuchElementException.class, UsernameNotFoundException.class})
     protected ResponseEntity handleNoPresentException() {
         return ErrorResponse.createErrorResponseEntity(HttpStatus.NOT_FOUND.value());
+    }
+
+    @ExceptionHandler(value = {BadCredentialsException.class})
+    protected ResponseEntity handleUnauthorizedException() {
+        return ErrorResponse.createErrorResponseEntity(HttpStatus.UNAUTHORIZED.value());
     }
 
 
