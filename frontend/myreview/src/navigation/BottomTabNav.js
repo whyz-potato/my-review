@@ -9,7 +9,7 @@ const BottomTabNav = () => {
 
     return(
         <BottomTab.Navigator initialRouteName='home' 
-        screenOptions={{tabBarActiveTintColor:'#6DAFB5', tabBarInactiveTintColor:'#E1D7C6',tabBarStyle:{height:70}, tabBarShowLabel:false, headerShown:false}}>
+        screenOptions={{tabBarActiveTintColor:'#6DAFB5', tabBarInactiveTintColor:'#E1D7C6',tabBarStyle:{height:70}, tabBarShowLabel:false, headerShown:false, unmountOnBlur:true}}>
             <BottomTab.Screen name="explore" component={ExploreScreen} 
             options={{tabBarIcon: ({color})=>(<MaterialIcons name="explore" size={46} color={color} />)}} />
             <BottomTab.Screen name='home' component={Home} 

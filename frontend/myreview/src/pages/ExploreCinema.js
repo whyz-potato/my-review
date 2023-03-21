@@ -14,21 +14,31 @@ const ExploreCinema = ({navigation}) => {
     const [myContentCnt, setMyContentCnt] = useState(0);
     const [topCnt, setTopCnt] = useState(0);
     const [newContentCnt, setNewContentCnt] = useState(0);
+    const [refresh, setRefresh] = useState(false);
 
-      const getId = async () => {
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            setRefresh(!refresh);
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
+
+    const getId = async () => {
         try {
-          const val = await AsyncStorage.getItem('userId');
-          if (val !== null) setUserId(val);
-          console.log("user id: "+userId);
+            const val = await AsyncStorage.getItem('userId');
+            if (val !== null) {
+                setUserId(val);
+            }
         } catch (error) {
             console.log("get id fail");
-          console.log(error);
+            console.log(error);
         }
-      }
+    }
 
-      useEffect(() => {
+    useEffect(() => {
         getId();
-      }, []);
+    }, []);
 
     // 신작, 담은, 탑10
     useEffect(()=>{
@@ -49,14 +59,14 @@ const ExploreCinema = ({navigation}) => {
                     console.error(err);
                 })
         }
-    },[userId])
+    }, [userId, refresh])
 
     const itemView = ({item})=>{
         return (
             <View style={{marginBottom: 5, marginRight: 20, width: 80}}>
                 <Pressable onPress={()=>navigation.navigate('contentsDetail', {
                         category: 'movie',
-                        itemId: item.id,
+                        itemId: item.itemId,
                         userId: userId
                     })}>
                     <Image

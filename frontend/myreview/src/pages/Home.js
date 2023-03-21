@@ -29,7 +29,6 @@ const Home = ({ navigation, route }) => {
 
   // get goal
   useEffect(() => {
-    console.log(userId);
     if (userId !== 0) {
       URL.get(`/v1/goal/${userId}`)
         .then((res) => {

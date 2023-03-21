@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert, FlatList, Image } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import URL from '../api/axios';
+import { Like } from '../util/Like';
 
 const MovieSearchResult=({navigation, route})=>{
     let query = route.params.query;
@@ -10,6 +11,15 @@ const MovieSearchResult=({navigation, route})=>{
     const [search, setSearch] = useState(query);
     const [item, setItem] = useState([]);
     const [itemCnt, setItemCnt] = useState(0);
+    const [pushLike, setPushLike] = useState(false);
+
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            handleSearch();
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
   
     // 검색 결과 조회
     const handleSearch = () => {
@@ -31,7 +41,7 @@ const MovieSearchResult=({navigation, route})=>{
 
     useEffect(()=>{
         handleSearch();
-    }, [])
+    }, [Like])
 
     const handleInput = (input) =>{
         if (input !== query) {  // 다른 검색어일 때
@@ -41,7 +51,7 @@ const MovieSearchResult=({navigation, route})=>{
                 Alert.alert('제목을 입력해주세요!');
             }
         }
-    } 
+    }
 
     React.useLayoutEffect(()=>{
         navigation.setOptions({
@@ -55,17 +65,17 @@ const MovieSearchResult=({navigation, route})=>{
             <View style={styles.content}>
                 <Pressable 
                     style={{ marginRight: 25 }}
-                    onPress={() => navigation.navigate('contentsDetail', 
+                    onPress={() => {navigation.navigate('contentsDetail', 
                         {
-                            userId: userId,
-                            itemId: item.itemId,
+                            user_id: userId,
+                            item_id: item.itemId,
                             category: 'movie',
                             title: item.title,
                             img: item.image,
                             releaseDate: item.releaseDate,
                             director: item.director,
                             actors: item.actors
-                        })}>
+                        })}}>
                     <Image
                         style={styles.image}
                         source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}} />
@@ -77,15 +87,25 @@ const MovieSearchResult=({navigation, route})=>{
                         <Pressable 
                             disabled={item.reviewId == null ? false : true}
                             style={[styles.contentBtn, item.reviewId==null?styles.ableBack:styles.disableBack, {marginRight: 7}]}
-                            onPress={() => {
+                            onPressIn={() => {
                                 Like('movie', userId, item.itemId, item.title, item.image, item.releaseDate, "", item.director, item.actors);
-                            }}>
+                            }}
+                            onPress={()=>{setPushLike(!pushLike)}}>
                             <Text style={{color:'#fff'}}>담기</Text>
                         </Pressable>
                         <Pressable
                             disabled={item.reviewId == null ? false : true}
                             style={[item.reviewId==null?styles.ableBack:styles.disableBack, styles.contentBtn, { marginRight: 7 }]}
-                            onPress={() => navigation.navigate('newReview', { category: 'movie' })}
+                            onPress={() => {navigation.navigate('newReview', {
+                                user_id: userId,
+                                item_id: item.itemId,
+                                category: 'movie',
+                                title: item.title,
+                                img: item.image,
+                                releaseDate: item.releaseDate,
+                                extra1: item.director,
+                                extra2: item.actors
+                            })}}
                         >
                             <Text style={{color:'#fff'}}>리뷰 쓰기</Text>
                         </Pressable>

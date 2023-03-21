@@ -12,6 +12,15 @@ const BookSearchResult=({navigation, route})=>{
     const [search, setSearch] = useState(query);  
     const [item, setItem] = useState([]);
     const [itemCnt, setItemCnt] = useState(0);
+    const [pushLike, setPushLike] = useState(false);
+
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            handleSearch();
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
   
     // 검색 결과 조회
     const handleSearch = () => {
@@ -33,7 +42,7 @@ const BookSearchResult=({navigation, route})=>{
 
     useEffect(()=>{
         handleSearch();
-    }, [])
+    }, [pushLike])
 
     const handleInput = (input) =>{
         if (input != query) {  // 다른 검색어일 때
@@ -46,6 +55,14 @@ const BookSearchResult=({navigation, route})=>{
             console.log('same query');
         }
     }
+
+    const handleLike = (itemId, title, img, releaseDate, description, author, extra) =>{
+        if (itemId==null){
+            Like('book', userId, itemId, title, img, releaseDate, description, author, extra);
+        }else {
+            Alert.alert('이미 담겨있습니다!');
+        }
+    } 
 
     React.useLayoutEffect(()=>{
         navigation.setOptions({
@@ -77,7 +94,7 @@ const BookSearchResult=({navigation, route})=>{
             <View style={styles.content}>
                 <Pressable 
                     style={{ marginRight: 25 }}
-                    onPress={() => navigation.navigate('contentsDetail', 
+                    onPress={() => {navigation.navigate('contentsDetail', 
                         {
                             category: 'book',
                             title: item.title,
@@ -86,9 +103,9 @@ const BookSearchResult=({navigation, route})=>{
                             description: item.description,
                             author: item.author,
                             isbn: item.isbn,
-                            userId: userId,
-                            itemId: item.itemId
-                        })}>
+                            user_id: userId,
+                            item_id: item.itemId
+                        })}}>
                     <Image
                         style={styles.image}
                         source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}}
@@ -98,16 +115,29 @@ const BookSearchResult=({navigation, route})=>{
                     <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 20, fontWeight: 'bold'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
                     <Text style={{fontSize: 17, marginBottom: 8}}>{item.author}</Text>
                     <View style={{flexDirection:'row', marginLeft: -5}}>
-                        <Pressable 
+                        <Pressable
+                            disabled={item.reviewId == null ? false : true}
                             style={[item.reviewId == null ? styles.ableBack : styles.disableBack, styles.contentBtn, { marginRight: 7 }]}
-                            onPress={() => {
+                            onPressIn={() => {
                                 Like('book', userId, item.itemId, item.title, item.image, item.releaseDate, item.description, item.author, item.isbn);
-                            }}>
+                            }}
+                            onPress={()=>{setPushLike(!pushLike)}}>
                             <Text style={{color: '#fff'}}>담기</Text>
                         </Pressable>
                         <Pressable
+                            disabled={item.reviewId == null ? false : true}
                             style={[item.reviewId == null ? styles.ableBack : styles.disableBack, styles.contentBtn]}
-                            onPress={() => navigation.navigate('newReview', { category: 'book' })}>
+                            onPress={() => {navigation.navigate('newReview', {
+                                category: 'book',
+                                title: item.title,
+                                img: item.image,
+                                releaseDate: item.releaseDate,
+                                description: item.description,
+                                extra1: item.author,
+                                extra2: item.isbn,
+                                user_id: userId,
+                                item_id: item.itemId
+                            })}}>
                             <Text style={{color: '#fff'}}>리뷰 쓰기</Text>
                         </Pressable>
                     </View>

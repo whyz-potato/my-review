@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList } from 'react-native';
 import { Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
 
 const Cinema = ({navigation}) => {
@@ -9,6 +10,15 @@ const Cinema = ({navigation}) => {
     const [userId, setUserId] = useState(0);
     const [review, setReview] = useState([]);
     const [reviewCnt, setReviewCnt] = useState(0);
+    const [refresh, setRefresh] = useState(false);
+
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            setRefresh(!refresh);
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
 
     const getId = async () => {
         try {
@@ -24,10 +34,10 @@ const Cinema = ({navigation}) => {
         getId();
     }, []);
 
-    // get movie
+    // get review
     useEffect(()=>{
         if (userId !== 0) {
-            URL.get(`/v1/review/movie/search?id=${userId}`)
+            URL.get(`/v1/review/movie/search?id=${userId}&display=40`)
                 .then((res) => {
                     console.log(res.data);
                     setReview(res.data.reviews);
@@ -38,18 +48,18 @@ const Cinema = ({navigation}) => {
                     console.error(err);
                 })
         }
-    },[userId])
+    },[userId, refresh])
     
     const itemView = ({item})=>{
         return (
-            <View style={{marginBottom: 5, marginRight: 10}}>
-                <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'movie'})}>
+            <View style={{marginBottom: 5, marginRight: 10, width: 80}}>
+                <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'movie', user_id: userId, review_id: item.reviewId})}>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.image }}
+                        source={item.item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.item.image}}
                     />
                 </Pressable>                
-                <Text style={{fontSize: 15, textAlign:'center'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
+                <Text numberOfLines={1} ellipsizeMode='tail' style={{fontSize: 15, textAlign:'center'}}>{item.item.title}</Text>
             </View>
         );
     };
@@ -162,7 +172,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         marginLeft:30,
         marginTop: 20,
-
+        maxHeight: 600,
     },
     contentsTitle: {
         fontSize: 23,
@@ -171,12 +181,12 @@ const styles = StyleSheet.create({
     contentBox:{
         flexDirection: 'row',
         marginTop: 15,
-        marginBottom: 480,
+        marginBottom: 50,
     },
     floatingBtn: {
         position: 'absolute',
         right: 30,
-        top: 655,   //25
+        bottom: 25
     },    
     image: {
         width: 80,

@@ -10,6 +10,15 @@ const Library = ({navigation}) => {
     const [userId, setUserId] = useState(0);
     const [review, setReview] = useState([]);
     const [reviewCnt, setReviewCnt] = useState(0);
+    const [refresh, setRefresh] = useState(false);
+
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            setRefresh(!refresh);
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
 
     const getId = async () => {
         try {
@@ -25,32 +34,32 @@ const Library = ({navigation}) => {
         getId();
     }, []);
 
-    // get book
+    // get review
     useEffect(()=>{
         if (userId !== 0) {
-            URL.get(`/v1/review/book/search?id=${userId}`)
+            URL.get(`/v1/review/book/search?id=${userId}&display=40`)
                 .then((res) => {
                     console.log(res.data);
                     setReview(res.data.reviews);
                     setReviewCnt(res.data.total);
                 })
                 .catch((err) => {
-                    console.log('get book fail');
+                    console.log('get book review fail');
                     console.error(err);
                 })
         }
-    },[userId])
+    },[userId ,refresh])
     
     const itemView = ({item})=>{
         return (
-            <View style={{marginBottom: 5, marginRight: 10}}>
-                <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'book'})}>
+            <View style={{marginBottom: 5, marginRight: 10, width: 80}}>
+                <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'book', user_id: userId, review_id: item.reviewId})}>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.image }}
+                        source={item.item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.item.image}}
                     />
                 </Pressable>                
-                <Text style={{fontSize: 15, textAlign:'center'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
+                <Text numberOfLines={1} ellipsizeMode='tail' style={{fontSize: 15, textAlign:'center'}}>{item.item.title}</Text>
             </View>
         );
     };
@@ -96,7 +105,7 @@ const Library = ({navigation}) => {
                         <View style={styles.contentBox}>
                             <FlatList
                                 data={review}
-                                key={'#'}
+                                key='#'
                                 keyExtractor={item => item.reviewId}
                                 renderItem={itemView}
                                 numColumns={4}
@@ -163,7 +172,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         marginLeft:30,
         marginTop: 20,
-
+        maxHeight: 600,
     },
     contentsTitle: {
         fontSize: 23,
@@ -172,7 +181,7 @@ const styles = StyleSheet.create({
     contentBox:{
         flexDirection: 'row',
         marginTop: 15,
-        marginBottom: 480,
+        marginBottom: 50,
     },
     floatingBtn: {
         position: 'absolute',

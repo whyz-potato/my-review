@@ -6,8 +6,6 @@ export const Like = (category, userId, itemId, title, imgUrl, releaseDate, descr
     let image=imgUrl;
     if (imgUrl=="") image="https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png";
 
-    console.log(userId+" "+itemId+" "+title);
-
     if (itemId === null) {
         if (category === "book") {
             URL.post(`/v1/review/book/new?id=${userId}`, {
@@ -19,7 +17,7 @@ export const Like = (category, userId, itemId, title, imgUrl, releaseDate, descr
                     "title": title,
                     "image": image,
                     "releaseDate": releaseDate,
-                    "description": description,
+                    "description": "",
                     "author": extra1,
                     "isbn": extra2
                 }

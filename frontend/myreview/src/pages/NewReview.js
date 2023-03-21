@@ -4,9 +4,14 @@ import { StyleSheet, Text, View, TextInput, Pressable, Alert, Image, ScrollView 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Checkbox from 'expo-checkbox';
 import { Entypo, AntDesign } from '@expo/vector-icons';
+import URL from '../api/axios';
+import { Like } from '../util/Like';
 
 const NewReview = ({route, navigation}) => {
     let category = route.params.category;    // book? movie?
+    let itemId = route.params.item_id;
+    let userId = route.params.user_id;
+    const [status, setStatus] = useState('');
     const [will, setWill] = useState(false);
     const [ing, setIng] = useState(false);
     const [done, setDone] = useState(false);
@@ -14,6 +19,156 @@ const NewReview = ({route, navigation}) => {
     const [date, setDate] = useState(new Date());
     const [dateModal, setDateModal] = useState(false);
     const [starRate, setStarRate] = useState(1);
+    const [title, setTitle] = useState("");
+    const [img, setImg] = useState('https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png');
+    const [releaseDate, setReleaseDate] = useState("");
+    const [description, setDescription] = useState("");
+    const [author, setAuthor] = useState("");
+    const [extra, setExtra] = useState("");
+
+    useEffect(() => {
+        if (itemId == null) {   // no item
+            setTitle(route.params.title);
+            setReleaseDate(route.params.releaseDate);
+            setImg(route.params.img == "" ? 'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png' : route.params.img);
+            setDescription(category === "book" ? route.params.description : "");
+            setAuthor(route.params.extra1);
+            setExtra(route.params.extra2);
+        } else {
+            URL.get(`/v1/content/${category}/${userId}/${itemId}`)
+                .then((res) => {
+                    console.log(res.data);
+                    setTitle(res.data.title);
+                    setReleaseDate(res.data.releaseDate);
+                    setImg(res.data.image == "" ? 'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png' : res.data.image);
+                    setDescription(category === "book" ? res.data.description : "");
+                    setAuthor(category === "book" ? res.data.author : res.data.director);
+                    setExtra(category === "book" ? res.data.isbn : res.data.actors);
+                })
+                .catch((err) => {
+                    console.log('get info fail');
+                    console.error(err);
+                })
+        }
+    }, [])
+
+    const postReview = () =>{
+        let viewDate = date.getFullYear().toString();
+        let month="";
+        let day=""
+        if (date.getMonth()<9){
+            month="0";
+            month+=(date.getMonth()+1).toString();
+        }else {
+            month=(date.getMonth()+1).toString();
+        }
+        if (date.getDate()<10){
+            day="0";
+            day+=date.getDate().toString();
+        }else {
+            day=date.getDate().toString();
+        }
+        viewDate += month;
+        viewDate += day;
+        console.log(viewDate);
+
+        if (status === 'LIKE') {
+            Like(category, userId, itemId, title, img, releaseDate, description, author, extra);
+        } else {
+            if (itemId === null) {
+                if (category === "book") {
+                    URL.post(`/v1/review/book/new?id=${userId}`, {
+                        review: {
+                            "status": status,
+                            "rate": starRate,
+                            "viewDate": viewDate,
+                            "content": comment
+                        },
+                        item: {
+                            "itemId": null,
+                            "title": title,
+                            "image": img,
+                            "releaseDate": releaseDate,
+                            "description": "",
+                            "author": author,
+                            "isbn": extra
+                        }
+                    })
+                        .then((res) => {
+                            console.log(res.data);
+                            Alert.alert('My Review', '리뷰 저장 완료😃', [
+                                {
+                                    text: 'ok',
+                                    onPress: () => { navigation.goBack(); }
+                                }
+                            ]);
+                        })
+                        .catch((err) => {
+                            console.log('post book null fail');
+                            console.error(err);
+                            console.error(err.response);
+                        })
+
+                } else {
+                    URL.post(`/v1/review/movie/new?id=${userId}`, {
+                        "review": {
+                            "status": status,
+                            "rate": starRate,
+                            "viewDate": viewDate,
+                            "content": comment
+                        },
+                        "item": {
+                            "itemId": itemId,
+                            "title": title,
+                            "image": img,
+                            "releaseDate": releaseDate,
+                            "description": description,
+                            "director": author,
+                            "actors": extra
+                        }
+                    })
+                        .then((res) => {
+                            console.log(res.data);
+                            Alert.alert('My Review', '리뷰 저장 완료😃', [
+                                {
+                                    text: 'ok',
+                                    onPress: () => { navigation.goBack(); }
+                                }
+                            ]);
+                        })
+                        .catch((err) => {
+                            console.log('post movie null fail');
+                            console.error(err);
+                        })
+                }
+            } else {
+                URL.post(`/v1/review/${category}/new?id=${userId}`, {
+                    "review": {
+                        "status": status,
+                        "rate": starRate,
+                        "viewDate": viewDate,
+                        "content": comment
+                    },
+                    "item": {
+                        "itemId": itemId
+                    }
+                })
+                    .then((res) => {
+                        console.log(res.data);
+                        Alert.alert('My Review', '리뷰 저장 완료😃', [
+                            {
+                                text: 'ok',
+                                onPress: () => { navigation.goBack(); }
+                            }
+                        ]);
+                    })
+                    .catch((err) => {
+                        console.log(`post ${category} fail`);
+                        console.error(err);
+                    })
+            }
+        }
+    }
 
     const showDatePicker = () => {
         setDateModal(true);
@@ -31,14 +186,17 @@ const NewReview = ({route, navigation}) => {
             setWill(true);
             setIng(false);
             setDone(false);
+            setStatus('LIKE');
         } else if (select==='ing') {
             setWill(false);
             setIng(true);
             setDone(false);
+            setStatus('WATCHING');
         } else {
             setWill(false);
             setIng(false);
             setDone(true);
+            setStatus('DONE');
         }
     };
 
@@ -49,33 +207,27 @@ const NewReview = ({route, navigation}) => {
             headerTintColor: '#E1D7C6',
             headerTitleStyle: {fontWeight: 'bold'},
             headerRight:()=>(
-                <View style={{flexDirection: 'row'}}>
-                    <Pressable
-                        onPress={() => { Alert.alert('save') }}>
-                        <Text style={styles.headerBtn}>저장</Text>
-                    </Pressable>
-                    <Pressable
-                        style={{ marginLeft: 13 }}
-                        onPress={() => { Alert.alert('delete') }}>
-                        <Text style={styles.headerBtn}>삭제</Text>
-                    </Pressable>
-                </View>
+                <Pressable
+                    style={{marginRight: 6}}
+                    onPress={() => { postReview() }}>
+                    <Text style={styles.headerBtn}>저장</Text>
+                </Pressable>
             ),
         })
     })
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <View style={{marginHorizontal: 30, marginVertical: 30}}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={{marginHorizontal: 30, marginBottom: 20}}>
                 <View style={{ flexDirection: 'row', marginBottom: 30 }}>
                     <Image
                         style={styles.image}
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} />
-                    <View style={{ justifyContent: 'flex-end' }}>
-                        <Text style={styles.size}>제목</Text>
-                        <Text style={styles.size}>작가</Text>
-                        <Text style={styles.size}>발매일</Text>
-                        <Text style={styles.size}>ISBN</Text>
+                        source={{ uri: img }} />
+                    <View style={{ justifyContent: 'flex-end', width: '50%' }}>
+                        <Text style={styles.size}>{author}</Text>
+                        <Text style={styles.size}>{releaseDate}</Text>
+                        <Text numberOfLines={3} ellipsizeMode='tail' style={styles.size}>{extra}</Text>
                     </View>
                 </View>
                 {/* 보기 상태 */}
@@ -181,7 +333,7 @@ const styles = StyleSheet.create({
     headerBtn: {
         color: '#E1D7C6', 
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
     },
     image: {
         width: 150,
@@ -221,7 +373,17 @@ const styles = StyleSheet.create({
     star: {
         color: '#FFD56D',
         marginRight: 8
-    },
+    },  
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop: 20,
+        marginBottom: 15,
+        alignSelf: 'center',
+        color: '#4E4637',
+        marginHorizontal: 20,
+        textAlign: 'center'
+    }
 });
 
 export default NewReview;
