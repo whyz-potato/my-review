@@ -142,7 +142,7 @@ public class ReviewRepositoryTest {
         reviewRepository.save(review);
 
         //when
-        Review findReview = reviewRepository.findById(review.getId());
+        Review findReview = reviewRepository.findById(review.getId()).get();
 
         //then
         assertThat(findReview).isSameAs(review);

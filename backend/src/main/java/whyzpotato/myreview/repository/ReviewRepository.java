@@ -27,13 +27,12 @@ public class ReviewRepository {
         return review;
     }
 
-    public void delete(Long id) {
-        if (findById(id) != null)
-            em.remove(id);
+    public void delete(Review review) {
+        em.remove(review);
     }
 
-    public Review findById(Long id) {
-        return em.find(Review.class, id);
+    public Optional<Review> findById(Long id) {
+        return Optional.ofNullable(em.find(Review.class, id));
     }
 
     public List<Review> findAll() {

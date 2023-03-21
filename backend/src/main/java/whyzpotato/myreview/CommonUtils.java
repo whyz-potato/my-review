@@ -25,7 +25,7 @@ public class CommonUtils {
     }
 
     public static ReviewStatus toReviewStatus(String status) {
-        switch (status) {
+        switch (status.toUpperCase()) {
             case "WATCHING":
                 return ReviewStatus.WATCHING;
             case "DONE":

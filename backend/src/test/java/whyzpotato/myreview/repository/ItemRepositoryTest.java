@@ -74,7 +74,7 @@ public class ItemRepositoryTest {
         itemRepository.save(book);
 
         //when
-        Item findItem = itemRepository.findById(book.getId());
+        Item findItem = itemRepository.findById(book.getId()).get();
 
         //then
         assertThat(findItem).isSameAs(book);
