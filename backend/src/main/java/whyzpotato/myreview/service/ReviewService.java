@@ -15,6 +15,7 @@ import whyzpotato.myreview.repository.ReviewRepository;
 import whyzpotato.myreview.repository.UsersRepository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
@@ -29,6 +30,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UsersRepository usersRepository;
     private final ItemRepository itemRepository;
+    private final ItemService itemService;
 
     public Long save(Review review) {
         reviewRepository.save(review);
@@ -41,9 +43,24 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewListResponseDto search(Long userId, String query, int start, int display) {
+    public ReviewListResponseDto searchBookReview(Long userId, String query, int start, int display) {
         Users users = usersRepository.findById(userId).get();
         List<Review> result = reviewRepository.findBookReviewByUserTitle(users, query, start, display);
+        return ReviewListResponseDto.builder()
+                .total(result.size())
+                .start(start)
+                .reviews(
+                        result.stream()
+                                .map(r -> new SimpleReviewResponseDto(r))
+                                .collect(Collectors.toList()))
+                .display(min(display, result.size()))
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewListResponseDto searchMovieReview(Long userId, String query, int start, int display) {
+        Users users = usersRepository.findById(userId).get();
+        List<Review> result = reviewRepository.findMovieReviewByUserTitle(users, query, start, display);
         return ReviewListResponseDto.builder()
                 .total(result.size())
                 .start(start)
@@ -59,7 +76,7 @@ public class ReviewService {
     public Long save(Long usersId, DetailBookDto bookDto, ReviewDto reviewDto) {
         Users users = usersRepository.findById(usersId).get();
 
-        Book book = itemRepository.save(bookDto.toEntity());
+        Book book = itemService.findBook(bookDto);
 
         if (reviewDto.getStatus().equals("LIKE")) {
             Review review = Review.builder()
@@ -83,19 +100,19 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public BookReviewDto findBookReview(Long userId, Long reviewId) {
-        Review findReview = reviewRepository.findById(reviewId);
+        Review findReview = reviewRepository.findById(reviewId).get();
         Users users = usersRepository.findById(userId).get();
 
         if (findReview.getUsers().equals(users)) {
             return new BookReviewDto(findReview);
         }
-        throw new IllegalStateException();
+        throw new NoSuchElementException();
     }
 
     public Long save(Long usersId, DetailMovieDto movieDto, ReviewDto reviewDto) {
         Users users = usersRepository.findById(usersId).get();
 
-        Movie movie = itemRepository.save(movieDto.toEntity());
+        Movie movie = itemService.findMovie(movieDto);
 
         if (reviewDto.getStatus().equals("LIKE")) {
             Review review = Review.builder()
@@ -119,35 +136,44 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public MovieReviewDto findMovieReview(Long userId, Long reviewId) {
-        Review findReview = reviewRepository.findById(reviewId);
+        Review findReview = reviewRepository.findById(reviewId).get();
         Users users = usersRepository.findById(userId).get();
 
         if (findReview.getUsers().equals(users)) {
             return new MovieReviewDto(findReview);
         }
-        throw new IllegalStateException();
+        throw new NoSuchElementException();
     }
 
 
     public BookReviewDto updateBookReview(Long userId, Long reviewId, ReviewDto requestDto) {
-        Review findReview = reviewRepository.findById(reviewId);
+        Review findReview = reviewRepository.findById(reviewId).get();
 
         Users users = usersRepository.findById(userId).get();
         if (findReview.getUsers().equals(users)) {
             return new BookReviewDto(findReview.update(requestDto.toEntity()));
         }
-        throw new IllegalStateException();
+        throw new NoSuchElementException();
 
 
     }
 
     public MovieReviewDto updateMovieReview(Long userId, Long reviewId, ReviewDto requestDto) {
-        Review findReview = reviewRepository.findById(reviewId);
+        Review findReview = reviewRepository.findById(reviewId).get();
 
         Users users = usersRepository.findById(userId).get();
         if (findReview.getUsers().equals(users)) {
             return new MovieReviewDto(findReview.update(requestDto.toEntity()));
         }
-        throw new IllegalStateException();
+        throw new NoSuchElementException();
+    }
+
+    public void remove(Long userId, Long reviewId) {
+        Users users = usersRepository.findById(userId).get();
+        Review review = reviewRepository.findById(reviewId).get();
+        if (review.getUsers().equals(users))
+            reviewRepository.delete(review);
+        else
+            throw new NoSuchElementException();
     }
 }

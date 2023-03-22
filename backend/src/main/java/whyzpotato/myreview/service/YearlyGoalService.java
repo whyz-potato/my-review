@@ -11,6 +11,7 @@ import whyzpotato.myreview.repository.YearlyGoalRepository;
 
 import java.time.Year;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +28,7 @@ public class YearlyGoalService {
      */
     public GoalResponseDto currentGoal(Long id) {
         int year = Year.now().getValue();
-        Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
+        Users users = usersRepository.findById(id).orElseThrow(() -> new NoSuchElementException("올바르지 않은 시도입니다."));
         if (yearlyGoalRepository.findByUsersAndPeriod(users, year) == null) {
             // 목표가 없으면 10권으로 생성
             YearlyGoal yearlyGoal = YearlyGoal.builder().users(users).target(10).period(year).build();
@@ -49,7 +50,7 @@ public class YearlyGoalService {
      */
     public GoalResponseDto updateYearlyGoal(Long id, int target) {
         int year = Year.now().getValue();
-        Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
+        Users users = usersRepository.findById(id).orElseThrow(() -> new NoSuchElementException("올바르지 않은 시도입니다."));
         YearlyGoal yearlyGoal = yearlyGoalRepository.findByUsersAndPeriod(users, year);
         yearlyGoal.updateGoal(target);
         yearlyGoalRepository.save(yearlyGoal);
@@ -62,7 +63,7 @@ public class YearlyGoalService {
      * 과거 기록 조회
      */
     public List<GoalResponseDto> historyYearlyGoal(Long id) {
-        Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
+        Users users = usersRepository.findById(id).orElseThrow(() -> new NoSuchElementException("올바르지 않은 시도입니다."));
         List<Object[]> resultList = reviewRepository.countByUsers(users);
         /*
             >>>year, cnt: 2023, 2

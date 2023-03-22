@@ -1,13 +1,15 @@
 package whyzpotato.myreview.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import whyzpotato.myreview.controller.ErrorCode;
 import whyzpotato.myreview.domain.Users;
-import whyzpotato.myreview.exception.DuplicateResourceException;
 import whyzpotato.myreview.dto.LoginResponseDto;
 import whyzpotato.myreview.dto.UsersResponseDto;
+import whyzpotato.myreview.exception.DuplicateResourceException;
 import whyzpotato.myreview.repository.UsersRepository;
 import whyzpotato.myreview.security.CustomUserDetails;
 import whyzpotato.myreview.security.JwtTokenProvider;
@@ -15,6 +17,7 @@ import whyzpotato.myreview.security.JwtTokenProvider;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +56,9 @@ public class UsersService {
      */
     public LoginResponseDto login(String email, String pw) {
         CustomUserDetails users = new CustomUserDetails(usersRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다.")));
+                .orElseThrow(() -> new UsernameNotFoundException("가입되지 않은 이메일입니다.")));
         if (!passwordEncoder.matches(pw, users.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+            throw new BadCredentialsException("잘못된 비밀번호 입니다.");
         }
         return new LoginResponseDto(users.getId(), jwtTokenProvider.createToken(users.getUsername(), users.getRoles()));
     }
@@ -64,7 +67,7 @@ public class UsersService {
      * 회원정보 조회
      */
     public UsersResponseDto findUsersInfo(Long id) {
-        Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
+        Users users = usersRepository.findById(id).orElseThrow(() -> new NoSuchElementException("올바르지 않은 시도입니다."));
         UsersResponseDto usersResponseDto = new UsersResponseDto(users.getId(), users.getEmail(), users.getName());
         return usersResponseDto;
     }
@@ -73,8 +76,8 @@ public class UsersService {
      * 회원정보 변경
      */
     public Long updateUsersInfo(Long id, String name, String pw) {
-        Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
-        if(pw!=null)
+        Users users = usersRepository.findById(id).orElseThrow(() -> new NoSuchElementException("올바르지 않은 시도입니다."));
+        if (pw != null)
             users.updateUsersInfo(name, passwordEncoder.encode(pw));
         else
             users.updateUsersInfo(name);
@@ -86,7 +89,7 @@ public class UsersService {
      * 회원 탈퇴
      */
     public void deleteUsers(Long id) {
-        Users users = usersRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 시도입니다."));
+        Users users = usersRepository.findById(id).orElseThrow(() -> new NoSuchElementException("올바르지 않은 시도입니다."));
         usersRepository.delete(users);
     }
 }
