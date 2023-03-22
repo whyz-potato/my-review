@@ -2,6 +2,7 @@ package whyzpotato.myreview.dto.item;
 
 import lombok.Getter;
 import whyzpotato.myreview.domain.Book;
+import whyzpotato.myreview.exception.MissingRequiredDataException;
 
 import javax.validation.constraints.NotNull;
 
@@ -20,7 +21,7 @@ public class BookSaveRequestDto {
     private String author;
     private String isbn;
 
-    public Book toEntity() {
+    public Book toEntity() throws MissingRequiredDataException {
         return Book.builder()
                 .title(this.title)
                 .releaseDate(toLocalDate(this.releaseDate))

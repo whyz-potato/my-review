@@ -30,6 +30,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UsersRepository usersRepository;
     private final ItemRepository itemRepository;
+    private final ItemService itemService;
 
     public Long save(Review review) {
         reviewRepository.save(review);
@@ -75,7 +76,7 @@ public class ReviewService {
     public Long save(Long usersId, DetailBookDto bookDto, ReviewDto reviewDto) {
         Users users = usersRepository.findById(usersId).get();
 
-        Book book = itemRepository.save(bookDto.toEntity());
+        Book book = itemService.findBook(bookDto);
 
         if (reviewDto.getStatus().equals("LIKE")) {
             Review review = Review.builder()
@@ -111,7 +112,7 @@ public class ReviewService {
     public Long save(Long usersId, DetailMovieDto movieDto, ReviewDto reviewDto) {
         Users users = usersRepository.findById(usersId).get();
 
-        Movie movie = itemRepository.save(movieDto.toEntity());
+        Movie movie = itemService.findMovie(movieDto);
 
         if (reviewDto.getStatus().equals("LIKE")) {
             Review review = Review.builder()
