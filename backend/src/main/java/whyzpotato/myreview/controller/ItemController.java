@@ -29,7 +29,7 @@ public class ItemController {
 
     @GetMapping("/v1/content/book/{userId}/{itemId}")
     public ResponseEntity<DetailBookDto> detailBook(@PathVariable("userId") Long userId,
-                                                          @PathVariable("itemId") Long itemId) {
+                                                    @PathVariable("itemId") Long itemId) {
         return new ResponseEntity<>(itemService.findBookById(userId, itemId), HttpStatus.OK);
     }
 
@@ -63,7 +63,7 @@ public class ItemController {
 
     @GetMapping("/v1/content/movie/{userId}/{itemId}")
     public ResponseEntity<DetailMovieDto> detailMovie(@PathVariable("userId") Long userId,
-                                                    @PathVariable("itemId") Long itemId) {
+                                                      @PathVariable("itemId") Long itemId) {
         return new ResponseEntity<>(itemService.findMovieById(userId, itemId), HttpStatus.OK);
     }
 

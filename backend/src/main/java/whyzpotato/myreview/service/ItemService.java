@@ -35,6 +35,22 @@ public class ItemService {
         return new DetailBookDto(book);
     }
 
+    public Book findBook(DetailBookDto dto) {
+        if (dto.getItemId() != null) {
+            return (Book) itemRepository.findById(dto.getItemId()).get();
+        }
+        return itemRepository.save(dto.toEntity());
+    }
+
+    public Movie findMovie(DetailMovieDto dto) {
+        if (dto.getItemId() != null) {
+            return (Movie) itemRepository.findById(dto.getItemId()).get();
+        }
+        Movie movie = dto.toEntity();
+        itemRepository.save(movie);
+        return movie;
+    }
+
     public DetailMovieDto findMovieById(Long userId, Long itemId) {
         Movie movie = (Movie) itemRepository.findById(itemId).get();
         return new DetailMovieDto(movie);

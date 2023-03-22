@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import whyzpotato.myreview.exception.DuplicateResourceException;
+import whyzpotato.myreview.exception.MissingRequiredDataException;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
-import static whyzpotato.myreview.controller.ErrorCode.BAD_REQUEST;
-import static whyzpotato.myreview.controller.ErrorCode.DUPLICATE_EMAIL;
+import static whyzpotato.myreview.controller.ErrorCode.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -30,6 +30,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {IllegalStateException.class})
     protected ResponseEntity handleBadRequestException() {
         return ErrorResponse.createErrorResponseEntity(BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {MissingRequiredDataException.class})
+    protected ResponseEntity handleMissingRequiredDataException() {
+        return ErrorResponse.createErrorResponseEntity(MISSING_REQUIRED_DATA);
     }
 
     @ExceptionHandler(value = {NoSuchElementException.class, UsernameNotFoundException.class})

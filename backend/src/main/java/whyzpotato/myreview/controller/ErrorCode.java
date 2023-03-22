@@ -12,6 +12,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 public enum ErrorCode {
     //400
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 접근입니다."),
+    MISSING_REQUIRED_DATA(HttpStatus.BAD_REQUEST, "필수 입력 사항이 누락되었습니다."),
 
     //401 UNAUTHORIZED
     INVALID_ACCESS_TOKEN(UNAUTHORIZED, "Access Token이 유효하지 않습니다"),
