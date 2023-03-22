@@ -15,7 +15,7 @@ const ContentsDetail = ({route, navigation}) => {
     const [author, setAuthor] = useState("");
     const [extra, setExtra] = useState("");
     const [reviewId, setReviewId] = useState(null);
-
+    
     //refresh
     useEffect(()=>{
         const unsubscribe = navigation.addListener('focus', ()=>{

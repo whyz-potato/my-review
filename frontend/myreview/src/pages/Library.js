@@ -10,12 +10,23 @@ const Library = ({navigation}) => {
     const [userId, setUserId] = useState(0);
     const [review, setReview] = useState([]);
     const [reviewCnt, setReviewCnt] = useState(0);
-    const [refresh, setRefresh] = useState(false);
 
     //refresh
     useEffect(()=>{
         const unsubscribe = navigation.addListener('focus', ()=>{
-            setRefresh(!refresh);
+            console.log(userId+" "+search);
+            if (userId !== 0) {
+                URL.get(`/v1/review/book/search?id=${userId}&q=${search}&display=40`)
+                    .then((res) => {
+                        console.log(res.data);
+                        setReview(res.data.reviews);
+                        setReviewCnt(res.data.total);
+                    })
+                    .catch((err) => {
+                        console.log('get book review fail');
+                        console.error(err);
+                    })
+            }
         })
         return ()=>{unsubscribe};
     },[navigation])
@@ -42,13 +53,28 @@ const Library = ({navigation}) => {
                     console.log(res.data);
                     setReview(res.data.reviews);
                     setReviewCnt(res.data.total);
+                    setSearch('');
                 })
                 .catch((err) => {
                     console.log('get book review fail');
                     console.error(err);
                 })
         }
-    },[userId ,refresh])
+    },[userId])
+
+    const filter = () => {
+        console.log(search);
+        URL.get(`/v1/review/book/search?id=${userId}&q=${search}&display=12`)
+            .then((res) => {
+                console.log(res.data);
+                setReview(res.data.reviews);
+                setReviewCnt(res.data.total);
+            })
+            .catch((err) => {
+                console.log('get movie fail');
+                console.error(err);
+            })
+    }
     
     const itemView = ({item})=>{
         return (
@@ -82,7 +108,7 @@ const Library = ({navigation}) => {
             </View>
             <View style={styles.searchContainer}>
                 <TextInput 
-                placeholder='제목으로 검색하기'
+                placeholder='검색어를 입력하세요'
                 placeholderTextColor={'white'}
                 style={styles.searchInput}
                 value={search}
@@ -90,7 +116,7 @@ const Library = ({navigation}) => {
                 />
                 <Pressable
                 style={styles.searchBtn}
-                onPressIn={()=>{console.log(search)}}>
+                onPressIn={()=>{filter()}}>
                     <Entypo name="magnifying-glass" size={38} color="#E1D7C6" />
                 </Pressable>
             </View>

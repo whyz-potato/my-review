@@ -49,6 +49,27 @@ const ReviewDetail = ({route, navigation}) => {
         }
     }, [detail])
 
+    const delReview = () => {
+        URL.delete(`/v1/review/${userId}/${reviewId}`)
+        .then((res)=>{
+            console.log('delete success');
+            Alert.alert('My Review', '정말 삭제하시겠습니까?', [
+                {
+                    text: '아니오',
+                    onPress: () => console.log('cancel'),
+                },
+                {
+                    text: '네',
+                    onPress: () => { navigation.goBack() }
+                }
+            ]);
+        })
+        .catch((err)=>{
+            console.log('delete fail');
+            console.error(err);
+        })
+    }
+
     React.useLayoutEffect(()=>{
         navigation.setOptions({
             title:'',
@@ -61,7 +82,7 @@ const ReviewDetail = ({route, navigation}) => {
                     </Pressable>
                     <Pressable
                         style={{ marginLeft: 13 }}
-                        onPress={() => { Alert.alert('delete') }}>
+                        onPress={() => { delReview() }}>
                         <Text style={styles.headerBtn}>삭제</Text>
                     </Pressable>
                 </View>
@@ -81,7 +102,7 @@ const ReviewDetail = ({route, navigation}) => {
                         <Text style={styles.size}>{category==='book'?info.author:info.director}</Text>
                         <Text style={styles.size}>{info.releaseDate}</Text>
                         <Text numberOfLines={1} ellipsizeMode='tail' style={styles.size}>{category==='book'?info.isbn:info.actors}</Text>
-                        <Text style={styles.size}>{info.reviewId===null?"":detail.viewDate}</Text>
+                        <Text style={styles.size}>{detail.reviewId===null?"":detail.viewDate}</Text>
                         <Text style={styles.status}>{status}</Text>
                     </View>
                 </View>
@@ -154,7 +175,7 @@ const styles = StyleSheet.create({
         padding: 5,
         textAlign: 'center',
         fontSize: 15,
-        marginTop: 3,
+        marginTop: 5,
         marginLeft: -5,
         width: 80
     },

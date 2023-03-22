@@ -14,12 +14,28 @@ const ExploreLib = ({navigation}) => {
     const [myContentCnt, setMyContentCnt] = useState(0);
     const [topCnt, setTopCnt] = useState(0);
     const [newContentCnt, setNewContentCnt] = useState(0);
-    const [refresh, setRefresh] = useState(false);
 
     //refresh
     useEffect(()=>{
         const unsubscribe = navigation.addListener('focus', ()=>{
-            setRefresh(!refresh);
+            console.log(userId);
+            if (userId !== 0) {
+                URL.get(`/v1/content/book/${userId}`)
+                    .then((res) => {
+                        console.log(res.data);
+                        setMyContent(res.data.myContent.items);
+                        setNewContent(res.data.newContent.items);
+                        setTop(res.data.top10.items);
+    
+                        setMyContentCnt(res.data.myContent.count);
+                        setNewContentCnt(res.data.newContent.count);
+                        setTopCnt(res.data.top10.count);
+                    })
+                    .catch((err) => {
+                        console.log('refresh fail');
+                        console.error(err);
+                    })
+            }
         })
         return ()=>{unsubscribe};
     },[navigation])
@@ -59,7 +75,7 @@ const ExploreLib = ({navigation}) => {
                     console.error(err);
                 })
         }
-    }, [userId, refresh])
+    }, [userId])
 
     const itemView = ({item})=>{
         return (
@@ -67,8 +83,8 @@ const ExploreLib = ({navigation}) => {
                 <Pressable onPress={()=>navigation.navigate('contentsDetail', 
                     {
                         category: 'book',
-                        itemId: item.itemId,
-                        userId: userId
+                        item_id: item.itemId,
+                        user_id: userId
                     })}>
                     <Image
                         style={styles.image}
@@ -98,7 +114,7 @@ const ExploreLib = ({navigation}) => {
             </View>
             <View style={styles.searchContainer}>
                 <TextInput 
-                placeholder='제목으로 검색하기'
+                placeholder='검색어를 입력하세요'
                 placeholderTextColor={'white'}
                 style={styles.searchInput}
                 value={search}

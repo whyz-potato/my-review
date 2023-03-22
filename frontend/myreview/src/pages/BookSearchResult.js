@@ -9,7 +9,7 @@ import { Like } from '../util/Like';
 const BookSearchResult=({navigation, route})=>{
     let query = route.params.query;
     let userId = route.params.user_id;
-    const [search, setSearch] = useState(query);  
+    const [search, setSearch] = useState(search===undefined?query:search);  
     const [item, setItem] = useState([]);
     const [itemCnt, setItemCnt] = useState(0);
     const [pushLike, setPushLike] = useState(false);

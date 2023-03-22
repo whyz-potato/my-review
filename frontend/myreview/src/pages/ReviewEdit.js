@@ -14,7 +14,7 @@ const ReviewEdit = ({route, navigation}) => {
     const [ing, setIng] = useState(false);
     const [done, setDone] = useState(false);
     const [comment, setComment] = useState('');
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(null);
     const [dateModal, setDateModal] = useState(false);
     const [starRate, setStarRate] = useState(null);
     const [detail, setDetail] = useState([]);   // review detail
@@ -31,6 +31,7 @@ const ReviewEdit = ({route, navigation}) => {
             setStarRate(res.data.review.rate);
             setStatus(res.data.review.status);
             setComment(res.data.review.content);
+            initStatus(res.data.review.status);
         })
         .catch((err)=>{
             console.log('get review fail');
@@ -40,56 +41,68 @@ const ReviewEdit = ({route, navigation}) => {
         initStatus();
     }, [])
 
-    const initStatus = () =>{
-        if (detail.status === 'LIKE'){
+    const initStatus = (st) =>{
+        console.log(st);
+        if (st === "LIKE"){
             setWill(true);
-        }else if (detail.status === 'WATCHING'){
+            setIng(false);
+            setDone(false);
+        }else if (st === "WATCHING"){
+            setWill(false);
             setIng(true);
+            setDone(false);
+            
         }else{
+            setWill(false);
+            setIng(false);
             setDone(true);
         }
     }
 
     const putReview = () => {
-        let viewDate = date.getFullYear().toString();
-        let month="";
-        let day=""
-        if (date.getMonth()<9){
-            month="0";
-            month+=(date.getMonth()+1).toString();
+        if (date===null){
+            Alert.alert('날짜를 선택해주세요.');
         }else {
-            month=(date.getMonth()+1).toString();
+            let viewDate = date.getFullYear().toString();
+            let month="";
+            let day=""
+            if (date.getMonth()<9){
+                month="0";
+                month+=(date.getMonth()+1).toString();
+            }else {
+                month=(date.getMonth()+1).toString();
+            }
+            if (date.getDate()<10){
+                day="0";
+                day+=date.getDate().toString();
+            }else {
+                day=date.getDate().toString();
+            }
+            viewDate += month;
+            viewDate += day;
+            console.log(viewDate);
+            
+            URL.put(`/v1/review/${category}/${userId}/${reviewId}`, {
+                "status": status,
+                "rate": starRate,
+                "viewDate": viewDate,
+                "content": comment
+            })
+            .then((res) => {
+                console.log(res.data);
+                Alert.alert('My Review', '리뷰 저장 완료😃', [
+                    {
+                        text: 'ok',
+                        onPress: () => { navigation.goBack(); }
+                    }
+                ]);
+            })
+            .catch((err) => {
+                console.log('put fail');
+                console.error(err);
+                console.error(err.response);
+            })
         }
-        if (date.getDate()<10){
-            day="0";
-            day+=date.getDate().toString();
-        }else {
-            day=date.getDate().toString();
-        }
-        viewDate += month;
-        viewDate += day;
-        console.log(viewDate);
-        
-        URL.put(`/v1/review/${category}/${userId}/${reviewId}`, {
-            "status": status,
-            "rate": starRate,
-            "viewDate": viewDate,
-            "content": comment
-        })
-        .then((res) => {
-            console.log(res.data);
-            Alert.alert('My Review', '리뷰 수정 완료😃', [
-                {
-                    text: 'ok',
-                    onPress: () => { navigation.goBack(); }
-                }
-            ]);
-        })
-        .catch((err) => {
-            console.log('put fail');
-            console.error(err);
-            console.error(err.response);
-        })
     }
 
     const showDatePicker = () => {
@@ -141,7 +154,7 @@ const ReviewEdit = ({route, navigation}) => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>{info.title}</Text>
-            <View style={{marginHorizontal: 30, marginVertical: 30}}>
+            <View style={{marginHorizontal: 30, marginBottom: 30}}>
                 <View style={{ flexDirection: 'row', marginBottom: 30 }}>
                     <Image
                         style={styles.image}

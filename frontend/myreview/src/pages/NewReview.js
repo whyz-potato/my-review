@@ -18,7 +18,7 @@ const NewReview = ({route, navigation}) => {
     const [comment, setComment] = useState('');
     const [date, setDate] = useState(new Date());
     const [dateModal, setDateModal] = useState(false);
-    const [starRate, setStarRate] = useState(1);
+    const [starRate, setStarRate] = useState(null);
     const [title, setTitle] = useState("");
     const [img, setImg] = useState('https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png');
     const [releaseDate, setReleaseDate] = useState("");
@@ -70,7 +70,7 @@ const NewReview = ({route, navigation}) => {
         }
         viewDate += month;
         viewDate += day;
-        console.log(viewDate);
+        console.log(viewDate+" "+starRate);
 
         if (status === 'LIKE') {
             Like(category, userId, itemId, title, img, releaseDate, description, author, extra);
@@ -96,7 +96,7 @@ const NewReview = ({route, navigation}) => {
                     })
                         .then((res) => {
                             console.log(res.data);
-                            Alert.alert('My Review', '리뷰 저장 완료😃', [
+                            Alert.alert('My Review', '리뷰 등록 완료😃', [
                                 {
                                     text: 'ok',
                                     onPress: () => { navigation.goBack(); }
@@ -129,7 +129,7 @@ const NewReview = ({route, navigation}) => {
                     })
                         .then((res) => {
                             console.log(res.data);
-                            Alert.alert('My Review', '리뷰 저장 완료😃', [
+                            Alert.alert('My Review', '리뷰 등록 완료😃', [
                                 {
                                     text: 'ok',
                                     onPress: () => { navigation.goBack(); }
@@ -155,7 +155,7 @@ const NewReview = ({route, navigation}) => {
                 })
                     .then((res) => {
                         console.log(res.data);
-                        Alert.alert('My Review', '리뷰 저장 완료😃', [
+                        Alert.alert('My Review', '리뷰 등록 완료😃', [
                             {
                                 text: 'ok',
                                 onPress: () => { navigation.goBack(); }
