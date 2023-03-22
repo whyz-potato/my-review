@@ -42,9 +42,24 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewListResponseDto search(Long userId, String query, int start, int display) {
+    public ReviewListResponseDto searchBookReview(Long userId, String query, int start, int display) {
         Users users = usersRepository.findById(userId).get();
         List<Review> result = reviewRepository.findBookReviewByUserTitle(users, query, start, display);
+        return ReviewListResponseDto.builder()
+                .total(result.size())
+                .start(start)
+                .reviews(
+                        result.stream()
+                                .map(r -> new SimpleReviewResponseDto(r))
+                                .collect(Collectors.toList()))
+                .display(min(display, result.size()))
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewListResponseDto searchMovieReview(Long userId, String query, int start, int display) {
+        Users users = usersRepository.findById(userId).get();
+        List<Review> result = reviewRepository.findMovieReviewByUserTitle(users, query, start, display);
         return ReviewListResponseDto.builder()
                 .total(result.size())
                 .start(start)
