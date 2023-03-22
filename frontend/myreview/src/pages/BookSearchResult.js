@@ -2,34 +2,47 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Alert, FlatList, Image } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import URL from '../api/axios';
+import { Like } from '../util/Like';
 
 const BookSearchResult=({navigation, route})=>{
     let query = route.params.query;
     let userId = route.params.user_id;
-    const [search, setSearch] = useState(query);  
+    const [search, setSearch] = useState(search===undefined?query:search);  
     const [item, setItem] = useState([]);
     const [itemCnt, setItemCnt] = useState(0);
+    const [pushLike, setPushLike] = useState(false);
+
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            handleSearch();
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
   
     // 검색 결과 조회
     const handleSearch = () => {
         console.log("query: "+search);
-        URL.get(`/v1/content/book/search?id=${userId}&q=${search}&start=1&display=15`)
-        .then((res)=>{
-            console.log(res.data);
-            setItem(res.data.items);
-            setItemCnt(res.data.total);
-        })
-        .catch((err)=>{
-            console.log('search fail');
-            console.error(err);
-            console.log(err.response);
-        })
+        if (search !== "") {
+            URL.get(`/v1/content/book/search?id=${userId}&q=${search}&start=1&display=15`)
+                .then((res) => {
+                    console.log(res.data);
+                    setItem(res.data.items);
+                    setItemCnt(res.data.total);
+                })
+                .catch((err) => {
+                    console.log('search fail');
+                    console.error(err);
+                    console.log(err.response);
+                })
+        }
     }
 
     useEffect(()=>{
         handleSearch();
-    }, [])
+    }, [pushLike])
 
     const handleInput = (input) =>{
         if (input != query) {  // 다른 검색어일 때
@@ -43,6 +56,14 @@ const BookSearchResult=({navigation, route})=>{
         }
     }
 
+    const handleLike = (itemId, title, img, releaseDate, description, author, extra) =>{
+        if (itemId==null){
+            Like('book', userId, itemId, title, img, releaseDate, description, author, extra);
+        }else {
+            Alert.alert('이미 담겨있습니다!');
+        }
+    } 
+
     React.useLayoutEffect(()=>{
         navigation.setOptions({
             title:'서재 검색',
@@ -50,30 +71,73 @@ const BookSearchResult=({navigation, route})=>{
         })
     })
 
+    // asyncstorage에 데이터 저장
+    // const handleData= async (item) => {
+    //     try {
+    //         await AsyncStorage.setItem('bookInfo', JSON.stringify({
+    //             title: item.title,
+    //             img: item.image,
+    //             releaseDate: item.releaseDate,
+    //             description: item.description,
+    //             author: item.author, isbn: item.isbn
+    //         }))
+    //         navigation.navigate('newReview', { category: 'book' });
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+
+    // }
+
     // 검색결과 flatlist
     const itemView = ({item})=>{
         return (
             <View style={styles.content}>
                 <Pressable 
                     style={{ marginRight: 25 }}
-                    onPress={() => navigation.navigate('contentsDetail', { category: 'book' })}>
+                    onPress={() => {navigation.navigate('contentsDetail', 
+                        {
+                            category: 'book',
+                            title: item.title,
+                            img: item.image,
+                            releaseDate: item.releaseDate,
+                            description: item.description,
+                            author: item.author,
+                            isbn: item.isbn,
+                            user_id: userId,
+                            item_id: item.itemId
+                        })}}>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.image }}
+                        source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}}
                     />
                 </Pressable>
                 <View style={{width: '70%'}}>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize: 20, fontWeight: 'bold'}}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
                     <Text style={{fontSize: 17, marginBottom: 8}}>{item.author}</Text>
                     <View style={{flexDirection:'row', marginLeft: -5}}>
-                        <Pressable 
+                        <Pressable
+                            disabled={item.reviewId == null ? false : true}
                             style={[item.reviewId == null ? styles.ableBack : styles.disableBack, styles.contentBtn, { marginRight: 7 }]}
-                            onPress={() => Alert.alert('담겼습니다!')}>
+                            onPressIn={() => {
+                                Like('book', userId, item.itemId, item.title, item.image, item.releaseDate, item.description, item.author, item.isbn);
+                            }}
+                            onPress={()=>{setPushLike(!pushLike)}}>
                             <Text style={{color: '#fff'}}>담기</Text>
                         </Pressable>
                         <Pressable
+                            disabled={item.reviewId == null ? false : true}
                             style={[item.reviewId == null ? styles.ableBack : styles.disableBack, styles.contentBtn]}
-                            onPress={() => navigation.navigate('newReview', { category: 'book' })}>
+                            onPress={() => {navigation.navigate('newReview', {
+                                category: 'book',
+                                title: item.title,
+                                img: item.image,
+                                releaseDate: item.releaseDate,
+                                description: item.description,
+                                extra1: item.author,
+                                extra2: item.isbn,
+                                user_id: userId,
+                                item_id: item.itemId
+                            })}}>
                             <Text style={{color: '#fff'}}>리뷰 쓰기</Text>
                         </Pressable>
                     </View>
@@ -99,7 +163,7 @@ const BookSearchResult=({navigation, route})=>{
                 </Pressable>
             </View>
             {itemCnt > 0 &&
-                <View style={{ marginTop: 20, marginLeft: 25, marginBottom: 100 }}>
+                <View style={{ marginTop: 20, marginLeft: 25, marginBottom: 120 }}>
                     <FlatList
                         data={item}
                         key='#'
@@ -109,7 +173,7 @@ const BookSearchResult=({navigation, route})=>{
                 </View>}
             {itemCnt == 0 &&
                 <View style={{ alignSelf: 'center', justifyContent: 'center', height: '90%' }}>
-                    <Text style={styles.emptyMsg}>검색 결과가 없습니다..😢</Text>
+                    <Text style={styles.emptyMsg}>검색 결과가 없습니다😢</Text>
                 </View>}
             <StatusBar style='auto'/>
         </View>
@@ -126,7 +190,7 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 15,
+        marginTop: 20,
     },
     searchInput: {
         backgroundColor:'#E1D7C6',

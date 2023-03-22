@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useFocusEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, FlatList, Image } from 'react-native';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,19 +15,46 @@ const ExploreLib = ({navigation}) => {
     const [topCnt, setTopCnt] = useState(0);
     const [newContentCnt, setNewContentCnt] = useState(0);
 
-      const getId = async () => {
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            console.log(userId);
+            if (userId !== 0) {
+                URL.get(`/v1/content/book/${userId}`)
+                    .then((res) => {
+                        console.log(res.data);
+                        setMyContent(res.data.myContent.items);
+                        setNewContent(res.data.newContent.items);
+                        setTop(res.data.top10.items);
+    
+                        setMyContentCnt(res.data.myContent.count);
+                        setNewContentCnt(res.data.newContent.count);
+                        setTopCnt(res.data.top10.count);
+                    })
+                    .catch((err) => {
+                        console.log('refresh fail');
+                        console.error(err);
+                    })
+            }
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
+
+    const getId = async () => {
         try {
-          const val = await AsyncStorage.getItem('userId');
-          if (val !== null) setUserId(val);
+            const val = await AsyncStorage.getItem('userId');
+            if (val !== null) {
+                setUserId(val);
+            }
         } catch (error) {
             console.log("get id fail");
-          console.log(error);
+            console.log(error);
         }
-      }
+    }
 
-      useEffect(() => {
+    useEffect(() => {
         getId();
-      }, []);
+    }, []);
 
     // 신작, 담은, 탑10
     useEffect(()=>{
@@ -48,18 +75,22 @@ const ExploreLib = ({navigation}) => {
                     console.error(err);
                 })
         }
-    },[userId])
+    }, [userId])
 
     const itemView = ({item})=>{
         return (
             <View style={{marginBottom: 5, marginRight: 20, width: 80}}>
-                <Pressable onPress={()=>navigation.navigate('contentsDetail', {category: 'book'})}>
+                <Pressable onPress={()=>navigation.navigate('contentsDetail', 
+                    {
+                        category: 'book',
+                        item_id: item.itemId,
+                        user_id: userId
+                    })}>
                     <Image
                         style={styles.image}
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}   //item.image
+                        source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}}
                     />
-                </Pressable> 
-                {/* html 태그 제거 */}               
+                </Pressable>             
                 <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
             </View>
         );
@@ -83,7 +114,7 @@ const ExploreLib = ({navigation}) => {
             </View>
             <View style={styles.searchContainer}>
                 <TextInput 
-                placeholder='제목으로 검색하기'
+                placeholder='검색어를 입력하세요'
                 placeholderTextColor={'white'}
                 style={styles.searchInput}
                 value={search}
@@ -109,7 +140,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {myContentCnt === 0 &&
                             <View>
-                                <Text style={styles.emptyMsg}>담은 도서가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>담은 도서가 없습니다😶</Text>
                             </View>}
                     </View>
                 </View>
@@ -126,7 +157,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {newContentCnt === 0 &&
                             <View>
-                                <Text>이달의 신작이 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>이달의 신작이 없습니다😶</Text>
                             </View>}
                     </View>
                 </View>
@@ -143,7 +174,7 @@ const ExploreLib = ({navigation}) => {
                             />}
                         {topCnt === 0 &&
                             <View>
-                                <Text>인기 도서가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>인기 도서가 없습니다😶</Text>
                             </View>}                        
                     </View>
                 </View>
@@ -224,7 +255,8 @@ const styles = StyleSheet.create({
     },
     emptyMsg: {
         fontSize: 20,
-        color: '#77BDC3',
+        fontWeight: 'bold',
+        color: '#E1D7C6',
         alignSelf: 'center',
         paddingVertical: 50
     },

@@ -1,16 +1,19 @@
 import axios from "axios";
-import * as Network from 'expo-network';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// let hostIP = "";
+let token="";
 
-// async () => {
-//     try {
-//         hostIP = await Network.getIpAddressAsync();
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
+const getToken = async () => {
+    try {
+      const val = await AsyncStorage.getItem('accessToken');
+      if (val !== null) token = val;
+    } catch (error) {
+        console.log("get token fail");
+      console.log(error);
+    }
 
+    return token;
+}
 
 const URL = axios.create({
     baseURL: "http://10.0.2.2:8080",
@@ -22,6 +25,7 @@ const URL = axios.create({
         "Access-Control-Allow-Headers": "Content-Type, Accept",
         "Content-Type": "application/json",
         Accept: "application/json",
+        'Access-Token': getToken(),
     },
 });
 

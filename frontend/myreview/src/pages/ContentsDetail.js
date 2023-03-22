@@ -1,9 +1,84 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Pressable, Alert, Image } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Alert, Image, ScrollView } from 'react-native';
+import { Like } from '../util/Like';
+import URL from '../api/axios';
 
 const ContentsDetail = ({route, navigation}) => {
-    const {category} = route.params;    // book? movie?
+    const category = route.params.category;    // book? movie?
+    const userId = route.params.user_id;
+    const itemId = route.params.item_id;
+    const [title, setTitle] = useState("");
+    const [img, setImg] = useState('https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png');
+    const [releaseDate, setReleaseDate] = useState("");
+    const [description, setDescription] = useState("");
+    const [author, setAuthor] = useState("");
+    const [extra, setExtra] = useState("");
+    const [reviewId, setReviewId] = useState(null);
+    
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            getInfo();
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
+
+    useEffect(()=>{
+        getInfo();
+    }, [])
+    
+    const getInfo = () => {
+        if (itemId == null) {
+            setTitle(route.params.title);
+            setReleaseDate(route.params.releaseDate);
+            setImg(route.params.img == "" ? 'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png' : route.params.img);
+            setDescription(category === "book" ? route.params.description : "");
+            setAuthor(category === "book" ? route.params.author : route.params.director);
+            setExtra(category === "book" ? route.params.isbn : route.params.actors);
+        } else {
+            URL.get(`/v1/content/${category}/${userId}/${itemId}`)
+                .then((res) => {
+                    console.log(res.data);
+                    setTitle(res.data.title);
+                    setReleaseDate(res.data.releaseDate);
+                    setImg(res.data.image == "" ? 'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png' : res.data.image);
+                    setDescription(category === "book" ? res.data.description : "");
+                    setAuthor(category === "book" ? res.data.author : res.data.director);
+                    setExtra(category === "book" ? res.data.isbn : res.data.actors);
+                    setReviewId(res.data.reviewId);
+                })
+                .catch((err) => {
+                    console.log('get info fail');
+                    console.error(err);
+                })
+        }
+    }
+
+    const handleLike = () =>{
+        if (reviewId==null){
+            Like(category, userId, itemId, title, img, releaseDate, description, author, extra);
+        }else {
+            Alert.alert('이미 담겨있습니다!');
+        }
+    }
+
+    const handlePost = () =>{
+        if (reviewId==null){
+            navigation.navigate('newReview', {
+                user_id: userId,
+                item_id: itemId,
+                category: category,
+                title: title,
+                img: img,
+                releaseDate: releaseDate,
+                extra1: author,
+                extra2: extra
+            })
+        }else {
+            Alert.alert('이미 저장한 리뷰입니다!');
+        }
+    }
 
     React.useLayoutEffect(()=>{
         navigation.setOptions({
@@ -13,13 +88,13 @@ const ContentsDetail = ({route, navigation}) => {
             headerRight:()=>(
                 <View style={{flexDirection: 'row'}}>
                     <Pressable
-                        onPress={() => { Alert.alert('담겼습니다') }}>
-                        <Text style={{ color: '#E1D7C6', fontWeight: 'bold' }}>담기</Text>
+                        onPress={() => { handleLike() }}>
+                        <Text style={styles.headerBtn}>담기</Text>
                     </Pressable>
                     <Pressable
                         style={{ marginLeft: 13 }}
-                        onPress={() => { navigation.navigate('newReview', {category: 'book'}) }}>
-                        <Text style={{ color: '#E1D7C6', fontWeight: 'bold' }}>저장</Text>
+                        onPress={() => { handlePost() }}>
+                        <Text style={styles.headerBtn}>저장</Text>
                     </Pressable>
                 </View>
             ),
@@ -28,24 +103,23 @@ const ContentsDetail = ({route, navigation}) => {
 
     return(
         <View style={styles.container}>
-            <View style={{marginHorizontal: 40, marginTop: 30}}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={{marginHorizontal: 35, marginTop: 20}}>
                 <View style={{flexDirection: 'row', marginBottom: 40}}>
                     <Image
                         style={styles.image}
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} />
-                    <View style={{justifyContent:'flex-end'}}>
-                        <Text style={styles.size}>제목</Text>
-                        <Text style={styles.size}>작가</Text>
-                        <Text style={styles.size}>발매일</Text>
-                        <Text style={styles.size}>ISBN</Text>
+                        source={{ uri: img }} />
+                    <View style={{justifyContent:'flex-end', width: '50%'}}>
+                        <Text style={styles.size}>{author}</Text>
+                        <Text style={styles.size}>{releaseDate}</Text>
+                        <Text numberOfLines={3} ellipsizeMode='tail' style={styles.size}>{extra}</Text>
                     </View>
                 </View>
-                <View>
-                    <Text style={{fontSize: 20, fontWeight: 'bold'}}>줄거리</Text>
-                    <Text style={[styles.size, styles.summary]}>
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
-                    It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
-                    </Text>
+                <View style={{maxHeight: 410}}>
+                    <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom:5}}>줄거리</Text>
+                    <ScrollView contentContainerStyle={{flexGrow:1}}>
+                        <Text style={[styles.size, styles.summary]}>{description}</Text>
+                    </ScrollView>
                 </View>
             </View>
             <StatusBar style='auto'/>
@@ -61,7 +135,7 @@ const styles = StyleSheet.create({
     headerBtn: {
         color: '#E1D7C6', 
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
     },
     image: {
         width: 150,
@@ -80,7 +154,15 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         paddingVertical: 15,
         paddingHorizontal: 20,
-        marginTop: 10
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop: 25,
+        alignSelf: 'center',
+        color: '#4E4637',
+        marginHorizontal: 20,
+        textAlign: 'center'
     }
 });
 
