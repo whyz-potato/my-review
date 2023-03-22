@@ -325,7 +325,7 @@ public class ReviewRepositoryTest {
         reviewRepository.save(review8);
 
         //when
-        List<Review> reviews = reviewRepository.findAllMovieReviewByUser(users2);
+        List<Review> reviews = reviewRepository.findAllMovieReviewByUser(users2, 0, 10);
 
         //then
         assertThat(reviews.size()).isEqualTo(2);

@@ -116,14 +116,30 @@ public class ReviewRepository {
                 .getResultList();
     }
 
-    public List<Review> findAllMovieReviewByUser(Users users) {
+    public List<Review> findAllMovieReviewByUser(Users users, int start, int display) {
         return em.createQuery(
                         "select r" +
                                 " from Review r" +
                                 " join fetch r.item i" +
                                 " where r.users = :users and type(i) = 'Movie'", Review.class)
                 .setParameter("users", users)
+                .setFirstResult(start)
+                .setMaxResults(display)
                 .getResultList();
     }
 
+    public List<Review> findMovieReviewByUserTitle(Users users, String title, int start, int display) {
+        if (title == null)
+            return findAllMovieReviewByUser(users, start, display);
+        return em.createQuery(
+                        "select r" +
+                                " from Review r" +
+                                " join fetch r.item i" +
+                                " where r.users = :users and type(i) = 'Movie' and i.title like concat('%', :title, '%')", Review.class)
+                .setParameter("users", users)
+                .setParameter("title", title)
+                .setFirstResult(start)
+                .setMaxResults(display)
+                .getResultList();
+    }
 }

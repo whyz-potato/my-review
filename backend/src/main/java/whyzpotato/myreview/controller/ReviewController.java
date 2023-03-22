@@ -43,7 +43,7 @@ public class ReviewController {
                                                               @RequestParam(value = "start", required = false) String start,
                                                               @RequestParam(value = "display", required = false) String display) {
 
-        return new ResponseEntity<>(reviewService.search(userId, query, startToInt(start, 0), displayToInt(display)), HttpStatus.OK);
+        return new ResponseEntity<>(reviewService.searchBookReview(userId, query, startToInt(start, 0), displayToInt(display)), HttpStatus.OK);
     }
 
 
@@ -93,7 +93,7 @@ public class ReviewController {
                                                                @RequestParam(value = "start", required = false) String start,
                                                                @RequestParam(value = "display", required = false) String display) {
 
-        return new ResponseEntity<>(reviewService.search(userId, query, startToInt(start, 0), displayToInt(display)), HttpStatus.OK);
+        return new ResponseEntity<>(reviewService.searchMovieReview(userId, query, startToInt(start, 0), displayToInt(display)), HttpStatus.OK);
     }
 
     @GetMapping("/v1/review/movie/{userId}/{reviewId}")
