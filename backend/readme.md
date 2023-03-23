@@ -3,16 +3,16 @@
 컨텐츠 검색과 리뷰 작성 뿐 아니라 올 해의 목표를 설정하고 달성률을 보여주는 기능도 제공하여 이용자에게 동기를 부여하고자 했습니다. 
 
 ## 목차
-1. [팀 소개](#🥔-팀)
-2. [주요 기능](#⚙︎-주요-기능)
-3. [아키텍처](#🔧-아키텍처)
-4. [API 명세서](#📜-API-명세서)
-5. [개발](#👨🏻‍💻-개발)
+1. [팀 소개](#-팀)
+2. [주요 기능](#bulb-주요-기능)
+3. [아키텍처](#-아키텍처)
+4. [API 명세서](#-api-명세서)
+5. [개발](#-개발)
 
 <br/>
 
 ## 🥔 팀
-<details open>
+<details>
 <summary>팀 접기/펼치기</summary>
 <div markdown="1">
 <table>
@@ -34,8 +34,8 @@
 </details>
 <br/>
 
-## ⚙︎ 주요 기능
-<details open>
+## :bulb: 주요 기능
+<details>
 <summary>주요 기능 접기/펼치기</summary>
 <div markdown="1">
 <img src="https://user-images.githubusercontent.com/59015764/227125837-a82f2a6e-442b-46a6-bf36-9e385d78f2d4.png">
@@ -75,7 +75,7 @@
 <br/>
 
 ## 🔧 아키텍처
-<details open>
+<details>
 <summary>아키텍처 접기/펼치기</summary>
 <div markdown="1">
 <h3>도메인 설계</h3>
@@ -92,7 +92,7 @@
 <br/>
 
 ## 👨🏻‍💻 개발
-<details open>
+<details>
 <summary>개발 접기/펼치기</summary>
 <div markdown="1">
 
