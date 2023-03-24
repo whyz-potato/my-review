@@ -30,12 +30,11 @@
 <ul>
     <li> React Native 0.70.5</li>
     <li> Expo SDK 47</li>
-    <li> Android Studio Electric Eel | 2022.1.1</li>
+    <li> Android Studio Electric Eel | 2022.1.1 (Virtual Device 사용)</li>
 </ul>
 <h3>기술 스택 </h3> 
 <img src="https://img.shields.io/badge/react native-61DAFB?style=for-the-badge&logo=React&logoColor=black">
 <img src="https://img.shields.io/badge/expo-000020?style=for-the-badge&logo=Expo&logoColor=white">
-<img src="https://img.shields.io/badge/anroid studio-3DDC84?style=for-the-badge&logo=Android&logoColor=white">
 <h3>협업 툴</h3>
 <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=Notion&logoColor=white">
 
