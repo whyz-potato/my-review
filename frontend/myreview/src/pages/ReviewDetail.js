@@ -77,7 +77,7 @@ const ReviewDetail = ({route, navigation}) => {
             headerRight:()=>(
                 <View style={{flexDirection: 'row'}}>
                     <Pressable
-                        onPress={() => {navigation.navigate('reviewEdit', {category: 'book', review_id: detail.reviewId, user_id: userId})}}>
+                        onPress={() => {navigation.navigate('reviewEdit', {category: category, review_id: detail.reviewId, user_id: userId})}}>
                         <Text style={styles.headerBtn}>수정</Text>
                     </Pressable>
                     <Pressable

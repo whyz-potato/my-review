@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AntDesign } from '@expo/vector-icons';
 import Svg, {Path} from 'react-native-svg';
@@ -36,7 +36,6 @@ const Home = ({ navigation, route }) => {
           setGoal(res.data.target);
           setCnt(res.data.cnt);
           setAchievement(res.data.attainmentRate);
-          // setAchievement(100);   // fortest
         })
         .catch((err) => {
           console.log('get goal fail');
@@ -53,9 +52,6 @@ const Home = ({ navigation, route }) => {
         <Path d="M0 560L13.7 568C27.3 576 54.7 592 82.2 598.3C109.7 604.7 137.3 601.3 164.8 593.2C192.3 585 219.7 572 247.2 564.5C274.7 557 302.3 555 329.8 563C357.3 571 384.7 589 398.3 598L412 607L412 788L398.3 788C384.7 788 357.3 788 329.8 788C302.3 788 274.7 788 247.2 788C219.7 788 192.3 788 164.8 788C137.3 788 109.7 788 82.2 788C54.7 788 27.3 788 13.7 788L0 788Z" fill="#9ed0d0"></Path>
         <Path d="M0 635L13.7 638.2C27.3 641.3 54.7 647.7 82.2 652.2C109.7 656.7 137.3 659.3 164.8 661.3C192.3 663.3 219.7 664.7 247.2 665C274.7 665.3 302.3 664.7 329.8 665.3C357.3 666 384.7 668 398.3 669L412 670L412 788L398.3 788C384.7 788 357.3 788 329.8 788C302.3 788 274.7 788 247.2 788C219.7 788 192.3 788 164.8 788C137.3 788 109.7 788 82.2 788C54.7 788 27.3 788 13.7 788L0 788Z" fill="#77bdc3"></Path>
       </Svg>
-      {/* whale */}
-      <AntDesign name="smile-circle" size={100} style={[styles.whale, {bottom: (achievement==0)?10:(achievement>=100)?420:(achievement*3.5)}]} color="black" />
-      
       <View style={styles.goalBox}>
         <Text style={{ fontSize: 50, fontWeight: 'bold', color: '#77BDC3' }}>{achievement}%</Text>
         <View>
@@ -69,6 +65,19 @@ const Home = ({ navigation, route }) => {
           </View>
         </View>
       </View>
+      {/* whale */}
+      {achievement < 10 &&
+        <View>
+          <Image resizeMode='center' style={[styles.whale, {bottom:-870}]} source={require('../images/whale1.png')} />
+        </View>}
+      {achievement >= 10 && achievement < 100 &&
+        <View>
+          <Image resizeMode='center' style={[styles.whale, {width:'35%', bottom:(-840+3.5*(achievement-10))}]} source={require('../images/whale2.png')} />
+        </View>}
+        {achievement >= 100 &&
+        <View>
+          <Image resizeMode='center' style={[styles.whale, {bottom:-550}]} source={require('../images/whale3.png')} />
+        </View>}
       <StatusBar style="auto" />
     </View>
 
@@ -100,6 +109,7 @@ const styles = StyleSheet.create({
    whale: {
     position: 'absolute',
     alignSelf: 'center',
+    width: '50%'
    },
 });
 
