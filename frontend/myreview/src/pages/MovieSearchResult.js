@@ -41,7 +41,7 @@ const MovieSearchResult=({navigation, route})=>{
 
     useEffect(()=>{
         handleSearch();
-    }, [Like])
+    }, [pushLike])
 
     const handleInput = (input) =>{
         if (input !== query) {  // 다른 검색어일 때

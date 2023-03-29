@@ -37,8 +37,6 @@ const ReviewEdit = ({route, navigation}) => {
             console.log('get review fail');
             console.error(err);
         })
-
-        initStatus();
     }, [])
 
     const initStatus = (st) =>{
@@ -60,26 +58,31 @@ const ReviewEdit = ({route, navigation}) => {
     }
 
     const putReview = () => {
-        if (date===null){
+        if (detail.viewDate===null){
             Alert.alert('날짜를 선택해주세요.');
         }else {
-            let viewDate = date.getFullYear().toString();
-            let month="";
-            let day=""
-            if (date.getMonth()<9){
-                month="0";
-                month+=(date.getMonth()+1).toString();
+            let viewDate="";
+            if (dateChanged) {
+                viewDate = date.getFullYear().toString();
+                let month = "";
+                let day = ""
+                if (date.getMonth() < 9) {
+                    month = "0";
+                    month += (date.getMonth() + 1).toString();
+                } else {
+                    month = (date.getMonth() + 1).toString();
+                }
+                if (date.getDate() < 10) {
+                    day = "0";
+                    day += date.getDate().toString();
+                } else {
+                    day = date.getDate().toString();
+                }
+                viewDate += month;
+                viewDate += day;
             }else {
-                month=(date.getMonth()+1).toString();
+                viewDate = detail.viewDate;
             }
-            if (date.getDate()<10){
-                day="0";
-                day+=date.getDate().toString();
-            }else {
-                day=date.getDate().toString();
-            }
-            viewDate += month;
-            viewDate += day;
             console.log(viewDate);
             
             URL.put(`/v1/review/${category}/${userId}/${reviewId}`, {
@@ -90,7 +93,7 @@ const ReviewEdit = ({route, navigation}) => {
             })
             .then((res) => {
                 console.log(res.data);
-                Alert.alert('My Review', '리뷰 저장 완료😃', [
+                Alert.alert('My Review', '리뷰 수정 완료😃', [
                     {
                         text: 'ok',
                         onPress: () => { navigation.goBack(); }
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
     headerBtn: {
         color: '#E1D7C6', 
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
     },
     image: {
         width: 150,

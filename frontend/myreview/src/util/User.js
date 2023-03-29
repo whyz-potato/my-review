@@ -13,7 +13,7 @@ export const logout = async({navigation}) => {
 
 export const resign = async({navigation}, userId) => {
     console.log('resign');
-    URL.post(`/v1/users/resign/${userId}`)
+    URL.delete(`/v1/users/resign/${userId}`)
     .then((res)=>{
         console.log(res.data);
         try {
