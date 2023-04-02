@@ -73,9 +73,9 @@ const Mypage = ({navigation, route}) => {
         URL.get(`/v1/goal/history/${userId}`)
         .then((res)=>{
             console.log(res.data);
-            setHistory(res.data);
+            setHistory(res.data.goals);
         })
-    },[])
+    },[goal])
 
     const itemView = ({item})=>{
         return(
