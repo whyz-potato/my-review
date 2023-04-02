@@ -60,6 +60,9 @@
 <h3>마이페이지</h3>
 <ul>
     <li>목표 조회/수정</li>
+    <img width="25%" src="https://user-images.githubusercontent.com/81554184/229343264-aae4de13-6e82-4804-8fa1-16e30dc36378.png">
+    <img width="25%" src="https://user-images.githubusercontent.com/81554184/229343294-0c918ae1-f389-459a-9641-91972dbb12c8.png">
+    <img width="25%" src="https://user-images.githubusercontent.com/81554184/229343322-214ff46d-3924-4676-967a-18b8f9691901.png">
     <li>프로필 수정</li>
     <img width="25%" src="https://user-images.githubusercontent.com/81554184/227703590-4c72a4af-7605-47d3-80a7-937497196a8e.png">
     <img width="25%" src="https://user-images.githubusercontent.com/81554184/227703631-df81600b-fb94-4594-96d3-acd4ed300b26.png">
