@@ -19,8 +19,7 @@ const Login = ({ navigation }) => {
         "/v1/login", {
         "email": email,
         "password": password,
-      }
-      )
+      })      
         .then(async (res) => {
           console.log(res.data);
           setId(res.data.id);
@@ -32,6 +31,8 @@ const Login = ({ navigation }) => {
           } catch (error) {
             console.log(error);
           }
+          setEmail("");
+          setPassword("");
           navigation.navigate('auth');
         })
         .catch((err) => {

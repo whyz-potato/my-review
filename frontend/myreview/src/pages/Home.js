@@ -1,15 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
-import { ImageBackground, StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AntDesign } from '@expo/vector-icons';
 import Svg, {Path} from 'react-native-svg';
 import URL from '../api/axios';
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation, route }) => {
   const [goal, setGoal] = useState(10);
   const [cnt, setCnt] = useState(0);
-  const [achievement, setAchievement] = useState('');
+  const [achievement, setAchievement] = useState(0);
   const [userId, setUserId] = useState(0);
+  // const [userId, setUserId] = useState(route.params.user_id);
 
   const getId = async () => {
     try {
@@ -25,6 +27,7 @@ const Home = ({ navigation }) => {
     getId();
   }, []);
 
+  // get goal
   useEffect(() => {
     if (userId !== 0) {
       URL.get(`/v1/goal/${userId}`)
@@ -43,7 +46,6 @@ const Home = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* <ImageBackground resizeMode='contain' source={require('../images/wave.png')} style={styles.bgImage}> */}
       <Svg viewBox="0 0 412 787" width="412" height="787" style={styles.svg}>
         <Path d="M0 322L13.7 332.5C27.3 343 54.7 364 82.2 362.3C109.7 360.7 137.3 336.3 164.8 330.8C192.3 325.3 219.7 338.7 247.2 346.2C274.7 353.7 302.3 355.3 329.8 354.7C357.3 354 384.7 351 398.3 349.5L412 348L412 788L398.3 788C384.7 788 357.3 788 329.8 788C302.3 788 274.7 788 247.2 788C219.7 788 192.3 788 164.8 788C137.3 788 109.7 788 82.2 788C54.7 788 27.3 788 13.7 788L0 788Z" fill="#e6f4f1"></Path>
         <Path d="M0 482L13.7 482.5C27.3 483 54.7 484 82.2 484C109.7 484 137.3 483 164.8 474.7C192.3 466.3 219.7 450.7 247.2 441.2C274.7 431.7 302.3 428.3 329.8 426.3C357.3 424.3 384.7 423.7 398.3 423.3L412 423L412 788L398.3 788C384.7 788 357.3 788 329.8 788C302.3 788 274.7 788 247.2 788C219.7 788 192.3 788 164.8 788C137.3 788 109.7 788 82.2 788C54.7 788 27.3 788 13.7 788L0 788Z" fill="#c2e2df"></Path>
@@ -63,7 +65,19 @@ const Home = ({ navigation }) => {
           </View>
         </View>
       </View>
-      {/* </ImageBackground> */}
+      {/* whale */}
+      {achievement < 10 &&
+        <View>
+          <Image resizeMode='center' style={[styles.whale, {bottom:-870}]} source={require('../images/whale1.png')} />
+        </View>}
+      {achievement >= 10 && achievement < 100 &&
+        <View>
+          <Image resizeMode='center' style={[styles.whale, {width:'35%', bottom:(-840+3.5*(achievement-10))}]} source={require('../images/whale2.png')} />
+        </View>}
+        {achievement >= 100 &&
+        <View>
+          <Image resizeMode='center' style={[styles.whale, {bottom:-550}]} source={require('../images/whale3.png')} />
+        </View>}
       <StatusBar style="auto" />
     </View>
 
@@ -91,7 +105,12 @@ const styles = StyleSheet.create({
   svg:{
     position: 'absolute',
     bottom:0
-  }
+  },
+   whale: {
+    position: 'absolute',
+    alignSelf: 'center',
+    width: '50%'
+   },
 });
 
 export default Home;

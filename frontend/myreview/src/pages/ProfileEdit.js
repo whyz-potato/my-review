@@ -8,6 +8,7 @@ import URL from '../api/axios';
 const ProfileEdit = ({navigation, route}) => {
     const userId = route.params.user_id;
     const [userEmail, setUserEmail] = useState('');
+    const [userName, setUserName] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [pwdCheck, setPwdCheck] = useState('');
@@ -18,13 +19,14 @@ const ProfileEdit = ({navigation, route}) => {
     const [modal, setModal] = useState(false);
     const [email, setEmail] = useState('');
 
-    // email 가져오기
+    // email, name 가져오기
     useEffect(()=>{
         console.log('get email '+userId)
         URL.get(`/v1/users/${userId}`)
         .then((res)=>{
             console.log(res.data);
             setUserEmail(res.data.email);
+            setUserName(res.data.name);
         })
         .catch((err)=>{
             console.log('get user info fail');
@@ -59,6 +61,7 @@ const ProfileEdit = ({navigation, route}) => {
         }
     }, [pwdCheck])
 
+    // 이름, 비번 변경
     const changeProfile = () =>{
         console.log("name: "+name+", pwd: "+password);
         if (name.length!==0 && password.length!==0) {
@@ -70,7 +73,8 @@ const ProfileEdit = ({navigation, route}) => {
                 })
                     .then((res) => {
                         console.log('edit success');
-                        console.log(res);
+                        console.log(res.data);
+                        Alert.alert('변경되었습니다!');
                     })
                     .catch((err) => {
                         console.log('edit fail');
@@ -83,11 +87,13 @@ const ProfileEdit = ({navigation, route}) => {
             if (validPwd && validPwdCheck) {
                 URL.put(
                     `/v1/users/${userId}`, {
+                    "name": userName,
                     "password": password
                 })
                     .then((res) => {
                         console.log('pwd edit success');
                         console.log(res.data);
+                        Alert.alert('변경되었습니다!');
                     })
                     .catch((err) => {
                         console.log('pwd fail');
@@ -104,6 +110,7 @@ const ProfileEdit = ({navigation, route}) => {
                 .then((res) => {
                     console.log('name edit success');
                     console.log(res.data);
+                    Alert.alert('변경되었습니다!');
                 })
                 .catch((err) => {
                     console.log('name fail');
@@ -170,7 +177,7 @@ const ProfileEdit = ({navigation, route}) => {
                     <View style={{flexDirection: 'row', alignSelf: 'center', marginTop: 100}}>
                         <Pressable
                         style={{marginRight: 20}}
-                        onPressIn={()=>{Alert.alert('로그아웃', '정말 로그아웃 하시겠습니까?', [
+                        onPressIn={()=>{Alert.alert('My Review', '정말 로그아웃 하시겠습니까?', [
                             {
                                 text: '취소',
                                 onPress: () => console.log('cancel'),
@@ -180,12 +187,11 @@ const ProfileEdit = ({navigation, route}) => {
                                 onPress: () => { logout({navigation}) }
                             }
                         ]);
-                        }}
-                        >
+                        }}>                        
                             <Text style={styles.memberBtn}>로그아웃</Text>
                         </Pressable>
 
-                        <Modal
+                        {/* <Modal
                             animationType="fade"
                             transparent={true}
                             visible={modal}
@@ -193,7 +199,7 @@ const ProfileEdit = ({navigation, route}) => {
                             <View style={styles.centeredView}>
                                 <View style={styles.modalView}>
                                     <View style={styles.modalInputBox}>
-                                        <Text style={{fontSize:22, marginBottom:20, fontWeight:'bold'}}>회원 탈퇴</Text>
+                                        <Text style={{ fontSize: 22, marginBottom: 20, fontWeight: 'bold' }}>회원 탈퇴</Text>
                                         <Text style={styles.modalText}>이메일을 입력해주세요.</Text>
                                         <TextInput
                                             value={email}
@@ -202,25 +208,35 @@ const ProfileEdit = ({navigation, route}) => {
                                         />
                                     </View>
                                     <View style={styles.check}>
-                                        <Text style={{color:'#872200', marginBottom: 8}}>정말 탈퇴하시겠습니까?</Text>
-                                        <View style={{flexDirection: 'row', justifyContent:'flex-end'}}>
+                                        <Text style={{ color: '#872200', marginBottom: 8 }}>정말 탈퇴하시겠습니까?</Text>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                                             <Pressable
-                                                style={{marginRight: 20}}
+                                                style={{ marginRight: 20 }}
                                                 onPress={() => { }}>
-                                                <Text style={{ fontSize: 18, color:'#872200', fontWeight:'bold' }}>네</Text>
+                                                <Text style={{ fontSize: 18, color: '#872200', fontWeight: 'bold' }}>네</Text>
                                             </Pressable>
                                             <Pressable
-                                            style={{}}
-                                            onPress={() => {setModal(false)}}>
-                                            <Text style={{fontSize:18, fontWeight:'bold'}}>아니오</Text>
-                                        </Pressable>
+                                                style={{}}
+                                                onPress={() => { setModal(false) }}>
+                                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>아니오</Text>
+                                            </Pressable>
                                         </View>
                                     </View>
                                 </View>
                             </View>
-                        </Modal>
+                        </Modal> */}
                         <Pressable
-                        onPressIn={()=>{setModal(true)}}>
+                        onPressIn={()=>{Alert.alert('My Review', '정말 탈퇴 하시겠습니까?', [
+                            {
+                                text: '취소',
+                                onPress: () => console.log('cancel'),
+                            },
+                            {
+                                text: '네',
+                                onPress: () => { resign({navigation}, userId) }
+                            }
+                        ]);
+                        }}>
                             <Text style={[styles.memberBtn, {backgroundColor: '#872200'}]}>회원탈퇴</Text>
                         </Pressable>
                     </View>

@@ -4,16 +4,109 @@ import { StyleSheet, Text, View, TextInput, Pressable, Alert, Image, ScrollView 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Checkbox from 'expo-checkbox';
 import { Entypo, AntDesign } from '@expo/vector-icons';
+import URL from '../api/axios';
 
 const ReviewEdit = ({route, navigation}) => {
     let category = route.params.category;    // book? movie?
+    let userId = route.params.user_id;
+    let reviewId = route.params.review_id;
     const [will, setWill] = useState(false);
     const [ing, setIng] = useState(false);
     const [done, setDone] = useState(false);
     const [comment, setComment] = useState('');
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(null);
     const [dateModal, setDateModal] = useState(false);
-    const [starRate, setStarRate] = useState(1);
+    const [starRate, setStarRate] = useState(null);
+    const [detail, setDetail] = useState([]);   // review detail
+    const [info, setInfo] = useState([]);   // contents info
+    const [status, setStatus] = useState('');
+    const [dateChanged, setDateChanged] = useState(false);
+
+    useEffect(()=>{
+        URL.get(`/v1/review/${category}/${userId}/${reviewId}`)
+        .then((res)=>{
+            console.log(res.data);
+            setDetail(res.data.review);
+            setInfo(res.data.item);
+            setStarRate(res.data.review.rate);
+            setStatus(res.data.review.status);
+            setComment(res.data.review.content);
+            initStatus(res.data.review.status);
+        })
+        .catch((err)=>{
+            console.log('get review fail');
+            console.error(err);
+        })
+    }, [])
+
+    const initStatus = (st) =>{
+        console.log(st);
+        if (st === "LIKE"){
+            setWill(true);
+            setIng(false);
+            setDone(false);
+        }else if (st === "WATCHING"){
+            setWill(false);
+            setIng(true);
+            setDone(false);
+            
+        }else{
+            setWill(false);
+            setIng(false);
+            setDone(true);
+        }
+    }
+
+    const putReview = () => {
+        if (detail.viewDate===null){
+            Alert.alert('날짜를 선택해주세요.');
+        }else {
+            let viewDate="";
+            if (dateChanged) {
+                viewDate = date.getFullYear().toString();
+                let month = "";
+                let day = ""
+                if (date.getMonth() < 9) {
+                    month = "0";
+                    month += (date.getMonth() + 1).toString();
+                } else {
+                    month = (date.getMonth() + 1).toString();
+                }
+                if (date.getDate() < 10) {
+                    day = "0";
+                    day += date.getDate().toString();
+                } else {
+                    day = date.getDate().toString();
+                }
+                viewDate += month;
+                viewDate += day;
+            }else {
+                viewDate = detail.viewDate;
+            }
+            console.log(viewDate);
+            
+            URL.put(`/v1/review/${category}/${userId}/${reviewId}`, {
+                "status": status,
+                "rate": starRate,
+                "viewDate": viewDate,
+                "content": comment
+            })
+            .then((res) => {
+                console.log(res.data);
+                Alert.alert('My Review', '리뷰 수정 완료😃', [
+                    {
+                        text: 'ok',
+                        onPress: () => { navigation.goBack(); }
+                    }
+                ]);
+            })
+            .catch((err) => {
+                console.log('put fail');
+                console.error(err);
+                console.error(err.response);
+            })
+        }
+    }
 
     const showDatePicker = () => {
         setDateModal(true);
@@ -23,6 +116,7 @@ const ReviewEdit = ({route, navigation}) => {
     };
     const handleDate = (date) => {
         setDate(date);
+        setDateChanged(true);
         hideDatePicker();
     };
 
@@ -31,14 +125,17 @@ const ReviewEdit = ({route, navigation}) => {
             setWill(true);
             setIng(false);
             setDone(false);
+            setStatus('LIKE');
         } else if (select==='ing') {
             setWill(false);
             setIng(true);
             setDone(false);
+            setStatus('WATCHING');
         } else {
             setWill(false);
             setIng(false);
             setDone(true);
+            setStatus('DONE');
         }
     };
 
@@ -50,7 +147,7 @@ const ReviewEdit = ({route, navigation}) => {
             headerTitleStyle: {fontWeight: 'bold'},
             headerRight:()=>(
                 <Pressable
-                    onPress={() => { Alert.alert('save') }}>
+                    onPress={() => { putReview() }}>
                     <Text style={styles.headerBtn}>저장</Text>
                 </Pressable>
             ),
@@ -59,16 +156,16 @@ const ReviewEdit = ({route, navigation}) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <View style={{marginHorizontal: 30, marginVertical: 30}}>
+            <Text style={styles.title}>{info.title}</Text>
+            <View style={{marginHorizontal: 30, marginBottom: 30}}>
                 <View style={{ flexDirection: 'row', marginBottom: 30 }}>
                     <Image
                         style={styles.image}
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} />
-                    <View style={{ justifyContent: 'flex-end' }}>
-                        <Text style={styles.size}>제목</Text>
-                        <Text style={styles.size}>작가</Text>
-                        <Text style={styles.size}>발매일</Text>
-                        <Text style={styles.size}>ISBN</Text>
+                        source={info.image===""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: info.image}} />
+                    <View style={{ justifyContent: 'flex-end', width: '50%' }}>
+                        <Text style={styles.size}>{category==='book'?info.author:info.director}</Text>
+                        <Text style={styles.size}>{info.releaseDate}</Text>
+                        <Text numberOfLines={1} ellipsizeMode='tail' style={styles.size}>{category==='book'?info.isbn:info.actors}</Text>
                     </View>
                 </View>
                 {/* 보기 상태 */}
@@ -112,7 +209,7 @@ const ReviewEdit = ({route, navigation}) => {
                             onConfirm={handleDate}
                             onCancel={hideDatePicker}
                         />
-                        <Text style={{fontSize: 18}}>본 날짜 : {date.toLocaleDateString()}</Text>
+                        <Text style={{fontSize: 18}}>본 날짜 : {dateChanged?date.toLocaleDateString():detail.viewDate}</Text>
                     </View>
                     {/* star rate */}
                     <Text style={{fontSize: 20, fontWeight: 'bold', marginBottom:10}}>별점</Text>
@@ -174,7 +271,7 @@ const styles = StyleSheet.create({
     headerBtn: {
         color: '#E1D7C6', 
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
     },
     image: {
         width: 150,
@@ -215,6 +312,16 @@ const styles = StyleSheet.create({
         color: '#FFD56D',
         marginRight: 8
     },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop: 20,
+        marginBottom: 10,
+        alignSelf: 'center',
+        color: '#4E4637',
+        marginHorizontal: 20,
+        textAlign: 'center'
+    }
 });
 
 export default ReviewEdit;

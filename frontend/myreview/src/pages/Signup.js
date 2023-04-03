@@ -84,24 +84,24 @@ const Signup = ({navigation}) => {
 
         if (!validEmail) Alert.alert('유효하지 않은 이메일 형식입니다.');
         else {
-            // URL.post(
-            //     "/signup", {
-            //     "email": email,
-            //     "name": "",
-            //     password: "",
-            // }
-            // )
-            //     .then((res) => {
-            //         console.log(res.data);
-            //         Alert.alert('사용 가능한 이메일입니다.');
-            //         setCheckedEmail(true);
-            //     })
-            //     .catch((err) => {
-            //         console.log(err.response);
-            //         setCheckedEmail(false);
-            //     })
-            setCheckedEmail(true);
-            Alert.alert('ok');
+            URL.post(
+                "/v1/emChk", {
+                "email": email
+            })            
+                .then((res) => {
+                    console.log(res.data);
+                    if (res.data === 0) {
+                        Alert.alert('사용 가능한 이메일입니다.');
+                        setCheckedEmail(true);
+                    }else {
+                        Alert.alert('이미 존재하는 이메일입니다.');
+                        setCheckedEmail(false);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                    setCheckedEmail(false);
+                })
         }
     }
 

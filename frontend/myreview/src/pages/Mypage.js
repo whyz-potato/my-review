@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Modal } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Pressable, Modal, FlatList } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import URL from '../api/axios';
 
@@ -14,14 +14,14 @@ const Mypage = ({navigation, route}) => {
     const [history, setHistory] = useState([]);
 
     const changeGoal = () => {
-        // error 400
+        console.log('goal to: '+goalChange);
         URL.put(
             `/v1/goal/${userId}`, {
-            "target": goal,
+            "target": goalChange,
         })
             .then((res) => {
                 console.log(res.data);
-                setGoal(goal);
+                setGoal(goalChange);
                 setModal(false);
             })
             .catch((err) => {
@@ -34,7 +34,7 @@ const Mypage = ({navigation, route}) => {
 
     const handleGoalChange = (input) => {
         if (input===NaN || input===0) {
-            setGoal(10);
+            setGoalChange(10);
         }else{
             setGoalChange(input);
         }
@@ -67,16 +67,24 @@ const Mypage = ({navigation, route}) => {
             console.error(err);
         })
     },[goal])
- /*
+ 
     // 기록 가져오기
     useEffect(()=> {
-        URL.get(`/v1/users/goal/history/${userId}`)
+        URL.get(`/v1/goal/history/${userId}`)
         .then((res)=>{
             console.log(res.data);
-            setHistory(res.data.body.goals);
+            setHistory(res.data.goals);
         })
-    },[])
-    */
+    },[goal])
+
+    const itemView = ({item})=>{
+        return(
+            <View style={styles.rowBetween}>
+                <Text style={styles.txt}>{item.year}</Text>
+                <Text style={styles.txt}>{item.cnt}/{item.target}</Text>
+            </View>
+        )
+    }
     
     return(
         <View style={styles.container}>
@@ -125,14 +133,12 @@ const Mypage = ({navigation, route}) => {
                 </View>
                 <View style={{marginTop: 60}}>
                     <Text style={{ fontSize: 25 }}>과거 기록</Text>
-                    <View style={styles.rowBetween}>
-                        <Text style={styles.txt}>2022</Text>
-                        <Text style={styles.txt}>5/8</Text>
-                    </View>
-                    <View style={styles.rowBetween}>
-                        <Text style={styles.txt}>2021</Text>
-                        <Text style={styles.txt}>5/8</Text>
-                    </View>
+                    <FlatList
+                        data={history}
+                        key='#'
+                        keyExtractor={item => item.year}
+                        renderItem={itemView}
+                    />
                 </View>
             </View>
             <StatusBar style="auto" />

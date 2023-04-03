@@ -2,16 +2,16 @@ package whyzpotato.myreview.dto.item;
 
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import whyzpotato.myreview.domain.Item;
 import whyzpotato.myreview.domain.Movie;
 
 import static whyzpotato.myreview.CommonUtils.toLocalDate;
 import static whyzpotato.myreview.CommonUtils.unProxy;
 
-@Getter
-@ToString
+@Data
+@NoArgsConstructor
 public class DetailMovieDto {
     private Long itemId;
     private Long reviewId;

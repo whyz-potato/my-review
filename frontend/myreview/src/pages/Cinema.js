@@ -2,52 +2,89 @@ import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList } from 'react-native';
 import { Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import URL from '../api/axios';
 
 const Cinema = ({navigation}) => {
     const [search, setSearch] = useState(''); 
-    const Data = [
-        { id: '1', title: '므레모사', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '2', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '3', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '4', title: 'D', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '5', title: 'E', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '6', title: 'F', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '7', title: 'G', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '8', title: 'H', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '9', title: 'I', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '10', title: '므레모사', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '11', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '12', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '13', title: 'D', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '14', title: 'E', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '15', title: 'F', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '16', title: 'G', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '17', title: 'H', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '18', title: 'I', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '19', title: 'B', img: 'https://reactnative.dev/img/tiny_logo.png' },
-        { id: '20', title: 'C', img: 'https://reactnative.dev/img/tiny_logo.png' },
-      ];
-    let userId = 0;
+    const [userId, setUserId] = useState(0);
+    const [review, setReview] = useState([]);
+    const [reviewCnt, setReviewCnt] = useState(0);
 
-    async () => {
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            console.log(userId+" "+search);
+            if (userId !== 0) {
+                URL.get(`/v1/review/movie/search?id=${userId}&q=${search}&display=40`)
+                    .then((res) => {
+                        console.log(res.data);
+                        setReview(res.data.reviews);
+                        setReviewCnt(res.data.total);
+                    })
+                    .catch((err) => {
+                        console.log('get movie fail');
+                        console.error(err);
+                    })
+            }
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
+
+    const getId = async () => {
         try {
-            userId = await AsyncStorage.getItem('userId');
-            if (userId != null) userId = JSON.parse(userId);
+            const val = await AsyncStorage.getItem('userId');
+            if (val !== null) setUserId(val);
         } catch (error) {
+            console.log("get id fail");
             console.log(error);
         }
+    }
+
+    useEffect(() => {
+        getId();
+    }, []);
+
+    // get review
+    useEffect(()=>{
+        if (userId !== 0) {
+            URL.get(`/v1/review/movie/search?id=${userId}&display=40`)
+                .then((res) => {
+                    console.log(res.data);
+                    setReview(res.data.reviews);
+                    setReviewCnt(res.data.total);
+                })
+                .catch((err) => {
+                    console.log('get movie fail');
+                    console.error(err);
+                })
+        }
+    },[userId])
+
+    const filter = () => {
+        console.log(search);
+        URL.get(`/v1/review/movie/search?id=${userId}&q=${search}&display=12`)
+            .then((res) => {
+                console.log(res.data);
+                setReview(res.data.reviews);
+                setReviewCnt(res.data.total);
+            })
+            .catch((err) => {
+                console.log('get movie fail');
+                console.error(err);
+            })
     }
     
     const itemView = ({item})=>{
         return (
-            <View style={{marginBottom: 5, marginRight: 10}}>
-                <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'movie'})}>
+            <View style={{marginBottom: 5, marginRight: 10, width: 80}}>
+                <Pressable onPress={()=>navigation.navigate('reviewDetail', {category: 'movie', user_id: userId, review_id: item.reviewId})}>
                     <Image
                         style={styles.image}
-                        source={{ uri: item.img }}
+                        source={item.item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.item.image}}
                     />
                 </Pressable>                
-                <Text style={{fontSize: 15, textAlign:'center'}}>{item.title}</Text>
+                <Text numberOfLines={1} ellipsizeMode='tail' style={{fontSize: 15, textAlign:'center'}}>{item.item.title}</Text>
             </View>
         );
     };
@@ -70,7 +107,7 @@ const Cinema = ({navigation}) => {
             </View>
             <View style={styles.searchContainer}>
                 <TextInput 
-                placeholder='제목으로 검색하기'
+                placeholder='검색어를 입력하세요'
                 placeholderTextColor={'white'}
                 style={styles.searchInput}
                 value={search}
@@ -78,27 +115,32 @@ const Cinema = ({navigation}) => {
                 />
                 <Pressable
                 style={styles.searchBtn}
-                onPressIn={()=>{console.log(search)}}>
+                onPressIn={()=>{filter()}}>
                     <Entypo name="magnifying-glass" size={38} color="#E1D7C6" />
                 </Pressable>
             </View>
-            <View style={styles.contentsArr}>
-                <View>
-                    <Text style={styles.contentsTitle}>작성한 리뷰</Text>
-                    <View style={styles.contentBox}>
-                        <FlatList
-                            data={Data}
-                            key={'#'}
-                            keyExtractor={item => item.id}
-                            renderItem={itemView}
-                            numColumns={4}
-                        />
+            {reviewCnt == 0 &&
+                <View style={{ alignSelf: 'center', justifyContent: 'center', height: '75%' }}>
+                    <Text style={styles.emptyMsg}>작성한 리뷰가 없습니다.{'\n'}새로운 리뷰를 작성해주세요😃</Text>
+                </View>}
+            {reviewCnt > 0 &&
+                <View style={styles.contentsArr}>
+                    <View>
+                        <Text style={styles.contentsTitle}>작성한 리뷰</Text>
+                        <View style={styles.contentBox}>
+                            <FlatList
+                                data={review}
+                                key={'#'}
+                                keyExtractor={item => item.reviewId}
+                                renderItem={itemView}
+                                numColumns={4}
+                            />
+                        </View>
                     </View>
-                </View>
-            </View>
+                </View>}
             <Pressable
             style={styles.floatingBtn}
-            onPress={()=>navigation.navigate('movieSearchResult')}>
+            onPress={()=>navigation.navigate('movieSearchResult', {query: "", user_id: userId})}>
                 <AntDesign name="pluscircle" size={60} color="#E1D7C6"/>
             </Pressable>
             <StatusBar style="auto" />
@@ -155,7 +197,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         marginLeft:30,
         marginTop: 20,
-
+        maxHeight: 600,
     },
     contentsTitle: {
         fontSize: 23,
@@ -164,17 +206,22 @@ const styles = StyleSheet.create({
     contentBox:{
         flexDirection: 'row',
         marginTop: 15,
-        marginBottom: 480,
+        marginBottom: 50,
     },
     floatingBtn: {
         position: 'absolute',
         right: 30,
-        top: 655,   //25
+        bottom: 25
     },    
     image: {
         width: 80,
         height: 110,
         borderRadius: 7,
+    },
+    emptyMsg: {
+        fontSize: 20,
+        color: '#E1D7C6',
+        textAlign: 'center',
     },
 });
 

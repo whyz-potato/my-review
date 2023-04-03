@@ -2,6 +2,7 @@ package whyzpotato.myreview.dto.item;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import whyzpotato.myreview.domain.Book;
 import whyzpotato.myreview.domain.Item;
 
@@ -9,6 +10,7 @@ import static whyzpotato.myreview.CommonUtils.toLocalDate;
 import static whyzpotato.myreview.CommonUtils.unProxy;
 
 @Data
+@NoArgsConstructor
 public class DetailBookDto {
     private Long itemId;
     private Long reviewId;

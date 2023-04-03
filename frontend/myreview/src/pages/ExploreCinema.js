@@ -15,20 +15,46 @@ const ExploreCinema = ({navigation}) => {
     const [topCnt, setTopCnt] = useState(0);
     const [newContentCnt, setNewContentCnt] = useState(0);
 
-      const getId = async () => {
+    //refresh
+    useEffect(()=>{
+        const unsubscribe = navigation.addListener('focus', ()=>{
+            console.log(userId);
+            if (userId !== 0) {
+                URL.get(`/v1/content/movie/${userId}`)
+                    .then((res) => {
+                        console.log(res.data);
+                        setMyContent(res.data.myContent.items);
+                        setNewContent(res.data.newContent.items);
+                        setTop(res.data.top10.items);
+    
+                        setMyContentCnt(res.data.myContent.count);
+                        setNewContentCnt(res.data.newContent.count);
+                        setTopCnt(res.data.top10.count);
+                    })
+                    .catch((err) => {
+                        console.log('get movie fail');
+                        console.error(err);
+                    })
+            }
+        })
+        return ()=>{unsubscribe};
+    },[navigation])
+
+    const getId = async () => {
         try {
-          const val = await AsyncStorage.getItem('userId');
-          if (val !== null) setUserId(val);
-          console.log("user id: "+userId);
+            const val = await AsyncStorage.getItem('userId');
+            if (val !== null) {
+                setUserId(val);
+            }
         } catch (error) {
             console.log("get id fail");
-          console.log(error);
+            console.log(error);
         }
-      }
+    }
 
-      useEffect(() => {
+    useEffect(() => {
         getId();
-      }, []);
+    }, []);
 
     // 신작, 담은, 탑10
     useEffect(()=>{
@@ -49,18 +75,21 @@ const ExploreCinema = ({navigation}) => {
                     console.error(err);
                 })
         }
-    },[userId])
+    }, [userId])
 
     const itemView = ({item})=>{
         return (
             <View style={{marginBottom: 5, marginRight: 20, width: 80}}>
-                <Pressable onPress={()=>navigation.navigate('contentsDetail', {category: 'movie'})}>
+                <Pressable onPress={()=>navigation.navigate('contentsDetail', {
+                        category: 'movie',
+                        item_id: item.itemId,
+                        user_id: userId
+                    })}>
                     <Image
                         style={styles.image}
-                        source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }}   //item.image
+                        source={item.image==""? {uri:'https://i.postimg.cc/wBncwMHT/stacked-waves-haikei.png'}:{uri: item.image}}
                     />
                 </Pressable>
-                {/* html 태그 제거 */}
                 <Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTitle}>{(item.title).replace(/(<([^>]+)>)/ig,"")}</Text>
             </View>
         );
@@ -84,7 +113,7 @@ const ExploreCinema = ({navigation}) => {
             </View>
             <View style={styles.searchContainer}>
                 <TextInput 
-                placeholder='제목으로 검색하기'
+                placeholder='검색어를 입력하세요'
                 placeholderTextColor={'white'}
                 style={styles.searchInput}
                 value={search}
@@ -110,7 +139,7 @@ const ExploreCinema = ({navigation}) => {
                             />}
                         {myContentCnt === 0 &&
                             <View>
-                                <Text style={styles.emptyMsg}>담은 영화가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>담은 영화가 없습니다😶</Text>
                             </View>}
                     </View>
                 </View>
@@ -127,7 +156,7 @@ const ExploreCinema = ({navigation}) => {
                             />}
                         {newContentCnt === 0 &&
                             <View>
-                                <Text>이달의 신작이 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>이달의 신작이 없습니다😶</Text>
                             </View>}
                     </View>
                 </View>
@@ -144,7 +173,7 @@ const ExploreCinema = ({navigation}) => {
                             />}
                         {topCnt === 0 &&
                             <View>
-                                <Text>인기 영화가 없습니다!</Text>
+                                <Text style={styles.emptyMsg}>인기 영화가 없습니다😶</Text>
                             </View>}                        
                     </View>
                 </View>
@@ -225,7 +254,8 @@ const styles = StyleSheet.create({
     },
     emptyMsg: {
         fontSize: 20,
-        color: '#77BDC3',
+        fontWeight: 'bold',
+        color: '#E1D7C6',
         alignSelf: 'center',
         paddingVertical: 50
     },

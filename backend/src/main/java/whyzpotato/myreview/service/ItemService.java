@@ -28,8 +28,33 @@ public class ItemService {
         return itemRepository.save(dto.toEntity()).getId();
     }
 
-    //TODO Movie save
+    //TODO MovieDto save
 
+    public DetailBookDto findBookById(Long userId, Long itemId) {
+        Book book = (Book) itemRepository.findById(itemId).get();
+        return new DetailBookDto(book);
+    }
+
+    public Book findBook(DetailBookDto dto) {
+        if (dto.getItemId() != null) {
+            return (Book) itemRepository.findById(dto.getItemId()).get();
+        }
+        return itemRepository.save(dto.toEntity());
+    }
+
+    public Movie findMovie(DetailMovieDto dto) {
+        if (dto.getItemId() != null) {
+            return (Movie) itemRepository.findById(dto.getItemId()).get();
+        }
+        Movie movie = dto.toEntity();
+        itemRepository.save(movie);
+        return movie;
+    }
+
+    public DetailMovieDto findMovieById(Long userId, Long itemId) {
+        Movie movie = (Movie) itemRepository.findById(itemId).get();
+        return new DetailMovieDto(movie);
+    }
 
     public ExploreResponseDto exploreBook(Long userId) {
 
@@ -134,4 +159,5 @@ public class ItemService {
                 .releaseDate(naverMovieDto.getPubDate())
                 .build();
     }
+
 }
